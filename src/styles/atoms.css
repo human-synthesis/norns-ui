@@ -59,4 +59,138 @@
 	.ui-spinner {
 		@apply inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent;
 	}
+
+	/* --- Text inputs --- */
+	.input {
+		@apply block w-full rounded-md border border-neutral-300 bg-white text-sm text-neutral-900 shadow-sm;
+		@apply placeholder:text-neutral-400;
+		@apply transition-[border-color,box-shadow] duration-150 ease-out;
+		@apply focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30;
+		@apply disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-70;
+		height: var(--ui-h-md);
+		padding-inline: 0.75rem;
+	}
+
+	.input-sm {
+		@apply text-xs;
+		height: var(--ui-h-sm);
+		padding-inline: 0.625rem;
+	}
+
+	.input-lg {
+		@apply text-base;
+		height: var(--ui-h-lg);
+		padding-inline: 0.875rem;
+	}
+
+	.input-err {
+		@apply border-red-500 focus:border-red-500 focus:ring-red-500/30;
+	}
+
+	/* Textarea overrides .input's height */
+	.textarea {
+		@apply block w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm;
+		@apply placeholder:text-neutral-400;
+		@apply transition-[border-color,box-shadow] duration-150 ease-out;
+		@apply focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30;
+		@apply disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-70;
+		min-height: calc(var(--ui-h-md) * 2);
+	}
+
+	.textarea-err {
+		@apply border-red-500 focus:border-red-500 focus:ring-red-500/30;
+	}
+
+	.select {
+		@apply block w-full rounded-md border border-neutral-300 bg-white text-sm text-neutral-900 shadow-sm;
+		@apply transition-[border-color,box-shadow] duration-150 ease-out;
+		@apply focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30;
+		@apply disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-70;
+		height: var(--ui-h-md);
+		padding-inline: 0.75rem;
+	}
+
+	.select-err {
+		@apply border-red-500 focus:border-red-500 focus:ring-red-500/30;
+	}
+
+	/* --- Checkbox / Radio --- */
+	.checkbox {
+		@apply size-4 cursor-pointer rounded border-neutral-300 text-primary-600 shadow-sm;
+		@apply focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:ring-offset-1;
+		@apply disabled:cursor-not-allowed disabled:opacity-60;
+	}
+
+	.checkbox-err {
+		@apply border-red-500 focus:ring-red-500/30;
+	}
+
+	.radio {
+		@apply size-4 cursor-pointer border-neutral-300 text-primary-600 shadow-sm;
+		@apply focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:ring-offset-1;
+		@apply disabled:cursor-not-allowed disabled:opacity-60;
+	}
+
+	.radio-err {
+		@apply border-red-500 focus:ring-red-500/30;
+	}
+
+	/* --- Switch (styled checkbox / toggle) ---
+	 * Implemented as a checkbox the user wraps in a label; we provide the
+	 * pill track via .switch and the moving knob via ::before.
+	 */
+	.switch {
+		@apply relative inline-flex h-5 w-9 shrink-0 cursor-pointer appearance-none rounded-full bg-neutral-200 shadow-inner;
+		@apply transition-colors duration-150 ease-out;
+		@apply checked:bg-primary-600;
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-1;
+		@apply disabled:cursor-not-allowed disabled:opacity-60;
+	}
+	.switch::before {
+		content: '';
+		@apply absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow;
+		@apply transition-transform duration-150 ease-out;
+	}
+	.switch:checked::before {
+		transform: translateX(1rem);
+	}
+
+	/* --- Field (label + control + help/error) --- */
+	.field {
+		@apply flex flex-col;
+	}
+
+	.field-label {
+		@apply mb-1 block text-sm font-medium text-neutral-700;
+	}
+
+	.field-required {
+		@apply ml-0.5 text-red-600;
+	}
+
+	.field-help {
+		@apply mt-1 text-xs text-neutral-500;
+	}
+
+	.field-error {
+		@apply mt-1 text-xs text-red-600;
+	}
+
+	.field-row {
+		@apply flex items-center gap-2;
+	}
+
+	/* Field-group: border-grouped collection of fields */
+	.field-group {
+		@apply space-y-3 rounded-md border border-neutral-200 p-4;
+	}
+
+	.field-group-legend {
+		@apply -mx-1 -mt-1 px-1 text-sm font-medium text-neutral-700;
+	}
+
+	/* --- Form (vertical stack of fields) --- */
+	.form {
+		@apply space-y-4;
+	}
 }

@@ -1,0 +1,34 @@
+select(
+	id!="{resolvedId}"
+	name!="{name}"
+	bind:value
+	required!="{required}"
+	disabled!="{disabled}"
+	aria-invalid!="{hasError ? 'true' : undefined}"
+	aria-describedby!="{describedBy}"
+	class!="{classes}"
+)
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+
+	{
+		value = $bindable()
+		name
+		id: providedId
+		required = false
+		disabled = false
+		error: explicitError = false
+		children
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+	describedBy := resolvedId && hasError ? `${resolvedId}-error` : undefined
+
+	classes := cn 'select', hasError && 'select-err', extra
+</script>

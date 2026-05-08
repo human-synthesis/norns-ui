@@ -1,0 +1,33 @@
+input(
+	type="radio"
+	id!="{resolvedId}"
+	name!="{name}"
+	value!="{value}"
+	bind:group
+	required!="{required}"
+	disabled!="{disabled}"
+	aria-invalid!="{hasError ? 'true' : undefined}"
+	class!="{classes}"
+)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+
+	{
+		group = $bindable()
+		value
+		name
+		id: providedId
+		required = false
+		disabled = false
+		error: explicitError = false
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	classes := cn 'radio', hasError && 'radio-err', extra
+</script>

@@ -1,0 +1,23 @@
+form(
+	method!="{method}"
+	action!="{action}"
+	enctype!="{enctype}"
+	class!="{classes}"
+	onsubmit!="{onsubmit}"
+)
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		method = 'POST'
+		action
+		enctype
+		onsubmit
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'form', extra
+</script>

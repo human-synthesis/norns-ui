@@ -1,0 +1,17 @@
+fieldset(class!="{classes}")
+	+if('legend')
+		legend.field-group-legend
+			| {legend}
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		legend
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'field-group', extra
+</script>

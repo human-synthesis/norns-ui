@@ -1,0 +1,47 @@
+.field(class!="{classes}")
+	+if('label')
+		label.field-label(for!="{ctx.id}")
+			| {label}
+			+if('required')
+				span.field-required *
+	| {@render children?.()}
+	+if('error')
+		p.field-error(role="alert" id!="{ctx.id ? `${ctx.id}-error` : undefined}")
+			| {error}
+	+if('!error && help')
+		p.field-help(id!="{ctx.id ? `${ctx.id}-help` : undefined}")
+			| {help}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { setContext } from 'svelte'
+
+	{
+		label
+		help
+		error
+		required = false
+		id: providedId
+		children
+		class: extra = ''
+	} := $props()
+
+	// Deterministic id derivation:
+	//   1. explicit prop wins
+	//   2. otherwise slugify the label so SSR + hydrate produce the same id
+	//   3. otherwise undefined — without a label, no <label for=> association
+	//      is needed anyway
+	slugify := (s) => s.toLowerCase().trim().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '')
+	resolvedId := providedId ?? (label && `field-${slugify(label)}`) ?? undefined
+
+	// Shared with descendants (Input, Textarea, Select, etc.) so they pick up
+	// the id automatically and switch to error styling. $state proxy so
+	// children's reads are reactive when `error` changes.
+	ctx := $state({ id: resolvedId, hasError: !!error })
+	$effect ->
+		ctx.id = resolvedId
+		ctx.hasError = !!error
+	setContext 'norns-ui:field', ctx
+
+	classes := cn 'field', extra
+</script>

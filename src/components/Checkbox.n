@@ -1,0 +1,33 @@
+input(
+	type="checkbox"
+	id!="{resolvedId}"
+	name!="{name}"
+	value!="{value}"
+	bind:checked
+	required!="{required}"
+	disabled!="{disabled}"
+	aria-invalid!="{hasError ? 'true' : undefined}"
+	class!="{classes}"
+)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+
+	{
+		checked = $bindable(false)
+		value
+		name
+		id: providedId
+		required = false
+		disabled = false
+		error: explicitError = false
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	classes := cn 'checkbox', hasError && 'checkbox-err', extra
+</script>

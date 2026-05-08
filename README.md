@@ -2,7 +2,7 @@
 
 UI library for the [Norns](https://github.com/human-synthesis/norns) ecosystem — Pug + Civet components on Tailwind v4.
 
-**Status: Phase 1 (foundation).** Currently ships `Btn` and the atom CSS layer. Forms tier (Input, Field, Form, …) lands in Phase 2; Bits-UI-backed behavior tier (Dialog, Popover, Tabs, Toast, …) in Phase 3.
+**Status: Phase 2 (forms tier).** Currently ships `Btn`, `Form`, `Field`, `FieldGroup`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`. Bits-UI-backed behavior tier (Dialog, Popover, Tabs, Toast, …) lands in Phase 3.
 
 ## Stack
 
@@ -23,7 +23,7 @@ bun add -D @human-synthesis/norns-ui
 
 ### 1. Wire `presetUI()` into `nornsAutoImport`
 
-So `<Btn>`, `<Card>`, `<Field>` resolve in markup without explicit imports.
+So `<Btn>`, `<Field>`, `<Input>`, etc. resolve in markup without explicit imports.
 
 ```js
 // vite.config.js
@@ -69,28 +69,32 @@ Same shape goes in `svelte.config.js`'s `preprocess` array.
 ### 3. Use components in Pug
 
 ```pug
-section.space-y-3
-	h1.text-3xl Notes
-	form(method="POST" action="?/create")
-		input.input(name="title" required)
+section.space-y-4
+	h1.text-3xl New note
+
+	Form(method="POST" action="?/create")
+		Field(label="Title" required error!="{form?.errors?.title}")
+			Input(name="title" required)
+		Field(label="Body" help="Optional — supports plain text only")
+			Textarea(name="body" rows="4")
 		Btn(type="submit" variant="primary") Create note
 ```
 
-## What ships
+## Component catalog
 
-### Atoms (CSS-only — Tailwind `@layer components`)
+### Phase 1 — atoms
 
-Use directly via Pug class shorthand:
+CSS classes via `@layer components`. Use directly via Pug class shorthand:
 
-- `.btn` + variants: `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.btn-danger`, `.btn-link`
-- `.btn` + sizes: `.btn-sm`, `.btn-lg` (default md is built into `.btn`)
-- `.ui-spinner` — small inline spinner
+- `.btn` + variants (`primary`, `secondary`, `ghost`, `danger`, `link`) + sizes (`sm`, `lg`)
+- `.input` / `.textarea` / `.select` + `-err` modifier
+- `.checkbox` / `.radio` / `.switch` + `-err` modifier
+- `.field` / `.field-label` / `.field-required` / `.field-help` / `.field-error`
+- `.field-group` / `.field-group-legend`
+- `.form`
+- `.ui-spinner`
 
-More atoms (`.input`, `.card`, `.badge`, `.field-*`) land in Phase 2.
-
-### Components
-
-#### `<Btn>` ([source](src/components/Btn.n))
+### Phase 1 — Btn
 
 Wrapped `<button>` with class merging, variant/size props, loading state, and snippet-prop API for icons.
 
@@ -108,12 +112,49 @@ Props (see [`src/types/Btn.d.ts`](src/types/Btn.d.ts)):
 - `variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'link'` (default `'primary'`)
 - `size?: 'sm' | 'md' | 'lg'` (default `'md'`)
 - `loading?: boolean` — replaces leading icon with `.ui-spinner`, sets `disabled` and `aria-busy`
-- `disabled?: boolean`
-- `type?: 'button' | 'submit' | 'reset'` (default `'button'`)
-- `onclick?: (event) => void`
-- `class?: string` — merged via [`tailwind-merge`](https://github.com/dcastil/tailwind-merge)
-- `children` — default snippet (the button label)
-- `leading`, `trailing` — snippet slots for icons
+- `disabled?: boolean`, `type?`, `onclick?`, `class?`, `children`, `leading`, `trailing`
+
+### Phase 2 — forms tier
+
+#### `<Field>`
+
+Wraps a control with label + optional help/error text. Provides `id` and `hasError` to descendant controls via Svelte context — child Inputs auto-pick up the right `id` for `<label for=>` and switch to error styling.
+
+```pug
+Field(label="Email" required error!="{form?.errors?.email}" help="We'll never share it")
+	Input(name="email" type="email" required)
+```
+
+Props: `label?`, `help?`, `error?`, `required?`, `id?`, `class?`, `children`.
+
+#### `<Form>`, `<FieldGroup>`
+
+Styled `<form>` (vertical stack via `.form`) and `<fieldset>` (`.field-group` with optional legend).
+
+```pug
+Form(action="?/save")
+	FieldGroup(legend="Profile")
+		Field(label="Name")
+			Input(name="name" required)
+		Field(label="Bio")
+			Textarea(name="bio" rows="3")
+	Btn(type="submit") Save
+```
+
+#### Form controls
+
+All accept `class?` (merged via `cn`), pull `id` + `hasError` from a parent `<Field>` automatically, and surface `aria-invalid` + `aria-describedby` for accessibility:
+
+| Component | Bind | Common props |
+|---|---|---|
+| `<Input>` | `bind:value` | `type`, `size`, `name`, `placeholder`, `required`, `disabled`, `readonly`, `autocomplete` |
+| `<Textarea>` | `bind:value` | `name`, `placeholder`, `rows` (default 4), `required`, `disabled`, `readonly` |
+| `<Select>` | `bind:value` | `name`, `required`, `disabled`. Children: `<option>` elements |
+| `<Checkbox>` | `bind:checked` | `name`, `value`, `required`, `disabled` |
+| `<Radio>` | `bind:group` | `name`, `value`, `required`, `disabled` |
+| `<Switch>` | `bind:checked` | `name`, `value`, `required`, `disabled`. Renders as a styled toggle (`role="switch"`) |
+
+Each has a hand-rolled `.d.ts` shim under `src/types/`.
 
 ## Theming
 
@@ -126,14 +167,15 @@ Dark mode: toggle via `<html data-theme="dark">`. The library's tokens.css ships
 Every component takes a `class` prop merged via `tailwind-merge` (the `cn` helper):
 
 ```svelte
-<Btn variant="primary" class="w-full" /> <!-- both classes survive; later wins on conflicts -->
+<Btn variant="primary" class="w-full" />
+<Input class="font-mono" />
 ```
 
 `cn` is exported from `@human-synthesis/norns-ui/cn` if you want to swap in plain `clsx` for smaller bundle:
 
 ```js
 import { cn } from '@human-synthesis/norns-ui/cn';
-cn('btn', isActive && 'btn-active', extra)
+cn('btn', isActive && 'btn-active', extra);
 ```
 
 ## Override a component

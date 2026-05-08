@@ -1,0 +1,38 @@
+textarea(
+	id!="{resolvedId}"
+	name!="{name}"
+	bind:value
+	placeholder!="{placeholder}"
+	rows!="{rows}"
+	required!="{required}"
+	disabled!="{disabled}"
+	readonly!="{readonly}"
+	aria-invalid!="{hasError ? 'true' : undefined}"
+	aria-describedby!="{describedBy}"
+	class!="{classes}"
+)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+
+	{
+		value = $bindable('')
+		name
+		id: providedId
+		placeholder
+		rows = 4
+		required = false
+		disabled = false
+		readonly = false
+		error: explicitError = false
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+	describedBy := resolvedId && hasError ? `${resolvedId}-error` : undefined
+
+	classes := cn 'textarea', hasError && 'textarea-err', extra
+</script>

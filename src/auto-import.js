@@ -9,21 +9,17 @@
  *
  *   const ui = presetUI();
  *
- *   // vite.config.js
  *   plugins: [
  *     nornsCivetPlugin(),
  *     nornsAutoImport({
  *       componentDirs: ['src/lib/components'],   // user folder wins
- *       components: ui.components,                // norns-ui as fallback
- *       helpers: ui.helpers
+ *       components: ui.components                 // norns-ui as fallback
  *     }),
  *     sveltekit()
  *   ]
  *
  * Components are imported via bare specifiers so the consumer's
  * `node_modules/@human-synthesis/norns-ui/...` is the resolution target.
- * Helpers (functional APIs like `toast()`) are added incrementally as the
- * library grows.
  *
  * @typedef {Object} UIPreset
  * @property {Record<string, string>} components  name → bare-specifier import path
@@ -34,11 +30,23 @@
 export function presetUI() {
 	return {
 		components: {
-			Btn: '@human-synthesis/norns-ui/components/Btn.n'
-			// Phase 2+ adds: Input, Textarea, Select, Checkbox, Radio, Switch,
-			// Field, Form, FieldGroup, Card, Dialog, Sheet, Popover, Dropdown,
-			// Tooltip, Tabs, Accordion, Toast, Listbox, Combobox, Pagination,
-			// Avatar, Badge, Spinner, Progress, Skeleton, Icon
+			// Phase 1
+			Btn: '@human-synthesis/norns-ui/components/Btn.n',
+
+			// Phase 2 — forms tier
+			Field: '@human-synthesis/norns-ui/components/Field.n',
+			FieldGroup: '@human-synthesis/norns-ui/components/FieldGroup.n',
+			Form: '@human-synthesis/norns-ui/components/Form.n',
+			Input: '@human-synthesis/norns-ui/components/Input.n',
+			Textarea: '@human-synthesis/norns-ui/components/Textarea.n',
+			Select: '@human-synthesis/norns-ui/components/Select.n',
+			Checkbox: '@human-synthesis/norns-ui/components/Checkbox.n',
+			Radio: '@human-synthesis/norns-ui/components/Radio.n',
+			Switch: '@human-synthesis/norns-ui/components/Switch.n'
+
+			// Phase 3+ adds: Card, Dialog, Sheet, Popover, Dropdown, Tooltip,
+			// Tabs, Accordion, Toast + ToastProvider, Listbox, Combobox,
+			// Pagination, Avatar, Badge, Spinner, Progress, Skeleton, Icon
 		},
 		helpers: [
 			// Phase 3+: { from: '@human-synthesis/norns-ui', imports: ['toast'] }

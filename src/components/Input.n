@@ -1,0 +1,41 @@
+input(
+	type!="{type}"
+	id!="{resolvedId}"
+	name!="{name}"
+	bind:value
+	placeholder!="{placeholder}"
+	required!="{required}"
+	disabled!="{disabled}"
+	readonly!="{readonly}"
+	autocomplete!="{autocomplete}"
+	aria-invalid!="{hasError ? 'true' : undefined}"
+	aria-describedby!="{describedBy}"
+	class!="{classes}"
+)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+
+	{
+		value = $bindable('')
+		type = 'text'
+		size = 'md'
+		name
+		id: providedId
+		placeholder
+		required = false
+		disabled = false
+		readonly = false
+		autocomplete
+		error: explicitError = false
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+	describedBy := resolvedId && hasError ? `${resolvedId}-error` : undefined
+
+	classes := cn 'input', size !== 'md' && `input-${size}`, hasError && 'input-err', extra
+</script>
