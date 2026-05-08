@@ -1,0 +1,32 @@
+PopoverRoot(bind:open)
+	+if('trigger')
+		PopoverTrigger(class!="{triggerClass ?? undefined}")
+			| {@render trigger()}
+	PopoverPortal
+		PopoverContent(class!="{contentClasses}" side!="{side}" align!="{align}" sideOffset!="{sideOffset}")
+			| {@render children?.()}
+
+<script>
+	import { Popover } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		Root: PopoverRoot
+		Trigger: PopoverTrigger
+		Portal: PopoverPortal
+		Content: PopoverContent
+	} := Popover
+
+	{
+		open = $bindable(false)
+		side = 'bottom'
+		align = 'center'
+		sideOffset = 8
+		trigger
+		children
+		triggerClass
+		class: extra = ''
+	} .= $props()
+
+	contentClasses := cn 'popover-content', extra
+</script>

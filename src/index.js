@@ -21,7 +21,17 @@ export { default as Select } from './components/Select.n';
 export { default as Switch } from './components/Switch.n';
 export { default as Textarea } from './components/Textarea.n';
 
+// Phase 3 — behavior tier (Bits UI)
+export { default as Dialog } from './components/Dialog.n';
+export { default as Sheet } from './components/Sheet.n';
+export { default as Popover } from './components/Popover.n';
+export { default as Dropdown } from './components/Dropdown.n';
+export { default as Tooltip } from './components/Tooltip.n';
+export { default as Tabs } from './components/Tabs.n';
+export { default as ToastProvider } from './components/ToastProvider.n';
+
 // Helpers
 export { cn } from './lib/cn.js';
 export { variantClasses } from './lib/variants.js';
 export { presetUI } from './auto-import.js';
+export { toast, notify, dismiss, clear } from './lib/toast.svelte.js';

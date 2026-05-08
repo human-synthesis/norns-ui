@@ -12,18 +12,16 @@
  *   plugins: [
  *     nornsCivetPlugin(),
  *     nornsAutoImport({
- *       componentDirs: ['src/lib/components'],   // user folder wins
- *       components: ui.components                 // norns-ui as fallback
+ *       componentDirs: ['src/lib/components'],
+ *       components: ui.components,
+ *       helpers: [...DEFAULT_HELPERS, ...ui.helpers]
  *     }),
  *     sveltekit()
  *   ]
  *
- * Components are imported via bare specifiers so the consumer's
- * `node_modules/@human-synthesis/norns-ui/...` is the resolution target.
- *
  * @typedef {Object} UIPreset
- * @property {Record<string, string>} components  name → bare-specifier import path
- * @property {Array<{ from: string, imports: string[] }>} helpers  name groups for nornsAutoImport
+ * @property {Record<string, string>} components
+ * @property {Array<{ from: string, imports: string[] }>} helpers
  *
  * @returns {UIPreset}
  */
@@ -42,14 +40,25 @@ export function presetUI() {
 			Select: '@human-synthesis/norns-ui/components/Select.n',
 			Checkbox: '@human-synthesis/norns-ui/components/Checkbox.n',
 			Radio: '@human-synthesis/norns-ui/components/Radio.n',
-			Switch: '@human-synthesis/norns-ui/components/Switch.n'
+			Switch: '@human-synthesis/norns-ui/components/Switch.n',
 
-			// Phase 3+ adds: Card, Dialog, Sheet, Popover, Dropdown, Tooltip,
-			// Tabs, Accordion, Toast + ToastProvider, Listbox, Combobox,
-			// Pagination, Avatar, Badge, Spinner, Progress, Skeleton, Icon
+			// Phase 3 — behavior tier (Bits UI)
+			Dialog: '@human-synthesis/norns-ui/components/Dialog.n',
+			Sheet: '@human-synthesis/norns-ui/components/Sheet.n',
+			Popover: '@human-synthesis/norns-ui/components/Popover.n',
+			Dropdown: '@human-synthesis/norns-ui/components/Dropdown.n',
+			Tooltip: '@human-synthesis/norns-ui/components/Tooltip.n',
+			Tabs: '@human-synthesis/norns-ui/components/Tabs.n',
+			ToastProvider: '@human-synthesis/norns-ui/components/ToastProvider.n'
+
+			// Phase 4+ adds: Accordion, Listbox, Combobox, Pagination,
+			// Avatar, Badge, Spinner, Progress, Skeleton, Icon, Card
 		},
 		helpers: [
-			// Phase 3+: { from: '@human-synthesis/norns-ui', imports: ['toast'] }
+			{
+				from: '@human-synthesis/norns-ui/toast',
+				imports: ['toast', 'notify', 'dismiss']
+			}
 		]
 	};
 }

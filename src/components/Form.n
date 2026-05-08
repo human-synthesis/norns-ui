@@ -9,15 +9,37 @@ form(
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { setContext } from 'svelte'
 
 	{
 		method = 'POST'
 		action
 		enctype
 		onsubmit
+		form
 		children
 		class: extra = ''
 	} := $props()
+
+	// Errors-by-name map. Built reactively from the valibot issue list so
+	// descendant Fields can look up their own error by `name` without a
+	// per-page $derived helper.
+	//
+	// $derived (not $state + $effect) is critical for SSR — $effect runs
+	// only client-side, so an effect-based context would produce empty
+	// errors during initial server render.
+	errorsMap := $derived.by =>
+		out := {}
+		if form?.errors
+			for issue of form.errors
+				name := issue.path?.[0]?.key
+				if name && !out[name]
+					out[name] = issue.message
+		out
+
+	// Getter wraps the $derived so context consumers re-evaluate on read.
+	ctx := { get errors() { errorsMap } }
+	setContext 'norns-ui:form', ctx
 
 	classes := cn 'form', extra
 </script>

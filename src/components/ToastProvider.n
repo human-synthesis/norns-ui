@@ -1,0 +1,16 @@
+div(role="region" aria-label="Notifications" class!="{regionClasses}")
+	+each('toastStore.items as item (item.id)')
+		div(class!="{`toast toast-${item.variant}`}" role="status" data-id!="{item.id}")
+			.toast-message
+				| {item.message}
+			button.toast-close(type="button" aria-label="Dismiss" onclick!="{() => dismiss(item.id)}")
+				| ✕
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { toastStore, dismiss } from '@human-synthesis/norns-ui/toast'
+
+	{ class: extra = '' } := $props()
+
+	regionClasses := cn 'toast-region', extra
+</script>

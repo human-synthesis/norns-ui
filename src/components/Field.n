@@ -1,46 +1,55 @@
 .field(class!="{classes}")
 	+if('label')
-		label.field-label(for!="{ctx.id}")
+		label.field-label(for!="{resolvedId}")
 			| {label}
 			+if('required')
 				span.field-required *
 	| {@render children?.()}
-	+if('error')
-		p.field-error(role="alert" id!="{ctx.id ? `${ctx.id}-error` : undefined}")
-			| {error}
-	+if('!error && help')
-		p.field-help(id!="{ctx.id ? `${ctx.id}-help` : undefined}")
+	+if('resolvedError')
+		p.field-error(role="alert" id!="{resolvedId ? `${resolvedId}-error` : undefined}")
+			| {resolvedError}
+	+if('!resolvedError && help')
+		p.field-help(id!="{resolvedId ? `${resolvedId}-help` : undefined}")
 			| {help}
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
-	import { setContext } from 'svelte'
+	import { setContext, getContext } from 'svelte'
 
 	{
 		label
 		help
 		error
+		name
 		required = false
 		id: providedId
 		children
 		class: extra = ''
 	} := $props()
 
-	// Deterministic id derivation:
-	//   1. explicit prop wins
-	//   2. otherwise slugify the label so SSR + hydrate produce the same id
-	//   3. otherwise undefined — without a label, no <label for=> association
-	//      is needed anyway
-	slugify := (s) => s.toLowerCase().trim().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '')
-	resolvedId := providedId ?? (label && `field-${slugify(label)}`) ?? undefined
+	// Error resolution order:
+	//   1. explicit `error` prop wins (caller has full control)
+	//   2. else look up `name` in the parent <Form>'s errors map (auto-wired)
+	//   3. else no error
+	formCtx := getContext 'norns-ui:form'
+	resolvedError := $derived error ?? (name && formCtx?.errors?.[name]) ?? undefined
 
-	// Shared with descendants (Input, Textarea, Select, etc.) so they pick up
-	// the id automatically and switch to error styling. $state proxy so
-	// children's reads are reactive when `error` changes.
-	ctx := $state({ id: resolvedId, hasError: !!error })
-	$effect ->
-		ctx.id = resolvedId
-		ctx.hasError = !!error
+	// Deterministic id derivation. SSR-safe (no random fallback):
+	//   1. explicit `id` prop wins
+	//   2. else `name` (single source of truth for submission + id)
+	//   3. else slugify the label
+	//   4. else undefined — no label, no <label for=> association needed
+	slugify := (s) => s.toLowerCase().trim().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '')
+	resolvedId := $derived providedId ?? name ?? (label && `field-${slugify(label)}`) ?? undefined
+
+	// Shared with descendants. Getters wrap $derived so context reads
+	// remain reactive in both SSR (synchronous) and client (post-mount)
+	// — `$effect` would only fire client-side, leaving SSR with stale
+	// initial values.
+	ctx := {
+		get id() { resolvedId }
+		get hasError() { !!resolvedError }
+	}
 	setContext 'norns-ui:field', ctx
 
 	classes := cn 'field', extra

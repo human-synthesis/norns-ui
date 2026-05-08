@@ -1,0 +1,34 @@
+TooltipProvider(delayDuration!="{delay}")
+	TooltipRoot
+		TooltipTrigger(class!="{triggerClass ?? undefined}")
+			| {@render trigger?.()}
+		TooltipPortal
+			TooltipContent(class!="{contentClasses}" side!="{side}" sideOffset!="{sideOffset}")
+				| {content ?? ''}
+				| {@render children?.()}
+
+<script>
+	import { Tooltip } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		Provider: TooltipProvider
+		Root: TooltipRoot
+		Trigger: TooltipTrigger
+		Portal: TooltipPortal
+		Content: TooltipContent
+	} := Tooltip
+
+	{
+		content
+		side = 'top'
+		sideOffset = 6
+		delay = 300
+		trigger
+		children
+		triggerClass
+		class: extra = ''
+	} .= $props()
+
+	contentClasses := cn 'tooltip-content', extra
+</script>

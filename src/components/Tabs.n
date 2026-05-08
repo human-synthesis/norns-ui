@@ -1,0 +1,28 @@
+TabsRoot(bind:value class!="{rootClasses}")
+	TabsList.tabs-list
+		+each('items as item (item.value)')
+			TabsTrigger.tabs-trigger(value!="{item.value}" disabled!="{item.disabled}")
+				| {item.label}
+	+each('items as item (item.value)')
+		TabsContent.tabs-content(value!="{item.value}")
+			| {@render item.panel?.()}
+
+<script>
+	import { Tabs } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		Root: TabsRoot
+		List: TabsList
+		Trigger: TabsTrigger
+		Content: TabsContent
+	} := Tabs
+
+	{
+		value = $bindable()
+		items = []
+		class: extra = ''
+	} .= $props()
+
+	rootClasses := cn 'tabs-root', extra
+</script>

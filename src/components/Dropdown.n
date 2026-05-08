@@ -1,0 +1,41 @@
+MenuRoot(bind:open)
+	+if('trigger')
+		MenuTrigger(class!="{triggerClass ?? undefined}")
+			| {@render trigger()}
+	MenuPortal
+		MenuContent(class!="{contentClasses}" side!="{side}" align!="{align}" sideOffset!="{sideOffset}")
+			+each('items as item, i')
+				+if('item.separator')
+					MenuSeparator.dropdown-separator
+				+if('!item.separator')
+					MenuItem.dropdown-item(disabled!="{item.disabled}" onSelect!="{item.onSelect}")
+						| {item.label}
+			| {@render children?.()}
+
+<script>
+	import { DropdownMenu } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		Root: MenuRoot
+		Trigger: MenuTrigger
+		Portal: MenuPortal
+		Content: MenuContent
+		Item: MenuItem
+		Separator: MenuSeparator
+	} := DropdownMenu
+
+	{
+		open = $bindable(false)
+		side = 'bottom'
+		align = 'start'
+		sideOffset = 4
+		items = []
+		trigger
+		children
+		triggerClass
+		class: extra = ''
+	} .= $props()
+
+	contentClasses := cn 'dropdown-content', extra
+</script>

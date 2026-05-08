@@ -2,7 +2,9 @@
 
 UI library for the [Norns](https://github.com/human-synthesis/norns) ecosystem — Pug + Civet components on Tailwind v4.
 
-**Status: Phase 2 (forms tier).** Currently ships `Btn`, `Form`, `Field`, `FieldGroup`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`. Bits-UI-backed behavior tier (Dialog, Popover, Tabs, Toast, …) lands in Phase 3.
+**Status: Phase 3 (behavior tier).** Currently ships `Btn`, `Form`, `Field`, `FieldGroup`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`, the in-house `ToastProvider` + `toast()` helper, and the Bits-UI-backed `Dialog`, `Sheet`, `Popover`, `Dropdown`, `Tooltip`, `Tabs`. Data tier (Combobox, Listbox, Pagination, Accordion) and polish tier (Avatar, Badge, Spinner, …) land in Phase 4–5.
+
+> **Required: scope your preprocessors to project files.** Bits UI ships TypeScript-typed `<script lang="ts">` source, and the default Norns preprocess pipeline (svelte-preprocess + auto-import) corrupts those node_modules files. Wrap each preprocessor with a `node_modules` guard so they no-op on third-party `.svelte` files; vite-plugin-svelte handles them natively from there. See the **Setup** section below for the four-line `scopeToProject` helper.
 
 ## Stack
 
@@ -11,6 +13,7 @@ UI library for the [Norns](https://github.com/human-synthesis/norns) ecosystem �
 - [Civet](https://civet.dev) — `<script>` language
 - [Tailwind CSS v4](https://tailwindcss.com) — styling, **hard peer dep**
 - [tailwind-merge](https://github.com/dcastil/tailwind-merge) — class deduplication
+- [Bits UI](https://bits-ui.com) — headless behavior backing `Dialog`/`Popover`/`Tabs`/etc.
 - `@human-synthesis/norns` `^0.0.7` — peer (`nornsAutoImport` for the registration flow)
 
 ## Install
@@ -52,6 +55,27 @@ export default defineConfig({
 Same shape goes in `svelte.config.js`'s `preprocess` array.
 
 `componentDirs` resolves first — your `src/lib/components/Btn.n` silently shadows the library's `Btn` whenever you want to override.
+
+### 1b. Scope project preprocessors to skip `node_modules`
+
+Wrap `nornsPreprocess()` outputs and `nornsAutoImport(...)` so their hooks no-op on third-party `.svelte` files. Bits UI's `lang="ts"` source compiles cleanly under vite-plugin-svelte's native TS handling, but breaks under our project-side svelte-preprocess + auto-import pipeline.
+
+```js
+// svelte.config.js
+const scopeToProject = (p) => ({
+	name: p.name,
+	markup: p.markup ? (a) => (a.filename?.includes('/node_modules/') ? null : p.markup(a)) : undefined,
+	script: p.script ? (a) => (a.filename?.includes('/node_modules/') ? null : p.script(a)) : undefined,
+	style: p.style ? (a) => (a.filename?.includes('/node_modules/') ? null : p.style(a)) : undefined
+});
+
+export default nornsConfig({
+	preprocess: [
+		...nornsPreprocess().map(scopeToProject),
+		scopeToProject(nornsAutoImport({ /* … */ }))
+	]
+});
+```
 
 ### 2. Import the styles
 
@@ -155,6 +179,86 @@ All accept `class?` (merged via `cn`), pull `id` + `hasError` from a parent `<Fi
 | `<Switch>` | `bind:checked` | `name`, `value`, `required`, `disabled`. Renders as a styled toggle (`role="switch"`) |
 
 Each has a hand-rolled `.d.ts` shim under `src/types/`.
+
+### Phase 3 — behavior tier (Bits UI)
+
+Headless behavior + accessibility from [Bits UI](https://bits-ui.com), wrapped with default Tailwind styling and a snippet-prop API designed for Pug.
+
+#### `<Dialog>`
+
+```pug
+Dialog(bind:open!="{deleteOpen}" title="Delete note?" description="This cannot be undone.")
+	+snippet('trigger')
+		Btn(variant="danger" size="sm") Delete
+	+snippet('actions')
+		Btn(variant="ghost" onclick!="{() => deleteOpen = false}") Cancel
+		Btn(variant="danger" onclick!="{confirm}") Delete
+```
+
+Props: `open` (bindable), `title`, `description`, `hideClose`, `trigger`, `actions`, `children`, `class`, `overlayClass`, `triggerClass`.
+
+#### `<Sheet>`
+
+Same API as `Dialog` plus `side?: 'top' | 'right' | 'bottom' | 'left'` (default `'right'`). Slides in from the chosen edge instead of centering.
+
+#### `<Popover>` and `<Dropdown>`
+
+```pug
+Popover
+	+snippet('trigger')
+		Btn(variant="ghost" size="sm") Filters
+	.space-y-2
+		Field(label="Status")
+			Select(name="status")
+				option(value="all") All
+				option(value="open") Open
+
+Dropdown(items!="{[{label:'Edit', onSelect: edit}, {separator: true}, {label:'Delete', onSelect: del}]}")
+	+snippet('trigger')
+		Btn(variant="ghost") ⋯
+```
+
+#### `<Tooltip>`
+
+```pug
+Tooltip(content="Saved 2 minutes ago")
+	+snippet('trigger')
+		Btn(variant="ghost" size="sm") ⓘ
+```
+
+#### `<Tabs>`
+
+```pug
++snippet('panelHuman')
+	p Play against another person on this device.
++snippet('panelCpu')
+	p Play against a simple CPU.
+
+Tabs(bind:value!="{mode}" items!="{[
+	{ value: 'human', label: 'Human', panel: panelHuman },
+	{ value: 'cpu',   label: 'CPU',   panel: panelCpu }
+]}")
+```
+
+#### `<ToastProvider>` + `toast()`
+
+Mount once near the app root, then call `toast()` from anywhere:
+
+```pug
+// +layout.n
+ToastProvider
+| {@render children?.()}
+```
+
+```civet
+import { toast } from '@human-synthesis/norns-ui/toast'
+
+handleSave := =>
+	await save()
+	toast 'Saved!', { variant: 'success' }
+```
+
+Variants: `info` (default), `success`, `warning`, `error`. Default duration 4000ms; pass `duration: 0` for sticky.
 
 ## Theming
 

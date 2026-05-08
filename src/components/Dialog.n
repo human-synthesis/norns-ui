@@ -1,0 +1,54 @@
+DialogRoot(bind:open)
+	+if('trigger')
+		DialogTrigger(class!="{triggerClass ?? undefined}")
+			| {@render trigger()}
+	DialogPortal
+		DialogOverlay(class!="{overlayClasses}")
+		DialogContent(class!="{contentClasses}")
+			+if('title')
+				DialogTitle.dialog-title
+					| {title}
+			+if('description')
+				DialogDescription.dialog-description
+					| {description}
+			+if('children')
+				.dialog-body
+					| {@render children()}
+			+if('actions')
+				.dialog-actions
+					| {@render actions()}
+			+if('!hideClose')
+				DialogClose.dialog-close(aria-label="Close")
+					| ✕
+
+<script>
+	import { Dialog } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		Root: DialogRoot
+		Trigger: DialogTrigger
+		Portal: DialogPortal
+		Overlay: DialogOverlay
+		Content: DialogContent
+		Title: DialogTitle
+		Description: DialogDescription
+		Close: DialogClose
+	} := Dialog
+
+	{
+		open = $bindable(false)
+		title
+		description
+		hideClose = false
+		trigger
+		actions
+		children
+		triggerClass
+		overlayClass = ''
+		class: extra = ''
+	} .= $props()
+
+	overlayClasses := cn 'dialog-overlay', overlayClass
+	contentClasses := cn 'dialog-content', extra
+</script>

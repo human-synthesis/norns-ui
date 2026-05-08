@@ -193,4 +193,172 @@
 	.form {
 		@apply space-y-4;
 	}
+
+	/* --- Dialog (modal) ---
+	 * Bits UI toggles `data-state="open|closed"`. We use plain CSS transitions
+	 * targeting that attribute for fade + scale; no `tailwindcss-animate`
+	 * dependency, no v4 plugin.
+	 */
+	.dialog-overlay {
+		@apply fixed inset-0 z-50 bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-150;
+	}
+	.dialog-overlay[data-state='open'] {
+		@apply opacity-100;
+	}
+
+	.dialog-content {
+		@apply fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2;
+		@apply rounded-lg border border-neutral-200 bg-white p-6 shadow-xl;
+		@apply opacity-0 scale-95 transition duration-150;
+	}
+	.dialog-content[data-state='open'] {
+		@apply opacity-100 scale-100;
+	}
+
+	.dialog-title {
+		@apply text-lg font-semibold leading-tight tracking-tight text-neutral-900;
+	}
+
+	.dialog-description {
+		@apply mt-1 text-sm text-neutral-600;
+	}
+
+	.dialog-body {
+		@apply mt-4;
+	}
+
+	.dialog-actions {
+		@apply mt-6 flex items-center justify-end gap-2;
+	}
+
+	.dialog-close {
+		@apply absolute right-3 top-3 inline-flex size-7 items-center justify-center rounded-md text-neutral-500;
+		@apply hover:bg-neutral-100 hover:text-neutral-900;
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500;
+	}
+
+	/* --- Sheet (side panel) --- */
+	.sheet-content {
+		@apply fixed z-50 border border-neutral-200 bg-white shadow-xl transition-transform duration-200 ease-out;
+	}
+	.sheet-right {
+		@apply right-0 top-0 h-full w-full max-w-md translate-x-full p-6;
+	}
+	.sheet-right[data-state='open'] {
+		@apply translate-x-0;
+	}
+	.sheet-left {
+		@apply left-0 top-0 h-full w-full max-w-md -translate-x-full p-6;
+	}
+	.sheet-left[data-state='open'] {
+		@apply translate-x-0;
+	}
+	.sheet-top {
+		@apply left-0 top-0 w-full -translate-y-full p-6;
+	}
+	.sheet-top[data-state='open'] {
+		@apply translate-y-0;
+	}
+	.sheet-bottom {
+		@apply bottom-0 left-0 w-full translate-y-full p-6;
+	}
+	.sheet-bottom[data-state='open'] {
+		@apply translate-y-0;
+	}
+
+	.sheet-body {
+		@apply mt-4;
+	}
+
+	/* --- Popover --- */
+	.popover-content {
+		@apply z-50 rounded-md border border-neutral-200 bg-white p-3 text-sm shadow-md;
+		@apply opacity-0 scale-95 transition duration-150;
+	}
+	.popover-content[data-state='open'] {
+		@apply opacity-100 scale-100;
+	}
+
+	/* --- Dropdown menu --- */
+	.dropdown-content {
+		@apply z-50 min-w-[8rem] rounded-md border border-neutral-200 bg-white p-1 text-sm shadow-md;
+		@apply opacity-0 scale-95 transition duration-150;
+	}
+	.dropdown-content[data-state='open'] {
+		@apply opacity-100 scale-100;
+	}
+	.dropdown-item {
+		@apply flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-neutral-800 outline-none;
+		@apply data-[highlighted]:bg-neutral-100 data-[highlighted]:text-neutral-900;
+		@apply data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50;
+	}
+	.dropdown-separator {
+		@apply -mx-1 my-1 h-px bg-neutral-200;
+	}
+
+	/* --- Tooltip --- */
+	.tooltip-content {
+		@apply z-50 overflow-hidden rounded-md bg-neutral-900 px-2 py-1 text-xs text-white shadow-md;
+		@apply opacity-0 scale-95 transition duration-150;
+	}
+	.tooltip-content[data-state='delayed-open'],
+	.tooltip-content[data-state='instant-open'] {
+		@apply opacity-100 scale-100;
+	}
+
+	/* --- Tabs --- */
+	.tabs-root {
+		@apply space-y-3;
+	}
+	.tabs-list {
+		@apply inline-flex h-9 items-center justify-center rounded-md bg-neutral-100 p-1 text-neutral-600;
+	}
+	.tabs-trigger {
+		@apply inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1 text-sm font-medium;
+		@apply transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500;
+		@apply data-[state=active]:bg-white data-[state=active]:text-neutral-900 data-[state=active]:shadow-sm;
+		@apply disabled:cursor-not-allowed disabled:opacity-50;
+	}
+	.tabs-content {
+		@apply focus-visible:outline-none;
+	}
+
+	/* --- Toast --- */
+	.toast-region {
+		@apply pointer-events-none fixed bottom-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2;
+	}
+	.toast {
+		@apply pointer-events-auto flex items-start gap-3 rounded-md border border-neutral-200 bg-white p-3 shadow-md;
+		animation: norns-toast-in 200ms ease-out;
+	}
+	@keyframes norns-toast-in {
+		from {
+			opacity: 0;
+			transform: translateX(1rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+	.toast-info {
+		@apply border-neutral-200;
+	}
+	.toast-success {
+		@apply border-green-200 bg-green-50 text-green-900;
+	}
+	.toast-warning {
+		@apply border-amber-200 bg-amber-50 text-amber-900;
+	}
+	.toast-error {
+		@apply border-red-200 bg-red-50 text-red-900;
+	}
+	.toast-message {
+		@apply flex-1 text-sm leading-snug;
+	}
+	.toast-close {
+		@apply -mr-1 -mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded text-neutral-500;
+		@apply hover:bg-neutral-100 hover:text-neutral-900;
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500;
+	}
 }
