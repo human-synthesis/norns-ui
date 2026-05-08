@@ -1,0 +1,25 @@
+div(class!="{classes}" role="status")
+	+if('icon')
+		.banner-icon
+			Icon(name!="{icon}" size="size-5")
+	.banner-body
+		| {@render children?.()}
+	+if('actions')
+		.banner-actions
+			| {@render actions()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		variant = 'info'
+		icon
+		actions
+		children
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'banner', `banner-${variant}`, extra
+</script>

@@ -1,0 +1,88 @@
+.uploader(
+	class!="{classes}"
+	ondragover!="{onDragOver}"
+	ondragleave!="{onDragLeave}"
+	ondrop!="{onDrop}"
+	role="button"
+	tabindex="0"
+	onclick!="{() => inputEl?.click()}"
+	onkeydown!="{(e) => { if (e.key === 'Enter' || e.key === ' ') inputEl?.click() }}"
+)
+	input(
+		type="file"
+		bind:this!="{inputEl}"
+		multiple!="{multiple}"
+		accept!="{accept}"
+		disabled!="{disabled}"
+		class="sr-only"
+		onchange!="{(e) => onPick(e.currentTarget.files)}"
+	)
+	Icon(name="lucide:upload-cloud" size="size-8" class="text-fg-muted")
+	.uploader-text
+		span.uploader-primary
+			| {placeholder}
+		+if('helper')
+			span.uploader-helper
+				| {helper}
+
++if('files.length > 0')
+	ul.uploader-list
+		+each('files as file, i')
+			li.uploader-item
+				Icon(name="lucide:file" size="size-4" class="text-fg-muted shrink-0")
+				.flex-1.min-w-0
+					.text-sm.truncate {file.name}
+					.text-xs(class="text-fg-muted") {humanSize(file.size)}
+				button.btn.btn-ghost.btn-sm(type="button" aria-label="Remove" onclick!="{() => remove(i)}")
+					Icon(name="lucide:x" size="size-3.5")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		files = $bindable([])
+		multiple = true
+		accept
+		disabled = false
+		placeholder = 'Drop files here or click to browse'
+		helper
+		onchange
+		class: extra = ''
+	} .= $props()
+
+	inputEl .= $state null
+	dragging .= $state false
+
+	classes := cn 'uploader-root', dragging && 'uploader-dragging', extra
+
+	humanSize := (n) =>
+		return '' unless n
+		if n < 1024
+			`${n} B`
+		else if n < 1024 * 1024
+			`${(n / 1024).toFixed(1)} KB`
+		else
+			`${(n / 1024 / 1024).toFixed(1)} MB`
+
+	onPick := (list) =>
+		return unless list
+		next := Array.from list
+		files = multiple ? [...files, ...next] : next.slice(0, 1)
+		onchange?.(files)
+
+	remove := (i) =>
+		files = files.filter (_, idx) => idx !== i
+		onchange?.(files)
+
+	onDragOver := (e) =>
+		e.preventDefault()
+		dragging = true
+
+	onDragLeave := => dragging = false
+
+	onDrop := (e) =>
+		e.preventDefault()
+		dragging = false
+		onPick e.dataTransfer?.files
+</script>

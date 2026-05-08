@@ -1,0 +1,66 @@
+.carousel(class!="{classes}" onmouseenter!="{pause}" onmouseleave!="{resume}")
+	.carousel-track(style!="{trackStyle}")
+		+each('slides as item, i')
+			.carousel-slide
+				+if('item.src')
+					img(src!="{item.src}" alt!="{item.alt ?? ''}" loading="lazy" class="block w-full h-full object-cover")
+				+if('!item.src && children')
+					| {@render children(item, i)}
+	+if('slides.length > 1')
+		button.carousel-arrow.carousel-arrow-prev(
+			type="button"
+			aria-label="Previous"
+			onclick!="{prev}"
+		)
+			Icon(name="lucide:chevron-left" size="size-5")
+		button.carousel-arrow.carousel-arrow-next(
+			type="button"
+			aria-label="Next"
+			onclick!="{next}"
+		)
+			Icon(name="lucide:chevron-right" size="size-5")
+		.carousel-dots
+			+each('slides as _, i')
+				button.carousel-dot(
+					type="button"
+					aria-label!="{`Go to slide ${i + 1}`}"
+					class!="{i === index ? 'carousel-dot-active' : ''}"
+					onclick!="{() => index = i}"
+				)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		slides = []
+		index = $bindable(0)
+		autoplay = false
+		interval = 5000
+		aspect = 'video'
+		children
+		class: extra = ''
+	} .= $props()
+
+	// Default aspect ratios; user can pass `class="aspect-square"` etc. to override.
+	aspectClass := aspect === 'square' ? 'aspect-square'
+		: aspect === 'wide' ? 'aspect-[21/9]'
+		: aspect === 'video' ? 'aspect-video'
+		: ''
+
+	classes := cn 'carousel', aspectClass, extra
+
+	trackStyle := $derived `transform: translateX(-${index * 100}%)`
+
+	prev := => index = (index - 1 + slides.length) % slides.length
+	next := => index = (index + 1) % slides.length
+
+	paused .= $state false
+	pause := => paused = true
+	resume := => paused = false
+
+	$effect =>
+		return unless autoplay && slides.length > 1
+		id := setInterval (=> next() unless paused), interval
+		=> clearInterval id
+</script>

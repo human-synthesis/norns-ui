@@ -1,0 +1,73 @@
+nav.pagination(aria-label="Pagination" class!="{extra}")
+	button.pagination-item(
+		type="button"
+		aria-label="First"
+		disabled!="{page <= 1}"
+		onclick!="{() => go(1)}"
+	)
+		Icon(name="lucide:chevrons-left" size="size-4")
+	button.pagination-item(
+		type="button"
+		aria-label="Previous"
+		disabled!="{page <= 1}"
+		onclick!="{() => go(page - 1)}"
+	)
+		Icon(name="lucide:chevron-left" size="size-4")
+	+each('pages as p')
+		+if('p === "ellipsis"')
+			span.pagination-ellipsis …
+		+if('p !== "ellipsis"')
+			button.pagination-item(
+				type="button"
+				class!="{p === page ? 'pagination-item-active' : ''}"
+				aria-current!="{p === page ? 'page' : undefined}"
+				onclick!="{() => go(p)}"
+			)
+				| {p}
+	button.pagination-item(
+		type="button"
+		aria-label="Next"
+		disabled!="{page >= totalPages}"
+		onclick!="{() => go(page + 1)}"
+	)
+		Icon(name="lucide:chevron-right" size="size-4")
+	button.pagination-item(
+		type="button"
+		aria-label="Last"
+		disabled!="{page >= totalPages}"
+		onclick!="{() => go(totalPages)}"
+	)
+		Icon(name="lucide:chevrons-right" size="size-4")
+
+<script>
+	import Icon from './Icon.n'
+
+	{
+		page = $bindable(1)
+		total = 0
+		pageSize = 10
+		siblingCount = 1
+		class: extra = ''
+		...rest
+	} .= $props()
+
+	totalPages := $derived Math.max(1, Math.ceil(total / pageSize))
+
+	go := (p) =>
+		clamped := Math.max 1, Math.min(totalPages, p)
+		page = clamped
+
+	pages := $derived.by =>
+		out := []
+		first := 1
+		last := totalPages
+		left := Math.max(first, page - siblingCount)
+		right := Math.min(last, page + siblingCount)
+		out.push first
+		out.push 'ellipsis' if left > first + 1
+		for n of [first + 1 .. last - 1]
+			out.push n if n >= left && n <= right
+		out.push 'ellipsis' if right < last - 1
+		out.push last unless last === first
+		out
+</script>

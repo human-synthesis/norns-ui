@@ -1,0 +1,29 @@
+ToggleRoot(bind:pressed class!="{classes}" disabled!="{disabled}" onPressedChange!="{onpressedchange}")
+	+if('icon')
+		Icon(name!="{icon}" size="size-4")
+	| {@render children?.()}
+
+<script>
+	import { Toggle } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{ Root: ToggleRoot } := Toggle
+
+	{
+		pressed = $bindable(false)
+		disabled = false
+		icon
+		variant = 'default'
+		size = 'md'
+		onpressedchange
+		children
+		class: extra = ''
+	} .= $props()
+
+	classes := cn
+		'toggle-btn'
+		variant !== 'default' && `toggle-btn-${variant}`
+		size !== 'md' && `toggle-btn-${size}`
+		extra
+</script>

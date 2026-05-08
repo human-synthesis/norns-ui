@@ -26,33 +26,88 @@
  * @returns {UIPreset}
  */
 export function presetUI() {
+	const c = (name) => `@human-synthesis/norns-ui/components/${name}.n`;
 	return {
 		components: {
 			// Phase 1
-			Btn: '@human-synthesis/norns-ui/components/Btn.n',
+			Btn: c('Btn'),
 
 			// Phase 2 — forms tier
-			Field: '@human-synthesis/norns-ui/components/Field.n',
-			FieldGroup: '@human-synthesis/norns-ui/components/FieldGroup.n',
-			Form: '@human-synthesis/norns-ui/components/Form.n',
-			Input: '@human-synthesis/norns-ui/components/Input.n',
-			Textarea: '@human-synthesis/norns-ui/components/Textarea.n',
-			Select: '@human-synthesis/norns-ui/components/Select.n',
-			Checkbox: '@human-synthesis/norns-ui/components/Checkbox.n',
-			Radio: '@human-synthesis/norns-ui/components/Radio.n',
-			Switch: '@human-synthesis/norns-ui/components/Switch.n',
+			Field: c('Field'),
+			FieldGroup: c('FieldGroup'),
+			Form: c('Form'),
+			Input: c('Input'),
+			Textarea: c('Textarea'),
+			Select: c('Select'),
+			Checkbox: c('Checkbox'),
+			Radio: c('Radio'),
+			Switch: c('Switch'),
 
 			// Phase 3 — behavior tier (Bits UI)
-			Dialog: '@human-synthesis/norns-ui/components/Dialog.n',
-			Sheet: '@human-synthesis/norns-ui/components/Sheet.n',
-			Popover: '@human-synthesis/norns-ui/components/Popover.n',
-			Dropdown: '@human-synthesis/norns-ui/components/Dropdown.n',
-			Tooltip: '@human-synthesis/norns-ui/components/Tooltip.n',
-			Tabs: '@human-synthesis/norns-ui/components/Tabs.n',
-			ToastProvider: '@human-synthesis/norns-ui/components/ToastProvider.n'
+			Dialog: c('Dialog'),
+			Sheet: c('Sheet'),
+			Popover: c('Popover'),
+			Dropdown: c('Dropdown'),
+			Tooltip: c('Tooltip'),
+			Tabs: c('Tabs'),
+			ToastProvider: c('ToastProvider'),
 
-			// Phase 4+ adds: Accordion, Listbox, Combobox, Pagination,
-			// Avatar, Badge, Spinner, Progress, Skeleton, Icon, Card
+			// 0.0.4 — display layer
+			Icon: c('Icon'),
+			Card: c('Card'),
+			Surface: c('Surface'),
+			Banner: c('Banner'),
+			Badge: c('Badge'),
+			Chip: c('Chip'),
+			Avatar: c('Avatar'),
+			Skeleton: c('Skeleton'),
+			Progress: c('Progress'),
+			ProgressCircular: c('ProgressCircular'),
+
+			// 0.0.4 — composite layer
+			Header: c('Header'),
+			Drawer: c('Drawer'),
+			HeroBanner: c('HeroBanner'),
+			Stepper: c('Stepper'),
+			Breadcrumbs: c('Breadcrumbs'),
+			Pagination: c('Pagination'),
+			Accordion: c('Accordion'),
+			Carousel: c('Carousel'),
+			Tree: c('Tree'),
+
+			// 0.0.4 — wave A: small/standalone
+			Separator: c('Separator'),
+			Toolbar: c('Toolbar'),
+			ButtonGroup: c('ButtonGroup'),
+			ToggleButton: c('ToggleButton'),
+			ToggleButtonGroup: c('ToggleButtonGroup'),
+			Collapsible: c('Collapsible'),
+			NumberInput: c('NumberInput'),
+			OtpField: c('OtpField'),
+			TagsInput: c('TagsInput'),
+			Image: c('Image'),
+			Audio: c('Audio'),
+			Video: c('Video'),
+			Timeline: c('Timeline'),
+
+			// 0.0.4 — wave B: medium / Bits-UI-backed
+			Autocomplete: c('Autocomplete'),
+			MultiSelect: c('MultiSelect'),
+			ContextMenu: c('ContextMenu'),
+			RichTooltip: c('RichTooltip'),
+			PreviewCard: c('PreviewCard'),
+			ScrollArea: c('ScrollArea'),
+			ColorPicker: c('ColorPicker'),
+			Uploader: c('Uploader'),
+			HierarchicalMenu: c('HierarchicalMenu'),
+			MegaMenu: c('MegaMenu'),
+
+			// 0.0.4 — wave C: pickers + table
+			DatePicker: c('DatePicker'),
+			DateRangePicker: c('DateRangePicker'),
+			TimePicker: c('TimePicker'),
+			Calendar: c('Calendar'),
+			DataTable: c('DataTable')
 		},
 		helpers: [
 			{

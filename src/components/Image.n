@@ -1,0 +1,31 @@
+img(
+	src!="{src}"
+	alt!="{alt}"
+	loading!="{loading}"
+	decoding="async"
+	class!="{classes}"
+	width!="{width}"
+	height!="{height}"
+)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		src
+		alt = ''
+		loading = 'lazy'
+		fit = 'cover'
+		rounded = false
+		width
+		height
+		class: extra = ''
+	} := $props()
+
+	classes := cn
+		'block max-w-full'
+		fit && `object-${fit}`
+		rounded === true && 'rounded'
+		typeof rounded === 'string' && `rounded-${rounded}`
+		extra
+</script>

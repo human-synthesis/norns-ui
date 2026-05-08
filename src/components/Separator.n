@@ -1,0 +1,12 @@
+div(role="separator" class!="{classes}" aria-orientation!="{orientation}")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		orientation = 'horizontal'
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'separator', `separator-${orientation}`, extra
+</script>

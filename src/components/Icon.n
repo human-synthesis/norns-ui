@@ -1,0 +1,16 @@
+IconifyIcon(icon!="{name}" class!="{classes}" flip!="{flip}" rotate!="{rotate}")
+
+<script>
+	import IconifyIcon from '@iconify/svelte'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		name
+		size = 'size-4'
+		flip
+		rotate
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'inline-block shrink-0 align-[-0.125em]', size, extra
+</script>

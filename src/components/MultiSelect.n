@@ -1,0 +1,56 @@
+ComboboxRoot(bind:value bind:open type="multiple")
+	.combobox-input-wrap
+		ComboboxInput.input.combobox-input(
+			placeholder!="{placeholder}"
+			disabled!="{disabled}"
+			oninput!="{(e) => term = e.currentTarget.value}"
+		)
+		ComboboxTrigger.combobox-trigger(aria-label="Toggle options")
+			Icon(name="lucide:chevrons-up-down" size="size-4")
+	+if('value.length > 0')
+		.flex.flex-wrap.gap-1.mt-2
+			+each('value as v')
+				span.chip
+					| {labelOf(v)}
+	ComboboxPortal
+		ComboboxContent.dropdown-content
+			ComboboxViewport
+				+each('filtered as item')
+					ComboboxItem.dropdown-item(value!="{item.value}" label!="{item.label}")
+						Icon(name="lucide:check" size="size-3.5" class="opacity-0 data-[selected]:opacity-100")
+						span {item.label}
+				+if('filtered.length === 0')
+					.dropdown-item(class="text-fg-muted")
+						| No matches
+
+<script>
+	import { Combobox } from 'bits-ui'
+	import Icon from './Icon.n'
+
+	{
+		Root: ComboboxRoot
+		Input: ComboboxInput
+		Trigger: ComboboxTrigger
+		Portal: ComboboxPortal
+		Content: ComboboxContent
+		Viewport: ComboboxViewport
+		Item: ComboboxItem
+	} := Combobox
+
+	{
+		items = []
+		value = $bindable([])
+		open = $bindable(false)
+		placeholder = 'Search…'
+		disabled = false
+	} .= $props()
+
+	term .= $state ''
+
+	filtered := $derived.by =>
+		return items unless term
+		t := term.toLowerCase()
+		items.filter (it) => it.label.toLowerCase().includes(t)
+
+	labelOf := (v) => items.find((it) => it.value === v)?.label ?? v
+</script>

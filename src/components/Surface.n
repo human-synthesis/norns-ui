@@ -1,0 +1,10 @@
+div(class!="{classes}")
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{ children, class: extra = '', ...rest } := $props()
+
+	classes := cn 'surface p-4', extra
+</script>

@@ -15,6 +15,12 @@ export type BtnProps = Omit<HTMLButtonAttributes, 'class' | 'children'> & {
 	loading?: boolean;
 	disabled?: boolean;
 	type?: 'button' | 'submit' | 'reset';
+	/**
+	 * Convenience: Iconify icon name (e.g. `"lucide:save"`). Renders an
+	 * `<Icon>` in the leading slot. If you also pass a `leading` snippet,
+	 * the snippet wins.
+	 */
+	icon?: string;
 	class?: string;
 	children?: Snippet;
 	leading?: Snippet;

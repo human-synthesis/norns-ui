@@ -1,0 +1,61 @@
+.data-table-wrap(class!="{wrapClasses}")
+	table.data-table
+		thead
+			tr
+				+each('columns as col')
+					th(
+						class!="{col.class ?? ''}"
+						style!="{col.width ? `width: ${col.width}` : undefined}"
+					)
+						+if('col.sortable')
+							button.data-table-sort(type="button" onclick!="{() => onSort(col.key)}")
+								span {col.label ?? col.key}
+								Icon(name!="{sortIcon(col.key)}" size="size-3.5" class="text-fg-muted")
+						+if('!col.sortable')
+							| {col.label ?? col.key}
+		tbody
+			+if('rows.length === 0')
+				tr.data-table-empty
+					td(colspan!="{columns.length}")
+						| {emptyMessage}
+			+each('rows as row, i')
+				tr(onclick!="{onrowclick ? () => onrowclick(row, i) : undefined}" class!="{onrowclick ? 'data-table-row-clickable' : ''}")
+					+each('columns as col')
+						td(class!="{col.cellClass ?? ''}")
+							| {row[col.key]}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		columns = []
+		rows = []
+		striped = false
+		dense = false
+		stickyHeader = false
+		emptyMessage = 'No data'
+		sortKey = $bindable(undefined)
+		sortDir = $bindable('asc')
+		onrowclick
+		class: extra = ''
+	} .= $props()
+
+	wrapClasses := cn
+		'data-table-root'
+		striped && 'data-table-striped'
+		dense && 'data-table-dense'
+		stickyHeader && 'data-table-sticky'
+		extra
+
+	onSort := (key) =>
+		if sortKey === key
+			sortDir = sortDir === 'asc' ? 'desc' : 'asc'
+		else
+			sortKey = key
+			sortDir = 'asc'
+
+	sortIcon := (key) =>
+		return 'lucide:chevrons-up-down' unless sortKey === key
+		sortDir === 'asc' ? 'lucide:chevron-up' : 'lucide:chevron-down'
+</script>

@@ -1,0 +1,27 @@
+span(class!="{classes}")
+	+if('icon')
+		Icon(name!="{icon}" size="size-3.5")
+	| {@render children?.()}
+	+if('removable')
+		button.chip-remove(
+			type="button"
+			aria-label="Remove"
+			onclick!="{onremove}"
+		)
+			Icon(name="lucide:x" size="size-3")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		removable = false
+		onremove = undefined
+		icon
+		children
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'chip', extra
+</script>

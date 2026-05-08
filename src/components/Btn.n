@@ -7,6 +7,8 @@ button(
 )
 	+if('loading')
 		span.ui-spinner(aria-hidden="true")
+	+if('!loading && icon')
+		Icon(name!="{icon}" size!="{iconSize}")
 	+if('!loading && leading')
 		| {@render leading()}
 	+if('children')
@@ -16,6 +18,7 @@ button(
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
 
 	{
 		variant = 'primary'
@@ -24,6 +27,7 @@ button(
 		disabled = false
 		type = 'button'
 		onclick = undefined
+		icon
 		children
 		leading
 		trailing
@@ -31,4 +35,5 @@ button(
 	} := $props()
 
 	classes := cn 'btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, extra
+	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
 </script>

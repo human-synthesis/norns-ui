@@ -1,0 +1,20 @@
+span(class!="{classes}")
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		variant = 'default'
+		size = 'md'
+		children
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn
+		'badge'
+		variant !== 'default' && `badge-${variant}`
+		size !== 'md' && `badge-${size}`
+		extra
+</script>

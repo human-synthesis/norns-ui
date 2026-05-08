@@ -1,0 +1,36 @@
+nav.nav-menu(class!="{classes}" aria-label!="{label}")
+	ul.nav-menu-list
+		+each('sections as section')
+			li.nav-menu-item
+				button.nav-menu-trigger(type="button" aria-haspopup="true" aria-expanded="false")
+					span {section.label}
+					Icon(name="lucide:chevron-down" size="size-3.5" class="ml-1 nav-menu-chevron")
+				.nav-menu-content
+					.mega-menu-grid(class!="{`grid-cols-${section.cols ?? 3}`}")
+						+each('section.columns as column')
+							.mega-menu-column
+								+if('column.title')
+									.mega-menu-title {column.title}
+								ul.flex.flex-col.gap-0.5
+									+each('column.items as item')
+										li
+											a.nav-menu-link(href!="{item.href ?? '#'}")
+												+if('item.icon')
+													Icon(name!="{item.icon}" size="size-4" class="text-fg-muted shrink-0")
+												.flex-1
+													.text-sm.font-medium {item.label}
+													+if('item.description')
+														.text-xs(class="text-fg-muted") {item.description}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		sections = []
+		label = 'Site navigation'
+		class: extra = ''
+	} := $props()
+
+	classes := cn '', extra
+</script>

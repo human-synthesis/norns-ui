@@ -1,0 +1,38 @@
+nav.nav-menu(class!="{classes}" aria-label!="{label}")
+	ul.nav-menu-list
+		+each('items as item')
+			li.nav-menu-item
+				+if('item.children')
+					button.nav-menu-trigger(type="button" aria-haspopup="true" aria-expanded="false")
+						span {item.label}
+						Icon(name="lucide:chevron-down" size="size-3.5" class="ml-1 nav-menu-chevron")
+					.nav-menu-content
+						ul.flex.flex-col.gap-0.5.p-1(class="min-w-[12rem]")
+							+each('item.children as child')
+								li
+									a.nav-menu-link(href!="{child.href ?? '#'}" onclick!="{(e) => onClickItem(e, child)}")
+										+if('child.icon')
+											Icon(name!="{child.icon}" size="size-4" class="text-fg-muted shrink-0")
+										span.flex-1 {child.label}
+				+if('!item.children')
+					a.nav-menu-trigger(href!="{item.href ?? '#'}" onclick!="{(e) => onClickItem(e, item)}")
+						span {item.label}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		items = []
+		label = 'Main navigation'
+		onSelect
+		class: extra = ''
+	} := $props()
+
+	classes := cn '', extra
+
+	onClickItem := (e, item) =>
+		if onSelect
+			e.preventDefault()
+			onSelect item
+</script>

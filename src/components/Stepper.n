@@ -1,0 +1,35 @@
+ol(class!="{classes}")
+	+each('steps as step, i')
+		li.stepper-step(class!="{stepClass(i)}")
+			.stepper-marker
+				+if('isComplete(i)')
+					Icon(name="lucide:check" size="size-3.5")
+				+if('!isComplete(i)')
+					| {i + 1}
+			.stepper-label
+				| {step.label}
+		+if('i < steps.length - 1')
+			.stepper-divider
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		steps = []
+		current = 0
+		orientation = 'horizontal'
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'stepper', orientation === 'vertical' && 'stepper-vertical', extra
+
+	isComplete := (i) => steps[i]?.complete ?? i < current
+	isCurrent := (i) => steps[i]?.current ?? i === current
+
+	stepClass := (i) =>
+		cn
+			isCurrent(i) && 'stepper-step-current'
+			isComplete(i) && 'stepper-step-complete'
+</script>

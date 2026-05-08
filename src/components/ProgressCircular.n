@@ -1,0 +1,52 @@
+svg(
+	class!="{classes}"
+	width!="{px}"
+	height!="{px}"
+	viewBox!="0 0 {viewBox} {viewBox}"
+	role="progressbar"
+	aria-valuemin="0"
+	aria-valuemax!="{max}"
+	aria-valuenow!="{indeterminate ? undefined : value}"
+)
+	circle(
+		cx!="{center}"
+		cy!="{center}"
+		r!="{radius}"
+		stroke="var(--color-border)"
+		stroke-width!="{stroke}"
+		fill="none"
+	)
+	circle(
+		cx!="{center}"
+		cy!="{center}"
+		r!="{radius}"
+		stroke="var(--color-primary-600)"
+		stroke-width!="{stroke}"
+		stroke-linecap="round"
+		fill="none"
+		stroke-dasharray!="{circumference}"
+		stroke-dashoffset!="{indeterminate ? circumference * 0.7 : circumference - (circumference * pct) / 100}"
+		transform!="rotate(-90 {center} {center})"
+		style="transition: stroke-dashoffset 300ms ease-out"
+	)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		value = 0
+		max = 100
+		size = 'md'
+		indeterminate = false
+		class: extra = ''
+	} := $props()
+
+	px := size === 'sm' ? 24 : size === 'lg' ? 64 : 40
+	stroke := size === 'sm' ? 3 : size === 'lg' ? 5 : 4
+	viewBox := px
+	center := px / 2
+	radius := center - stroke
+	circumference := $derived 2 * Math.PI * radius
+	pct := $derived Math.max(0, Math.min(100, (value / max) * 100))
+	classes := cn indeterminate && 'animate-spin', extra
+</script>

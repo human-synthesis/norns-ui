@@ -1,0 +1,64 @@
+PopoverRoot(bind:open)
+	PopoverTrigger.input.date-picker-trigger(
+		type="button"
+		disabled!="{disabled}"
+		id!="{resolvedId}"
+		aria-label!="{label ?? 'Pick a date'}"
+		class!="{hasError ? 'input-err' : ''}"
+	)
+		Icon(name="lucide:calendar" size="size-4" class="text-fg-muted shrink-0")
+		span.flex-1.text-left.truncate
+			| {value ? formatted : placeholder}
+		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
+	PopoverPortal
+		PopoverContent.popover-content(class="p-3 w-[20rem]")
+			Calendar(
+				bind:value
+				min!="{min}"
+				max!="{max}"
+				onchange!="{handleChange}"
+			)
+
+<script>
+	import { Popover } from 'bits-ui'
+	import { getContext } from 'svelte'
+	import Icon from './Icon.n'
+	import Calendar from './Calendar.n'
+
+	{
+		Root: PopoverRoot
+		Trigger: PopoverTrigger
+		Portal: PopoverPortal
+		Content: PopoverContent
+	} := Popover
+
+	{
+		value = $bindable('')
+		open = $bindable(false)
+		min = ''
+		max = ''
+		placeholder = 'Pick a date'
+		disabled = false
+		closeOnSelect = true
+		label
+		name
+		id: providedId
+		error: explicitError = false
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	formatter := new Intl.DateTimeFormat undefined, { dateStyle: 'medium' }
+
+	formatted := $derived.by =>
+		return '' unless value
+		try
+			formatter.format new Date(`${value}T00:00:00`)
+		catch _
+			value
+
+	handleChange := =>
+		open = false if closeOnSelect
+</script>

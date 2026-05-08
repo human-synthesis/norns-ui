@@ -1,0 +1,31 @@
+ScrollAreaRoot.scroll-area(class!="{classes}" type!="{type}")
+	ScrollAreaViewport.scroll-area-viewport
+		| {@render children?.()}
+	ScrollAreaScrollbar.scroll-area-scrollbar(orientation="vertical")
+		ScrollAreaThumb.scroll-area-thumb
+	+if('horizontal')
+		ScrollAreaScrollbar.scroll-area-scrollbar.scroll-area-scrollbar-h(orientation="horizontal")
+			ScrollAreaThumb.scroll-area-thumb
+	ScrollAreaCorner
+
+<script>
+	import { ScrollArea } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		Root: ScrollAreaRoot
+		Viewport: ScrollAreaViewport
+		Scrollbar: ScrollAreaScrollbar
+		Thumb: ScrollAreaThumb
+		Corner: ScrollAreaCorner
+	} := ScrollArea
+
+	{
+		type = 'hover'
+		horizontal = false
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'relative overflow-hidden', extra
+</script>

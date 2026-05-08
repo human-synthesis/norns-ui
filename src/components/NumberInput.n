@@ -1,0 +1,49 @@
+.number-input(class!="{wrapClasses}")
+	button.number-step(type="button" aria-label="Decrement" disabled!="{disabled || atMin}" onclick!="{() => step(-1)}")
+		Icon(name="lucide:minus" size="size-3.5")
+	input.input.number-input-field(
+		type="number"
+		bind:value
+		min!="{min}"
+		max!="{max}"
+		step!="{stepSize}"
+		disabled!="{disabled}"
+		readonly!="{readonly}"
+		name!="{name}"
+		id!="{resolvedId}"
+		aria-invalid!="{hasError ? 'true' : undefined}"
+	)
+	button.number-step(type="button" aria-label="Increment" disabled!="{disabled || atMax}" onclick!="{() => step(1)}")
+		Icon(name="lucide:plus" size="size-3.5")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+	import Icon from './Icon.n'
+
+	{
+		value = $bindable(0)
+		min = -Infinity
+		max = Infinity
+		stepSize = 1
+		disabled = false
+		readonly = false
+		name
+		id: providedId
+		error: explicitError = false
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	atMin := $derived value <= min
+	atMax := $derived value >= max
+
+	step := (dir) =>
+		next := (value ?? 0) + dir * stepSize
+		value = Math.max min, Math.min(max, next)
+
+	wrapClasses := cn 'number-input-wrap', extra
+</script>

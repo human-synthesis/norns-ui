@@ -1,0 +1,26 @@
+div(
+	class!="{wrapClasses}"
+	role="progressbar"
+	aria-valuemin="0"
+	aria-valuemax!="{max}"
+	aria-valuenow!="{indeterminate ? undefined : value}"
+)
+	.progress-bar(class!="{barClasses}" style!="{barStyle}")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		value = 0
+		max = 100
+		variant = 'primary'
+		indeterminate = false
+		class: extra = ''
+		...rest
+	} := $props()
+
+	pct := $derived Math.max(0, Math.min(100, (value / max) * 100))
+	wrapClasses := cn 'progress', indeterminate && 'progress-indeterminate', extra
+	barClasses := cn variant !== 'primary' && `progress-bar-${variant}`
+	barStyle := $derived indeterminate ? '' : `width: ${pct}%`
+</script>

@@ -1,0 +1,153 @@
+.calendar(class!="{classes}" role="application" aria-label!="{label}")
+	.calendar-header
+		button.calendar-nav(type="button" aria-label="Previous month" onclick!="{prevMonth}")
+			Icon(name="lucide:chevron-left" size="size-4")
+		button.calendar-heading-btn(type="button" aria-label="Jump to today" onclick!="{goToday}")
+			| {monthLabel}
+		button.calendar-nav(type="button" aria-label="Next month" onclick!="{nextMonth}")
+			Icon(name="lucide:chevron-right" size="size-4")
+
+	.calendar-row.calendar-weekdays
+		+each('weekdays as wd')
+			.calendar-weekday {wd}
+
+	+each('weeks as week')
+		.calendar-row
+			+each('week as cell')
+				button.calendar-day(
+					type="button"
+					class!="{cellClass(cell)}"
+					disabled!="{cell.disabled}"
+					aria-pressed!="{cell.selected}"
+					tabindex!="{cell.outside ? -1 : 0}"
+					onclick!="{() => onSelect(cell)}"
+					onmouseenter!="{() => range && (hovered = cell.iso)}"
+				)
+					| {cell.day}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		value = $bindable('')                           // ISO YYYY-MM-DD (single-date mode)
+		rangeValue = $bindable({ start: '', end: '' })  // (range mode)
+		range = false
+		min = ''
+		max = ''
+		label = 'Calendar'
+		onchange
+		class: extra = ''
+	} .= $props()
+
+	classes := cn 'calendar', extra
+
+	weekdays := ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+	monthFmt := new Intl.DateTimeFormat undefined, { month: 'long', year: 'numeric' }
+
+	// View anchor — initialised from value (or today) once.
+	initial := =>
+		s := range ? rangeValue?.start : value
+		s ? new Date(`${s}T00:00:00`) : new Date()
+	anchor .= $state initial()
+
+	hovered .= $state ''
+
+	monthLabel := $derived monthFmt.format(anchor)
+
+	prevMonth := =>
+		d := new Date anchor
+		d.setMonth d.getMonth() - 1
+		anchor = d
+
+	nextMonth := =>
+		d := new Date anchor
+		d.setMonth d.getMonth() + 1
+		anchor = d
+
+	goToday := => anchor = new Date()
+
+	pad := (n) => String(n).padStart 2, '0'
+	iso := (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+	todayIso := iso new Date()
+
+	weeks := $derived.by =>
+		year := anchor.getFullYear()
+		month := anchor.getMonth()
+		firstDow := new Date(year, month, 1).getDay()
+		daysInMonth := new Date(year, month + 1, 0).getDate()
+
+		// Build a flat 42-cell grid (6 rows × 7 cols).
+		cells := []
+		// leading days from previous month
+		i .= 0
+		while i < firstDow
+			d := new Date(year, month, -(firstDow - 1 - i))
+			cells.push buildCell(d, true)
+			i++
+		// current month
+		j .= 1
+		while j <= daysInMonth
+			d := new Date(year, month, j)
+			cells.push buildCell(d, false)
+			j++
+		// trailing
+		k .= 1
+		while cells.length < 42
+			d := new Date(year, month + 1, k)
+			cells.push buildCell(d, true)
+			k++
+
+		// Group into 6 rows of 7
+		out := []
+		w .= 0
+		while w < 6
+			out.push cells.slice(w * 7, w * 7 + 7)
+			w++
+		out
+
+	buildCell := (d, outside) =>
+		isoStr := iso(d)
+		isToday := isoStr === todayIso
+		disabled .= false
+		disabled = true if min && isoStr < min
+		disabled = true if max && isoStr > max
+		selected .= false
+		inRange .= false
+		if range
+			s := rangeValue?.start ?? ''
+			e := rangeValue?.end ?? ''
+			selected = !!((s && s === isoStr) || (e && e === isoStr))
+			if s && !e && hovered
+				lo := s < hovered ? s : hovered
+				hi := s < hovered ? hovered : s
+				inRange = isoStr > lo && isoStr < hi
+			else if s && e
+				inRange = isoStr > s && isoStr < e
+		else
+			selected = value === isoStr
+		{ day: d.getDate(), iso: isoStr, outside, disabled, selected, today: isToday, inRange }
+
+	cellClass := (cell) =>
+		cn
+			cell.outside && 'calendar-day-outside'
+			cell.today && 'calendar-day-today'
+			cell.selected && 'calendar-day-selected'
+			cell.inRange && 'calendar-day-in-range'
+
+	onSelect := (cell) =>
+		return if cell.disabled
+		if range
+			s := rangeValue?.start ?? ''
+			e := rangeValue?.end ?? ''
+			if !s || (s && e)
+				rangeValue = { start: cell.iso, end: '' }
+			else if cell.iso < s
+				rangeValue = { start: cell.iso, end: s }
+			else
+				rangeValue = { start: s, end: cell.iso }
+			onchange?.(rangeValue)
+		else
+			value = cell.iso
+			onchange?.(value)
+</script>

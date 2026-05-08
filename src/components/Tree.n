@@ -1,0 +1,57 @@
+ul.tree(class!="{classes}" role="tree")
+	+each('items as node')
+		| {@render renderNode(node, 0)}
+
++snippet('renderNode', node, depth)
+	li.tree-node(
+		role="treeitem"
+		aria-expanded!="{hasChildren(node) ? isExpanded(node.id) : undefined}"
+		aria-selected!="{node.id === selected}"
+	)
+		button.tree-row(
+			type="button"
+			class!="{node.id === selected ? 'tree-row-selected' : ''}"
+			style!="{`padding-left: ${0.5 + depth * 1.25}rem`}"
+			onclick!="{() => onRowClick(node)}"
+		)
+			+if('hasChildren(node)')
+				span.tree-chevron(class!="{isExpanded(node.id) ? 'tree-chevron-open' : ''}")
+					Icon(name="lucide:chevron-right" size="size-3.5")
+			+if('!hasChildren(node)')
+				span.tree-chevron-spacer
+			+if('node.icon')
+				Icon(name!="{node.icon}" size="size-4" class="text-fg-muted shrink-0")
+			span.tree-label
+				| {node.label}
+		+if('hasChildren(node) && isExpanded(node.id)')
+			ul(role="group")
+				+each('node.children as child')
+					| {@render renderNode(child, depth + 1)}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		items = []
+		expanded = $bindable([])
+		selected = $bindable(undefined)
+		class: extra = ''
+	} .= $props()
+
+	classes := cn 'tree', extra
+
+	hasChildren := (node) => Array.isArray(node.children) && node.children.length > 0
+	isExpanded := (id) => expanded.includes(id)
+
+	toggle := (id) =>
+		if isExpanded(id)
+			expanded = expanded.filter (x) => x !== id
+		else
+			expanded = [...expanded, id]
+
+	onRowClick := (node) =>
+		if hasChildren(node)
+			toggle node.id
+		selected = node.id
+</script>

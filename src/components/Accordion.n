@@ -1,0 +1,38 @@
+AccordionRoot(
+	type!="{multiple ? 'multiple' : 'single'}"
+	bind:value
+	class!="{classes}"
+)
+	+each('items as item')
+		AccordionItem.accordion-item(value!="{item.value}")
+			AccordionHeader
+				AccordionTrigger.accordion-trigger
+					span
+						| {item.title}
+					.accordion-chevron
+						Icon(name="lucide:chevron-down" size="size-4")
+			AccordionContent.accordion-content
+				| {@render item.content?.()}
+
+<script>
+	import { Accordion } from 'bits-ui'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		Root: AccordionRoot
+		Item: AccordionItem
+		Header: AccordionHeader
+		Trigger: AccordionTrigger
+		Content: AccordionContent
+	} := Accordion
+
+	{
+		items = []
+		multiple = false
+		value = $bindable(undefined)
+		class: extra = ''
+	} .= $props()
+
+	classes := cn 'accordion', extra
+</script>

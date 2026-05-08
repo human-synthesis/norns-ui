@@ -1,0 +1,55 @@
+PopoverRoot(bind:open)
+	PopoverTrigger.input.date-picker-trigger(type="button" disabled!="{disabled}" aria-label="Pick a date range")
+		Icon(name="lucide:calendar-range" size="size-4" class="text-fg-muted shrink-0")
+		span.flex-1.text-left.truncate
+			| {label}
+		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
+	PopoverPortal
+		PopoverContent.popover-content(class="p-3 w-[20rem]")
+			Calendar(
+				bind:rangeValue!="{value}"
+				range!="{true}"
+				min!="{min}"
+				max!="{max}"
+			)
+			.flex.justify-end.gap-2.mt-3
+				button.btn.btn-ghost.btn-sm(type="button" onclick!="{clear}") Clear
+				button.btn.btn-primary.btn-sm(type="button" onclick!="{() => open = false}") Done
+
+<script>
+	import { Popover } from 'bits-ui'
+	import Icon from './Icon.n'
+	import Calendar from './Calendar.n'
+
+	{
+		Root: PopoverRoot
+		Trigger: PopoverTrigger
+		Portal: PopoverPortal
+		Content: PopoverContent
+	} := Popover
+
+	{
+		value = $bindable({ start: '', end: '' })
+		open = $bindable(false)
+		min = ''
+		max = ''
+		placeholder = 'Pick a range'
+		disabled = false
+	} .= $props()
+
+	formatter := new Intl.DateTimeFormat undefined, { dateStyle: 'medium' }
+
+	fmt := (s) =>
+		return '' unless s
+		try
+			formatter.format new Date(`${s}T00:00:00`)
+		catch _
+			s
+
+	label := $derived.by =>
+		return placeholder unless value?.start
+		return `${fmt(value.start)} – …` unless value?.end
+		`${fmt(value.start)} – ${fmt(value.end)}`
+
+	clear := => value = { start: '', end: '' }
+</script>

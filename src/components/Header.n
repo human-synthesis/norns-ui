@@ -1,0 +1,23 @@
+header(class!="{classes}")
+	.norns-header-brand
+		| {@render brand?.()}
+	+if('nav')
+		nav.norns-header-nav
+			| {@render nav()}
+	.norns-header-actions
+		| {@render actions?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		sticky = false
+		brand
+		nav
+		actions
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'norns-header', sticky && 'norns-header-sticky', extra
+</script>

@@ -1,0 +1,66 @@
+.tags-input(class!="{wrapClasses}" onclick!="{focusInput}")
+	+each('value as tag, i')
+		span.chip
+			| {tag}
+			button.chip-remove(type="button" aria-label!="{`Remove ${tag}`}" onclick!="{(e) => { e.stopPropagation(); remove(i) }}")
+				Icon(name="lucide:x" size="size-3")
+	input.tags-input-field(
+		bind:this!="{inputEl}"
+		bind:value!="{draft}"
+		type="text"
+		placeholder!="{placeholder}"
+		disabled!="{disabled}"
+		onkeydown!="{onKey}"
+		onblur!="{commitOnBlur ? commit : undefined}"
+		name!="{name}"
+		id!="{resolvedId}"
+		aria-invalid!="{hasError ? 'true' : undefined}"
+	)
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+	import Icon from './Icon.n'
+
+	{
+		value = $bindable([])
+		max
+		placeholder = 'Add a tag…'
+		commitOnBlur = true
+		separators = [',', 'Enter']
+		disabled = false
+		name
+		id: providedId
+		error: explicitError = false
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	draft .= $state ''
+	inputEl .= $state null
+
+	wrapClasses := cn 'tags-input-wrap', hasError && 'tags-input-err', extra
+
+	focusInput := => inputEl?.focus()
+
+	commit := =>
+		t := draft.trim()
+		return unless t
+		return if max && value.length >= max
+		return if value.includes(t)
+		value = [...value, t]
+		draft = ''
+
+	remove := (i) =>
+		value = value.filter (_, idx) => idx !== i
+
+	onKey := (e) =>
+		if separators.includes(e.key)
+			e.preventDefault()
+			commit()
+		else if e.key === 'Backspace' && !draft && value.length > 0
+			remove(value.length - 1)
+</script>

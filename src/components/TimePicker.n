@@ -1,0 +1,144 @@
+PopoverRoot(bind:open)
+	PopoverTrigger.input.date-picker-trigger(
+		type="button"
+		disabled!="{disabled}"
+		id!="{resolvedId}"
+		aria-label!="{label ?? 'Pick a time'}"
+		class!="{hasError ? 'input-err' : ''}"
+	)
+		Icon(name="lucide:clock" size="size-4" class="text-fg-muted shrink-0")
+		span.flex-1.text-left.font-mono.tabular-nums
+			| {value || placeholder}
+		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
+	PopoverPortal
+		PopoverContent.popover-content(class="p-2 time-picker-popover")
+			.time-picker-grid
+				.time-picker-col(role="listbox" aria-label="Hour")
+					+each('hours as h')
+						button.time-picker-cell(
+							type="button"
+							class!="{h === currentHour ? 'time-picker-cell-selected' : ''}"
+							onclick!="{() => setHour(h)}"
+						)
+							| {pad(h)}
+				.time-picker-sep :
+				.time-picker-col(role="listbox" aria-label="Minute")
+					+each('minutes as m')
+						button.time-picker-cell(
+							type="button"
+							class!="{m === currentMinute ? 'time-picker-cell-selected' : ''}"
+							onclick!="{() => setMinute(m)}"
+						)
+							| {pad(m)}
+				+if('hourCycle === 12')
+					.time-picker-col(role="listbox" aria-label="AM/PM")
+						button.time-picker-cell(
+							type="button"
+							class!="{period === 'AM' ? 'time-picker-cell-selected' : ''}"
+							onclick!="{() => setPeriod('AM')}"
+						)
+							| AM
+						button.time-picker-cell(
+							type="button"
+							class!="{period === 'PM' ? 'time-picker-cell-selected' : ''}"
+							onclick!="{() => setPeriod('PM')}"
+						)
+							| PM
+			.flex.justify-between.gap-2.mt-2.pt-2(class="border-t border-border")
+				button.btn.btn-ghost.btn-sm(type="button" onclick!="{clearValue}") Clear
+				button.btn.btn-primary.btn-sm(type="button" onclick!="{() => open = false}") Done
+
+<script>
+	import { Popover } from 'bits-ui'
+	import { getContext } from 'svelte'
+	import Icon from './Icon.n'
+
+	{
+		Root: PopoverRoot
+		Trigger: PopoverTrigger
+		Portal: PopoverPortal
+		Content: PopoverContent
+	} := Popover
+
+	{
+		value = $bindable('')
+		open = $bindable(false)
+		minuteStep = 5
+		hourCycle = 24
+		placeholder = 'Pick a time'
+		disabled = false
+		label
+		name
+		id: providedId
+		error: explicitError = false
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	pad := (n) => String(n).padStart 2, '0'
+
+	parts := $derived.by =>
+		if !value
+			return { h: 0, m: 0 }
+		[hStr, mStr] := value.split ':'
+		{ h: parseInt(hStr ?? '0', 10), m: parseInt(mStr ?? '0', 10) }
+
+	hours := $derived.by =>
+		out := []
+		if hourCycle === 12
+			out.push 12
+			i .= 1
+			while i <= 11
+				out.push i
+				i++
+		else
+			i .= 0
+			while i < 24
+				out.push i
+				i++
+		out
+
+	minutes := $derived.by =>
+		out := []
+		i .= 0
+		while i < 60
+			out.push i
+			i += minuteStep
+		out
+
+	currentHour := $derived.by =>
+		h := parts.h
+		if hourCycle === 12
+			h === 0 ? 12 : (h > 12 ? h - 12 : h)
+		else
+			h
+
+	currentMinute := $derived parts.m
+	period := $derived parts.h >= 12 ? 'PM' : 'AM'
+
+	emit := (h24, m) =>
+		value = `${pad(h24)}:${pad(m)}`
+
+	setHour := (displayed) =>
+		nextH .= displayed
+		if hourCycle === 12
+			if period === 'PM'
+				nextH = displayed === 12 ? 12 : displayed + 12
+			else
+				nextH = displayed === 12 ? 0 : displayed
+		emit nextH, parts.m
+
+	setMinute := (m) => emit parts.h, m
+
+	setPeriod := (p) =>
+		nextH .= parts.h
+		if p === 'PM' && parts.h < 12
+			nextH = parts.h + 12
+		else if p === 'AM' && parts.h >= 12
+			nextH = parts.h - 12
+		emit nextH, parts.m
+
+	clearValue := => value = ''
+</script>

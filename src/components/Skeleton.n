@@ -1,0 +1,27 @@
+span(class!="{classes}" style!="{style}" aria-hidden="true")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		variant = 'rect'
+		width
+		height
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'skeleton', variant === 'circle' && 'skeleton-circle', extra
+
+	style := $derived.by =>
+		parts := []
+		if width
+			parts.push `width: ${typeof width === 'number' ? `${width}px` : width}`
+		if height
+			parts.push `height: ${typeof height === 'number' ? `${height}px` : height}`
+		else if variant === 'text'
+			parts.push 'height: 0.875rem'
+		else if variant === 'circle' && !height
+			parts.push 'height: 2.5rem; width: 2.5rem'
+		parts.join '; '
+</script>

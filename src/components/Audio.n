@@ -1,0 +1,24 @@
+audio(src!="{src}" controls!="{controls}" autoplay!="{autoplay}" loop!="{looping}" muted!="{muted}" preload!="{preload}" class!="{classes}")
+	+each('sources as source')
+		source(src!="{source.src}" type!="{source.type}")
+	| {fallback}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	// Note: HTML attribute `loop` becomes `looping` here because `loop` is a
+	// Civet reserved word.
+	{
+		src
+		sources = []
+		controls = true
+		autoplay = false
+		loop: looping = false
+		muted = false
+		preload = 'metadata'
+		fallback = 'Your browser does not support the audio element.'
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'audio-player w-full', extra
+</script>

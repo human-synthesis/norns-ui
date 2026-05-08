@@ -1,0 +1,32 @@
+section(class!="{classes}")
+	+if('image')
+		img.hero-image(src!="{image}" alt="" loading="lazy")
+	.relative
+		h1.hero-title
+			| {title}
+		+if('description')
+			p.hero-description
+				| {description}
+		+if('children')
+			.mt-4
+				| {@render children()}
+		+if('actions')
+			.hero-actions
+				| {@render actions()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		title = ''
+		description
+		image
+		align = 'left'
+		actions
+		children
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'hero', align === 'center' && 'hero-center', extra
+</script>

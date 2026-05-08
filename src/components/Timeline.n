@@ -1,0 +1,27 @@
+ol(class!="{classes}")
+	+each('items as item, i')
+		li.timeline-item
+			.timeline-dot(class!="{item.variant ? `timeline-dot-${item.variant}` : ''}")
+				+if('item.icon')
+					Icon(name!="{item.icon}" size="size-3")
+			+if('i < items.length - 1')
+				.timeline-line
+			.timeline-body
+				+if('item.time')
+					.timeline-time {item.time}
+				+if('item.title')
+					.timeline-title {item.title}
+				+if('item.description')
+					.timeline-description {item.description}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		items = []
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'timeline', extra
+</script>

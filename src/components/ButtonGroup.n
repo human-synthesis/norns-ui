@@ -1,0 +1,14 @@
+div(role="group" class!="{classes}")
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		orientation = 'horizontal'
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'btn-group', orientation === 'vertical' && 'btn-group-vertical', extra
+</script>

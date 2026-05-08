@@ -1,0 +1,62 @@
+.color-picker(class!="{classes}")
+	label.color-picker-swatch(style!="{`background: ${value}`}")
+		input(
+			type="color"
+			value!="{value}"
+			oninput!="{(e) => value = e.currentTarget.value}"
+			disabled!="{disabled}"
+			class="sr-only"
+			aria-label="Pick color"
+		)
+	input.input.color-picker-text(
+		type="text"
+		value!="{value}"
+		oninput!="{onTextInput}"
+		disabled!="{disabled}"
+		spellcheck="false"
+		placeholder="#000000"
+		name!="{name}"
+		id!="{resolvedId}"
+	)
+	+if('!hideCopy')
+		button.btn.btn-ghost.btn-sm(type="button" aria-label="Copy" onclick!="{copy}")
+			Icon(name!="{copied ? 'lucide:check' : 'lucide:copy'}" size="size-3.5")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { getContext } from 'svelte'
+	import Icon from './Icon.n'
+
+	{
+		value = $bindable('#7c3aed')
+		disabled = false
+		hideCopy = false
+		name
+		id: providedId
+		class: extra = ''
+	} .= $props()
+
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+
+	classes := cn 'color-picker-wrap', extra
+
+	copied .= $state false
+
+	hexRe := /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/
+
+	onTextInput := (e) =>
+		raw := e.currentTarget.value.trim()
+		next := raw.startsWith('#') ? raw : `#${raw}`
+		if hexRe.test(next.replace('#', ''))
+			value = next.toLowerCase()
+		else
+			value = next  // let user keep typing; not all keystrokes are valid
+
+	copy := =>
+		try
+			await navigator.clipboard.writeText value
+			copied = true
+			setTimeout (=> copied = false), 1200
+		catch _
+</script>

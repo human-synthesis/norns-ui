@@ -1,0 +1,25 @@
+div(class!="{classes}")
+	+if('header')
+		.card-header
+			| {@render header()}
+	.card-body(class!="{padded ? '' : 'p-0'}")
+		| {@render children?.()}
+	+if('footer')
+		.card-footer
+			| {@render footer()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		padded = true
+		interactive = false
+		header
+		footer
+		children
+		class: extra = ''
+		...rest
+	} := $props()
+
+	classes := cn 'card', interactive && 'card-interactive', extra
+</script>

@@ -1,0 +1,22 @@
+nav.breadcrumbs(aria-label="Breadcrumb" class!="{extra}")
+	ol.flex.items-center.gap-1
+		+each('items as item, i')
+			li.breadcrumb-item
+				+if('item.href && i < items.length - 1')
+					a.breadcrumb-link(href!="{item.href}")
+						| {item.label}
+				+if('!item.href || i === items.length - 1')
+					span(class!="{i === items.length - 1 ? 'breadcrumb-current' : ''}")
+						| {item.label}
+				+if('i < items.length - 1')
+					span.breadcrumb-separator(aria-hidden="true")
+						| {separator}
+
+<script>
+	{
+		items = []
+		separator = '/'
+		class: extra = ''
+		...rest
+	} := $props()
+</script>
