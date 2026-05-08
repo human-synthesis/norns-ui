@@ -1,0 +1,48 @@
+{
+	"name": "@human-synthesis/norns-ui",
+	"version": "0.0.1",
+	"description": "UI library for the Norns ecosystem — Pug + Civet components on Tailwind v4.",
+	"license": "MIT",
+	"author": "Daniel Teodoroiu (https://humansynthesis.ai)",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/human-synthesis/norns-ui.git"
+	},
+	"files": [
+		"src",
+		"README.md"
+	],
+	"scripts": {
+		"test": "bun test"
+	},
+	"exports": {
+		".": "./src/index.js",
+		"./auto-import": "./src/auto-import.js",
+		"./cn": "./src/lib/cn.js",
+		"./styles": "./src/styles/index.css",
+		"./styles/tokens": "./src/styles/tokens.css",
+		"./styles/atoms": "./src/styles/atoms.css",
+		"./components/*": "./src/components/*",
+		"./package.json": "./package.json"
+	},
+	"peerDependencies": {
+		"@human-synthesis/norns": "^0.0.7",
+		"@human-synthesis/norns-core": "^0.0.7",
+		"svelte": "^5.0.0",
+		"tailwindcss": "^4.0.0"
+	},
+	"peerDependenciesMeta": {
+		"@human-synthesis/norns": { "optional": false },
+		"@human-synthesis/norns-core": { "optional": false }
+	},
+	"dependencies": {
+		"tailwind-merge": "^2.5.0"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

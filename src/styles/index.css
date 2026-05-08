@@ -1,0 +1,8 @@
+/*
+ * Single entry point — consumers do `@import '@human-synthesis/norns-ui/styles'`
+ * in their app.css after the Tailwind import. Tokens come first so atoms can
+ * `@apply` against them.
+ */
+
+@import './tokens.css';
+@import './atoms.css';

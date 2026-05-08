@@ -1,0 +1,34 @@
+button(
+	type!="{type}"
+	class!="{classes}"
+	disabled!="{disabled || loading}"
+	onclick!="{onclick}"
+	aria-busy!="{loading ? 'true' : undefined}"
+)
+	+if('loading')
+		span.ui-spinner(aria-hidden="true")
+	+if('!loading && leading')
+		| {@render leading()}
+	+if('children')
+		| {@render children()}
+	+if('!loading && trailing')
+		| {@render trailing()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		variant = 'primary'
+		size = 'md'
+		loading = false
+		disabled = false
+		type = 'button'
+		onclick = undefined
+		children
+		leading
+		trailing
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, extra
+</script>
