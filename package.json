@@ -14,7 +14,9 @@
 		"README.md"
 	],
 	"scripts": {
-		"test": "bun test"
+		"test": "bun test",
+		"check:shims": "bun scripts/check-shims.mjs",
+		"check:shims:strict": "bun scripts/check-shims.mjs --strict"
 	},
 	"exports": {
 		".": "./src/index.js",
