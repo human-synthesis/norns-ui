@@ -21,6 +21,10 @@ export type BtnProps = Omit<HTMLButtonAttributes, 'class' | 'children'> & {
 	 * the snippet wins.
 	 */
 	icon?: string;
+	/** When set, renders as an `<a>` styled like the button. */
+	href?: string;
+	target?: string;
+	rel?: string;
 	class?: string;
 	children?: Snippet;
 	leading?: Snippet;

@@ -3,7 +3,11 @@ section(class!="{classes}")
 		img.hero-image(src!="{image}" alt="" loading="lazy")
 	.relative
 		h1.hero-title
-			| {title}
+			+if('gradient')
+				GradientText
+					| {title}
+			+if('!gradient')
+				| {title}
 		+if('description')
 			p.hero-description
 				| {description}
@@ -16,16 +20,17 @@ section(class!="{classes}")
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
+	import GradientText from './GradientText.n'
 
 	{
 		title = ''
 		description
 		image
 		align = 'left'
+		gradient = false
 		actions
 		children
 		class: extra = ''
-		...rest
 	} := $props()
 
 	classes := cn 'hero', align === 'center' && 'hero-center', extra

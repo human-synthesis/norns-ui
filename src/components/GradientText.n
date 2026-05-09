@@ -1,0 +1,21 @@
+span(class!="{classes}" style!="{styleStr}")
+	| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		from = 'var(--color-primary-500)'
+		to = 'var(--color-info-500)'
+		via
+		animate = true
+		angle = 90
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'gradient-text', animate && 'gradient-text-anim', extra
+
+	stops := $derived via ? `${from}, ${via}, ${to}` : `${from}, ${to}`
+	styleStr := $derived `background-image: linear-gradient(${angle}deg, ${stops})`
+</script>

@@ -1,10 +1,4 @@
-button(
-	type!="{type}"
-	class!="{classes}"
-	disabled!="{disabled || loading}"
-	onclick!="{onclick}"
-	aria-busy!="{loading ? 'true' : undefined}"
-)
++snippet('body')
 	+if('loading')
 		span.ui-spinner(aria-hidden="true")
 	+if('!loading && icon')
@@ -15,6 +9,25 @@ button(
 		| {@render children()}
 	+if('!loading && trailing')
 		| {@render trailing()}
+
++if('href')
+	a(
+		href!="{href}"
+		target!="{target}"
+		rel!="{rel}"
+		class!="{classes}"
+		aria-disabled!="{disabled || loading ? 'true' : undefined}"
+	)
+		| {@render body()}
++if('!href')
+	button(
+		type!="{type}"
+		class!="{classes}"
+		disabled!="{disabled || loading}"
+		onclick!="{onclick}"
+		aria-busy!="{loading ? 'true' : undefined}"
+	)
+		| {@render body()}
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
@@ -28,12 +41,15 @@ button(
 		type = 'button'
 		onclick = undefined
 		icon
+		href
+		target
+		rel
 		children
 		leading
 		trailing
 		class: extra = ''
 	} := $props()
 
-	classes := cn 'btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, extra
+	classes := cn 'btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, 'no-underline', extra
 	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
 </script>

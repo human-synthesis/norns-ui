@@ -1,0 +1,50 @@
+button(
+	type="button"
+	class!="{classes}"
+	disabled!="{disabled}"
+	onclick!="{copy}"
+	aria-label!="{copied ? 'Copied' : (label ?? 'Copy to clipboard')}"
+)
+	+if('copied')
+		Icon(name="lucide:check" size!="{iconSize}" class="copy-btn-check")
+	+if('!copied')
+		Icon(name!="{icon}" size!="{iconSize}")
+	+if('children')
+		| {@render children()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		value = ''
+		variant = 'ghost'
+		size = 'md'
+		icon = 'lucide:copy'
+		disabled = false
+		label
+		oncopy
+		children
+		class: extra = ''
+	} := $props()
+
+	copied .= $state false
+
+	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
+
+	classes := cn
+		'btn'
+		`btn-${variant}`
+		size !== 'md' && `btn-${size}`
+		'copy-btn'
+		copied && 'copy-btn-copied'
+		extra
+
+	copy := =>
+		try
+			await navigator.clipboard.writeText String(value)
+			copied = true
+			oncopy?.(value)
+			setTimeout (=> copied = false), 1400
+		catch _
+</script>

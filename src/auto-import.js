@@ -107,7 +107,17 @@ export function presetUI() {
 			DateRangePicker: c('DateRangePicker'),
 			TimePicker: c('TimePicker'),
 			Calendar: c('Calendar'),
-			DataTable: c('DataTable')
+			DataTable: c('DataTable'),
+
+			// 0.0.5 — CSS-only motion components
+			AvatarGroup: c('AvatarGroup'),
+			GradientText: c('GradientText'),
+			CopyButton: c('CopyButton'),
+			ThemeToggler: c('ThemeToggler'),
+			ShinyButton: c('ShinyButton'),
+			RippleButton: c('RippleButton')
+			// Motion-driven components live in `@human-synthesis/norns-ui/motion`
+			// and are NOT registered here (opt-in import only).
 		},
 		helpers: [
 			{

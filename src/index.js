@@ -87,6 +87,15 @@ export { default as TimePicker } from './components/TimePicker.n';
 export { default as Calendar } from './components/Calendar.n';
 export { default as DataTable } from './components/DataTable.n';
 
+// 0.0.5 — CSS-only motion components
+export { default as AvatarGroup } from './components/AvatarGroup.n';
+export { default as GradientText } from './components/GradientText.n';
+export { default as CopyButton } from './components/CopyButton.n';
+export { default as ThemeToggler } from './components/ThemeToggler.n';
+export { default as ShinyButton } from './components/ShinyButton.n';
+export { default as RippleButton } from './components/RippleButton.n';
+// Motion-driven: `import … from '@human-synthesis/norns-ui/motion'`.
+
 // Helpers
 export { cn } from './lib/cn.js';
 export { variantClasses } from './lib/variants.js';

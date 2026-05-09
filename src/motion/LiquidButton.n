@@ -1,0 +1,48 @@
+button(
+	type!="{type}"
+	class!="{classes}"
+	disabled!="{disabled}"
+	onclick!="{onclick}"
+	bind:this!="{el}"
+)
+	span.liquid-btn-blob(aria-hidden="true")
+	span.liquid-btn-content
+		+if('icon')
+			Icon(name!="{icon}" size!="{iconSize}")
+		+if('children')
+			| {@render children()}
+
+<script>
+	import { onMount } from 'svelte'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './../components/Icon.n'
+
+	{
+		variant = 'primary'
+		size = 'md'
+		type = 'button'
+		disabled = false
+		onclick
+		icon
+		children
+		class: extra = ''
+	} := $props()
+
+	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
+
+	classes := cn 'btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, 'liquid-btn', extra
+
+	el .= $state null
+
+	onMount =>
+		return unless el
+		(async =>
+			{ animate } := await import('motion')
+			blob := el.querySelector '.liquid-btn-blob'
+			return unless blob
+			el.addEventListener 'mouseenter', =>
+				animate blob, { transform: ['scale(0.6)', 'scale(1.4)'] }, { duration: 0.6, easing: [0.34, 1.56, 0.64, 1] }
+			el.addEventListener 'mouseleave', =>
+				animate blob, { transform: 'scale(0.6)' }, { duration: 0.4 }
+		)()
+</script>

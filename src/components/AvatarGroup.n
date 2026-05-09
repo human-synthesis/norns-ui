@@ -1,0 +1,25 @@
+.avatar-group(class!="{classes}" role="group" aria-label!="{label}")
+	+each('visible as item, i')
+		span.avatar-group-item(style!="{`--avatar-group-i: ${i}`}")
+			Avatar(src!="{item.src}" name!="{item.name}" size!="{size}")
+	+if('overflow > 0')
+		span.avatar-group-overflow(class!="{`avatar avatar-${size}`}" aria-hidden="true")
+			| +{overflow}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Avatar from './Avatar.n'
+
+	{
+		items = []
+		max = 5
+		size = 'md'
+		label = 'People'
+		class: extra = ''
+	} := $props()
+
+	visible := $derived items.slice(0, max)
+	overflow := $derived Math.max(0, items.length - max)
+
+	classes := cn 'avatar-group', extra
+</script>

@@ -1,0 +1,56 @@
+button(
+	type!="{type}"
+	class!="{classes}"
+	disabled!="{disabled}"
+	onclick!="{handleClick}"
+)
+	+each('ripples as r (r.id)')
+		span.ripple-btn-ripple(
+			aria-hidden="true"
+			style!="{`left: ${r.x}px; top: ${r.y}px; width: ${r.size}px; height: ${r.size}px`}"
+			ontransitionend!="{() => removeRipple(r.id)}"
+		)
+	+if('icon')
+		Icon(name!="{icon}" size!="{iconSize}")
+	+if('children')
+		| {@render children()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		variant = 'primary'
+		size = 'md'
+		type = 'button'
+		disabled = false
+		onclick
+		icon
+		children
+		class: extra = ''
+	} .= $props()
+
+	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
+
+	classes := cn
+		'btn'
+		`btn-${variant}`
+		size !== 'md' && `btn-${size}`
+		'ripple-btn'
+		extra
+
+	ripples .= $state []
+	nextId .= 0
+
+	handleClick := (e) =>
+		rect := e.currentTarget.getBoundingClientRect()
+		size := Math.max(rect.width, rect.height) * 2
+		x := e.clientX - rect.left - size / 2
+		y := e.clientY - rect.top - size / 2
+		id := ++nextId
+		ripples = [...ripples, { id, x, y, size }]
+		onclick?.(e)
+
+	removeRipple := (id) =>
+		ripples = ripples.filter (r) => r.id !== id
+</script>

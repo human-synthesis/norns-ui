@@ -4,7 +4,7 @@ div(class!="{classes}")
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
 
-	{ children, class: extra = '', ...rest } := $props()
+	{ tone, children, class: extra = '' } := $props()
 
-	classes := cn 'surface p-4', extra
+	classes := cn 'surface p-4', tone === 'glass' && 'surface-glass', extra
 </script>

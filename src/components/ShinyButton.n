@@ -1,0 +1,36 @@
+button(
+	type!="{type}"
+	class!="{classes}"
+	disabled!="{disabled}"
+	onclick!="{onclick}"
+)
+	span.shiny-btn-shine(aria-hidden="true")
+	+if('icon')
+		Icon(name!="{icon}" size!="{iconSize}")
+	+if('children')
+		| {@render children()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		variant = 'primary'
+		size = 'md'
+		type = 'button'
+		disabled = false
+		onclick
+		icon
+		children
+		class: extra = ''
+	} := $props()
+
+	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
+
+	classes := cn
+		'btn'
+		`btn-${variant}`
+		size !== 'md' && `btn-${size}`
+		'shiny-btn'
+		extra
+</script>

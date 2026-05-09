@@ -6,6 +6,8 @@ export type HeroBannerProps = {
 	/** Background/decorative image src; rendered with reduced opacity behind the content. */
 	image?: string;
 	align?: 'left' | 'center';
+	/** Apply animated `GradientText` to the title. Default false. */
+	gradient?: boolean;
 	actions?: Snippet;
 	children?: Snippet;
 	class?: string;

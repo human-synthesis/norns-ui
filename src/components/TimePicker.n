@@ -11,23 +11,29 @@ PopoverRoot(bind:open)
 			| {value || placeholder}
 		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
 	PopoverPortal
-		PopoverContent.popover-content(class="p-2 time-picker-popover")
+		PopoverContent.popover-content(
+			class="p-2 time-picker-popover"
+			onOpenAutoFocus!="{(e) => e.preventDefault()}"
+			onCloseAutoFocus!="{(e) => e.preventDefault()}"
+		)
 			.time-picker-grid
-				.time-picker-col(role="listbox" aria-label="Hour")
+				.time-picker-col(role="listbox" aria-label="Hour" bind:this!="{hourCol}")
 					+each('hours as h')
 						button.time-picker-cell(
 							type="button"
 							class!="{h === currentHour ? 'time-picker-cell-selected' : ''}"
 							onclick!="{() => setHour(h)}"
+							data-time-h!="{h}"
 						)
 							| {pad(h)}
 				.time-picker-sep :
-				.time-picker-col(role="listbox" aria-label="Minute")
+				.time-picker-col(role="listbox" aria-label="Minute" bind:this!="{minuteCol}")
 					+each('minutes as m')
 						button.time-picker-cell(
 							type="button"
 							class!="{m === currentMinute ? 'time-picker-cell-selected' : ''}"
 							onclick!="{() => setMinute(m)}"
+							data-time-m!="{m}"
 						)
 							| {pad(m)}
 				+if('hourCycle === 12')
@@ -141,4 +147,20 @@ PopoverRoot(bind:open)
 		emit nextH, parts.m
 
 	clearValue := => value = ''
+
+	hourCol .= $state null
+	minuteCol .= $state null
+
+	// When the popover opens, scroll each column to its currently-selected cell.
+	$effect =>
+		return unless open && (hourCol || minuteCol)
+		queueMicrotask =>
+			scrollSelected hourCol, currentHour, 'data-time-h'
+			scrollSelected minuteCol, currentMinute, 'data-time-m'
+
+	scrollSelected := (col, value, attr) =>
+		return unless col
+		target := col.querySelector `[${attr}="${value}"]`
+		return unless target
+		col.scrollTop = target.offsetTop - col.clientHeight / 2 + target.clientHeight / 2
 </script>

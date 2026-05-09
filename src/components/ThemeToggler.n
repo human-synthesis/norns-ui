@@ -1,0 +1,43 @@
+button(
+	type="button"
+	class!="{classes}"
+	onclick!="{toggle}"
+	aria-label="Toggle theme"
+	title="Toggle theme"
+)
+	Icon(name!="{lightIcon}" size!="{iconSize}" class="theme-toggle-light")
+	Icon(name!="{darkIcon}" size!="{iconSize}" class="theme-toggle-dark")
+	+if('showLabel')
+		span.theme-toggle-light
+			| {labelLight}
+		span.theme-toggle-dark
+			| {labelDark}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		variant = 'ghost'
+		size = 'md'
+		showLabel = false
+		labelLight = 'Dark'
+		labelDark = 'Light'
+		lightIcon = 'lucide:moon'
+		darkIcon = 'lucide:sun'
+		storageKey = 'norns-theme'
+		class: extra = ''
+	} := $props()
+
+	iconSize := size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
+
+	classes := cn 'btn' , `btn-${variant}`, size !== 'md' && `btn-${size}`, extra
+
+	toggle := =>
+		root := document.documentElement
+		next := root.dataset.theme === 'dark' ? 'light' : 'dark'
+		root.dataset.theme = next === 'dark' ? 'dark' : ''
+		try
+			localStorage.setItem storageKey, next
+		catch _
+</script>

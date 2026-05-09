@@ -1,0 +1,55 @@
+span(class!="{classes}" bind:this!="{el}")
+	| {display}
+
+<script>
+	import { onMount } from 'svelte'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		value = 0
+		from = 0
+		duration = 0.9
+		decimals = 0
+		format
+		class: extra = ''
+	} := $props()
+
+	display .= $state String((from ?? value).toFixed(decimals))
+	el .= $state null
+	hasMounted .= $state false
+
+	classes := cn 'tabular-nums', extra
+
+	doFormat := (n) =>
+		if format
+			format(n)
+		else if decimals === 0
+			Math.round(n).toLocaleString()
+		else
+			n.toFixed(decimals)
+
+	$effect =>
+		return unless hasMounted
+		// Re-runs whenever `value` changes (after mount).
+		v := value
+		(async =>
+			{ animate } := await import('motion')
+			anim := animate from, v, {
+				duration
+				onUpdate: (latest) => display = doFormat(latest)
+				onComplete: => display = doFormat(v)
+			}
+			anim
+		)()
+
+	onMount =>
+		hasMounted = true
+		(async =>
+			{ animate } := await import('motion')
+			animate (from ?? 0), value, {
+				duration
+				onUpdate: (latest) => display = doFormat(latest)
+				onComplete: => display = doFormat(value)
+			}
+		)()
+</script>

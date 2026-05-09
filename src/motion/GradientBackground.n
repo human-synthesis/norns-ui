@@ -1,0 +1,25 @@
+.gradient-bg(class!="{classes}" style!="{styleStr}")
+	+if('children')
+		.relative
+			| {@render children()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		colors = [
+			'oklch(60% 0.25 290)'
+			'oklch(60% 0.18 240)'
+			'oklch(70% 0.18 200)'
+			'oklch(60% 0.25 320)'
+		]
+		duration = 18
+		angle = 130
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'gradient-bg', extra
+	stops := $derived colors.join ', '
+	styleStr := $derived `--gradient-bg-stops: ${stops}; --gradient-bg-angle: ${angle}deg; --gradient-bg-duration: ${duration}s`
+</script>

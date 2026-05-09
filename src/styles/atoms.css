@@ -16,10 +16,25 @@
 		font-family: var(--font-sans);
 		color: var(--color-fg);
 		background-color: var(--color-bg);
+		font-feature-settings: 'ss01';
 	}
 	body {
 		color: var(--color-fg);
 		background-color: var(--color-bg);
+	}
+
+	/* Reduced-motion: globally short-circuit our transitions/animations.
+	 * Components using prefers-reduced-motion: reduce explicitly will get this.
+	 */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
 	}
 
 	/* Heading hierarchy — applied to bare h1..h6 unless overridden via Tailwind. */
@@ -80,8 +95,8 @@
 	/* ============================================================ */
 	.btn {
 		@apply inline-flex items-center justify-center gap-2 text-sm font-medium leading-none whitespace-nowrap;
-		@apply transition-[background-color,color,border-color,opacity] duration-150 ease-out;
-		@apply select-none cursor-pointer;
+		@apply transition-[background-color,color,border-color,transform,opacity] duration-150 ease-out;
+		@apply select-none cursor-pointer relative overflow-hidden;
 		@apply disabled:cursor-not-allowed disabled:opacity-60;
 		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
 		--tw-ring-color: var(--color-ring);
@@ -89,6 +104,9 @@
 		border-radius: var(--ui-radius);
 		height: var(--ui-h-md);
 		padding-inline: 0.875rem;
+	}
+	.btn:not(:disabled):active {
+		transform: scale(0.97);
 	}
 
 	.btn-sm {
@@ -582,6 +600,11 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 	}
+	.surface-glass {
+		background-color: color-mix(in oklab, var(--color-bg-elevated) 65%, transparent);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+	}
 	.card {
 		background-color: var(--color-bg-elevated);
 		color: var(--color-fg);
@@ -610,10 +633,18 @@
 		border-bottom-right-radius: var(--ui-radius-lg);
 	}
 	.card-interactive {
-		@apply cursor-pointer transition-colors;
+		@apply cursor-pointer no-underline;
+		color: inherit;
+		transition: border-color 150ms ease-out, transform 150ms ease-out, box-shadow 150ms ease-out;
 	}
 	.card-interactive:hover {
 		border-color: var(--color-border-strong);
+		transform: translateY(-2px);
+		box-shadow: 0 12px 24px -8px oklch(0% 0 0 / 0.10);
+	}
+	.card-interactive:focus-visible {
+		outline: 2px solid var(--color-ring);
+		outline-offset: 2px;
 	}
 
 	/* ============================================================ */
@@ -623,6 +654,17 @@
 		@apply flex items-start gap-3 p-3 text-sm;
 		border: 1px solid;
 		border-radius: var(--ui-radius);
+		animation: norns-banner-in 250ms cubic-bezier(0.21, 1.02, 0.73, 1) both;
+	}
+	@keyframes norns-banner-in {
+		from {
+			opacity: 0;
+			transform: translateY(-4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 	.banner-info {
 		background-color: var(--color-info-bg);
@@ -733,6 +775,173 @@
 	}
 	.avatar img {
 		@apply h-full w-full object-cover;
+	}
+
+	/* AvatarGroup */
+	.avatar-group {
+		@apply inline-flex items-center;
+	}
+	.avatar-group-item,
+	.avatar-group-overflow {
+		@apply relative inline-flex transition-transform duration-150 ease-out;
+		margin-left: -0.5rem;
+		box-shadow: 0 0 0 2px var(--color-bg);
+		border-radius: var(--ui-radius-full);
+	}
+	.avatar-group-item:first-child,
+	.avatar-group:has(.avatar-group-item:first-child) > .avatar-group-item:first-child {
+		margin-left: 0;
+	}
+	.avatar-group-item:hover {
+		transform: translateY(-2px);
+		z-index: 1;
+	}
+	.avatar-group-overflow {
+		@apply text-xs font-medium;
+		background-color: var(--color-bg-muted);
+		color: var(--color-fg-muted);
+	}
+
+	/* GradientText */
+	.gradient-text {
+		background-clip: text;
+		-webkit-background-clip: text;
+		color: transparent;
+		background-size: 200% 200%;
+		background-position: 0% 50%;
+	}
+	.gradient-text-anim {
+		animation: norns-gradient-shift 6s ease-in-out infinite;
+	}
+	@keyframes norns-gradient-shift {
+		0%, 100% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
+	}
+
+	/* CopyButton */
+	.copy-btn-check {
+		animation: norns-copy-pop 250ms ease-out;
+	}
+	@keyframes norns-copy-pop {
+		0% { transform: scale(0.5); opacity: 0; }
+		70% { transform: scale(1.15); }
+		100% { transform: scale(1); opacity: 1; }
+	}
+
+	/* ShinyButton — sweeping shine overlay */
+	.shiny-btn {
+		position: relative;
+		isolation: isolate;
+	}
+	.shiny-btn-shine {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(
+			110deg,
+			transparent 30%,
+			color-mix(in oklab, white 35%, transparent) 50%,
+			transparent 70%
+		);
+		background-size: 250% 100%;
+		background-position: 200% 0;
+		animation: norns-shiny 2.6s ease-in-out infinite;
+		mix-blend-mode: overlay;
+		border-radius: inherit;
+	}
+	@keyframes norns-shiny {
+		0% { background-position: 200% 0; }
+		100% { background-position: -150% 0; }
+	}
+
+	/* RippleButton */
+	.ripple-btn {
+		position: relative;
+		overflow: hidden;
+	}
+	.ripple-btn-ripple {
+		position: absolute;
+		pointer-events: none;
+		border-radius: 9999px;
+		background-color: color-mix(in oklab, currentColor 35%, transparent);
+		transform: scale(0);
+		opacity: 0.6;
+		animation: norns-ripple 600ms ease-out forwards;
+	}
+	@keyframes norns-ripple {
+		to {
+			transform: scale(1);
+			opacity: 0;
+		}
+	}
+
+	/* LiquidButton (motion subpath) */
+	.liquid-btn {
+		position: relative;
+		isolation: isolate;
+		overflow: hidden;
+	}
+	.liquid-btn-blob {
+		position: absolute;
+		inset: -25%;
+		background: radial-gradient(
+			circle,
+			color-mix(in oklab, white 40%, transparent),
+			transparent 60%
+		);
+		transform: scale(0.6);
+		mix-blend-mode: overlay;
+		pointer-events: none;
+		filter: blur(12px);
+		z-index: 0;
+	}
+	.liquid-btn-content {
+		@apply inline-flex items-center gap-2 relative;
+		z-index: 1;
+	}
+
+	/* Sparkles (motion subpath) */
+	.sparkles-wrap {
+		@apply relative inline-block;
+	}
+	.sparkles-overlay {
+		@apply pointer-events-none absolute inset-0 overflow-hidden;
+	}
+	.sparkle {
+		position: absolute;
+		display: block;
+		border-radius: 9999px;
+		background: var(--sparkle-color, var(--color-primary-400));
+		opacity: 0;
+		transform: scale(0);
+		animation: norns-sparkle 2.4s ease-in-out infinite;
+		animation-fill-mode: forwards;
+		filter: drop-shadow(0 0 4px var(--sparkle-color, var(--color-primary-400)));
+	}
+	.sparkles-paused .sparkle {
+		animation-play-state: paused;
+	}
+	@keyframes norns-sparkle {
+		0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+		20%, 80% { opacity: 1; }
+		50% { transform: scale(1) rotate(180deg); }
+	}
+
+	/* GradientBackground (motion subpath) */
+	.gradient-bg {
+		@apply relative overflow-hidden;
+		background-image: linear-gradient(
+			var(--gradient-bg-angle, 130deg),
+			var(--gradient-bg-stops, var(--color-primary-500), var(--color-info-500))
+		);
+		background-size: 300% 300%;
+		animation: norns-gradient-loop var(--gradient-bg-duration, 18s) ease-in-out infinite;
+	}
+	@keyframes norns-gradient-loop {
+		0%, 100% { background-position: 0% 50%; }
+		25% { background-position: 100% 50%; }
+		50% { background-position: 100% 100%; }
+		75% { background-position: 0% 100%; }
 	}
 
 	/* ============================================================ */

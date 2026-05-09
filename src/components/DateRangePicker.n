@@ -5,7 +5,11 @@ PopoverRoot(bind:open)
 			| {label}
 		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
 	PopoverPortal
-		PopoverContent.popover-content(class="p-3 w-[20rem]")
+		PopoverContent.popover-content(
+			class="p-3 w-[20rem]"
+			onOpenAutoFocus!="{(e) => e.preventDefault()}"
+			onCloseAutoFocus!="{(e) => e.preventDefault()}"
+		)
 			Calendar(
 				bind:rangeValue!="{value}"
 				range!="{true}"

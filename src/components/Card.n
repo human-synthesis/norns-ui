@@ -1,4 +1,4 @@
-div(class!="{classes}")
++snippet('body')
 	+if('header')
 		.card-header
 			| {@render header()}
@@ -8,18 +8,27 @@ div(class!="{classes}")
 		.card-footer
 			| {@render footer()}
 
++if('href')
+	a(href!="{href}" target!="{target}" rel!="{rel}" class!="{classes}")
+		| {@render body()}
++if('!href')
+	div(class!="{classes}")
+		| {@render body()}
+
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
 
 	{
 		padded = true
 		interactive = false
+		href
+		target
+		rel
 		header
 		footer
 		children
 		class: extra = ''
-		...rest
 	} := $props()
 
-	classes := cn 'card', interactive && 'card-interactive', extra
+	classes := cn 'card', (interactive || href) && 'card-interactive', extra
 </script>

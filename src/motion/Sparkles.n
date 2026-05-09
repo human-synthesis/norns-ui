@@ -1,0 +1,53 @@
+.sparkles-wrap(class!="{classes}" bind:this!="{wrap}")
+	+if('children')
+		| {@render children()}
+	.sparkles-overlay(aria-hidden="true")
+		+each('seeds as s')
+			span.sparkle(style!="{`left: ${s.x}%; top: ${s.y}%; width: ${s.size}px; height: ${s.size}px; --sparkle-color: ${s.color}; animation-delay: ${s.delay}s; animation-duration: ${s.duration}s`}")
+
+<script>
+	import { onMount, onDestroy } from 'svelte'
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		density = 14
+		colors = ['var(--color-primary-400)', 'var(--color-info-400)', 'var(--color-warning-400)']
+		minSize = 4
+		maxSize = 10
+		children
+		class: extra = ''
+	} := $props()
+
+	classes := cn 'sparkles-wrap', extra
+
+	rand := (min, max) => min + Math.random() * (max - min)
+
+	seeds := $derived.by =>
+		out := []
+		i .= 0
+		while i < density
+			out.push {
+				x: rand(2, 96)
+				y: rand(2, 96)
+				size: Math.round rand(minSize, maxSize)
+				color: colors[i % colors.length]
+				delay: rand(0, 3)
+				duration: rand(1.6, 3.2)
+			}
+			i++
+		out
+
+	wrap .= $state null
+	stopObserver .= $state null
+
+	onMount =>
+		return unless wrap
+		// Pause CSS animations off-screen via animation-play-state.
+		io := new IntersectionObserver (entries) =>
+			for entry of entries
+				wrap.classList.toggle 'sparkles-paused', !entry.isIntersecting
+		io.observe wrap
+		stopObserver = => io.disconnect()
+
+	onDestroy => stopObserver?.()
+</script>
