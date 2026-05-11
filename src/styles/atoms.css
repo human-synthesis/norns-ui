@@ -32,11 +32,16 @@
 		background-color: var(--color-bg);
 	}
 
+	/* Respect prefers-reduced-motion without nuking decorative animations
+	 * entirely: cap iterations to 1 (so infinite loops like the shiny
+	 * sweep, sparkle, gradient shift play once and stop instead of
+	 * looping), and shrink incidental transitions. Finite animations
+	 * (ripple, copy-pop, toast-in, banner-in) keep their natural duration
+	 * so users still see the state change they signal. */
 	@media (prefers-reduced-motion: reduce) {
 		*,
 		*::before,
 		*::after {
-			animation-duration: 0.01ms !important;
 			animation-iteration-count: 1 !important;
 			transition-duration: 0.01ms !important;
 			scroll-behavior: auto !important;
