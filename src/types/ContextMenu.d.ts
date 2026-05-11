@@ -5,7 +5,12 @@ export type ContextMenuItem = {
 	icon?: string;
 	separator?: boolean;
 	disabled?: boolean;
-	onSelect?: (event: Event) => void;
+	onSelect?: () => void;
+	/**
+	 * NOTE: nested submenus are not supported in 0.0.6+ (the property is
+	 * accepted but children are ignored). Re-introduce when the upstream
+	 * design needs them.
+	 */
 	children?: ContextMenuItem[];
 };
 

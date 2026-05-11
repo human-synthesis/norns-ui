@@ -10,6 +10,8 @@ export type TabsItem = {
 export type TabsProps = {
 	value?: string;
 	items?: TabsItem[];
+	/** ARIA label for the tablist. Default 'Tabs'. */
+	label?: string;
 	class?: string;
 };
 

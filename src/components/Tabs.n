@@ -1,28 +1,54 @@
-TabsRoot(bind:value class!="{rootClasses}")
-	TabsList.tabs-list
+.tabs-root(class!="{rootClasses}")
+	.tabs-list(
+		role="tablist"
+		aria-label!="{label}"
+		use:rovingTabindex!="{{ orientation: 'horizontal' }}"
+	)
 		+each('items as item (item.value)')
-			TabsTrigger.tabs-trigger(value!="{item.value}" disabled!="{item.disabled}")
+			button.tabs-trigger(
+				type="button"
+				role="tab"
+				id!="{tabId(item.value)}"
+				aria-selected!="{value === item.value}"
+				aria-controls!="{panelId(item.value)}"
+				data-state!="{value === item.value ? 'active' : 'inactive'}"
+				data-roving
+				disabled!="{item.disabled}"
+				onclick!="{() => select(item.value)}"
+			)
 				| {item.label}
 	+each('items as item (item.value)')
-		TabsContent.tabs-content(value!="{item.value}")
-			| {@render item.panel?.()}
+		.tabs-content(
+			role="tabpanel"
+			id!="{panelId(item.value)}"
+			aria-labelledby!="{tabId(item.value)}"
+			tabindex="0"
+			hidden!="{value !== item.value ? 'until-found' : undefined}"
+		)
+			+if('value === item.value')
+				| {@render item.panel?.()}
 
 <script>
-	import { Tabs } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
-
-	{
-		Root: TabsRoot
-		List: TabsList
-		Trigger: TabsTrigger
-		Content: TabsContent
-	} := Tabs
+	import { rovingTabindex } from '@human-synthesis/norns-ui/behaviors/rovingTabindex.svelte.js'
 
 	{
 		value = $bindable()
 		items = []
+		label = 'Tabs'
 		class: extra = ''
 	} .= $props()
 
 	rootClasses := cn 'tabs-root', extra
+
+	// Lazy default to first tab if no value bound.
+	$effect =>
+		if value === undefined && items.length > 0 && !items[0].disabled
+			value = items[0].value
+
+	uid := Math.random().toString(36).slice(2, 8)
+	tabId := (v) => `tab-${uid}-${v}`
+	panelId := (v) => `tabpanel-${uid}-${v}`
+
+	select := (v) => value = v
 </script>

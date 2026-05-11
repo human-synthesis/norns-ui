@@ -1,7 +1,7 @@
 import type { Component, Snippet } from 'svelte';
 
 export type ScrollAreaProps = {
-	type?: 'hover' | 'auto' | 'scroll' | 'always';
+	/** Allow horizontal scrolling instead of just vertical. */
 	horizontal?: boolean;
 	children?: Snippet;
 	class?: string;

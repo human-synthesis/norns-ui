@@ -1,17 +1,26 @@
 /*
  * Norns UI — component atom classes.
  *
- * Pure Tailwind utility-composition via `@layer components`. No JS, no Svelte.
- * All atoms reference *role tokens* from tokens.css — never raw color shades.
- * That's how light/dark theme swap works through a single point of change.
+ * Pure Tailwind utility composition via `@layer components`. No JS, no Svelte.
+ * Atoms reference role tokens (and the new elevation/motion/icon-btn tokens
+ * in tokens.css), never raw color shades. That's how light/dark theme swap
+ * works through a single point of change.
  *
- * Naming convention: `<atom>-<variant>` and `<atom>-<size>`. AI-predictable.
+ * Naming: `<atom>-<variant>` and `<atom>-<size>`. Predictable, AI-friendly.
+ *
+ * Design rules — every atom obeys these unless it has a documented reason:
+ *   1. Radius: `--ui-radius` for floating panels & full-size controls,
+ *      `--ui-radius-sm` for items inside menus, `--ui-radius-lg` only for
+ *      Dialog and HeroBanner.
+ *   2. Hover on any interactive surface uses `bg-bg-muted`. No exceptions.
+ *   3. Focus uses the `--ui-focus-ring` shadow on `:focus-visible`.
+ *   4. Transitions use `--ui-motion-fast` + `--ui-motion-ease`.
+ *   5. Shadows use `--ui-elev-{1,2,3}`. No raw shadow utilities.
  */
 
 @reference 'tailwindcss';
 
 @layer base {
-	/* Body */
 	html {
 		font-family: var(--font-sans);
 		color: var(--color-fg);
@@ -23,9 +32,6 @@
 		background-color: var(--color-bg);
 	}
 
-	/* Reduced-motion: globally short-circuit our transitions/animations.
-	 * Components using prefers-reduced-motion: reduce explicitly will get this.
-	 */
 	@media (prefers-reduced-motion: reduce) {
 		*,
 		*::before,
@@ -37,84 +43,156 @@
 		}
 	}
 
-	/* Heading hierarchy — applied to bare h1..h6 unless overridden via Tailwind. */
-	h1 {
-		@apply text-4xl font-bold tracking-tight leading-tight;
-	}
-	h2 {
-		@apply text-3xl font-semibold tracking-tight leading-tight;
-	}
-	h3 {
-		@apply text-2xl font-semibold tracking-tight leading-snug;
-	}
-	h4 {
-		@apply text-xl font-semibold leading-snug;
-	}
-	h5 {
-		@apply text-lg font-semibold leading-snug;
-	}
-	h6 {
-		@apply text-base font-semibold;
-	}
+	/* Heading hierarchy */
+	h1 { @apply text-4xl font-bold tracking-tight leading-tight; }
+	h2 { @apply text-3xl font-semibold tracking-tight leading-tight; }
+	h3 { @apply text-2xl font-semibold tracking-tight leading-snug; }
+	h4 { @apply text-xl font-semibold leading-snug; }
+	h5 { @apply text-lg font-semibold leading-snug; }
+	h6 { @apply text-base font-semibold; }
 
-	/* Inline code + pre */
 	code {
 		font-family: var(--font-mono);
-		@apply text-[0.9em] px-1 py-0.5 rounded;
+		@apply text-[0.9em] px-1 py-0.5;
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg);
+		border-radius: var(--ui-radius-sm);
 	}
 	pre {
 		font-family: var(--font-mono);
-		@apply text-sm p-3 rounded overflow-x-auto;
+		@apply text-sm p-3 overflow-x-auto;
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg);
+		border-radius: var(--ui-radius);
 	}
 	pre code {
 		@apply p-0 bg-transparent;
 	}
 
-	/* Keyboard */
 	kbd {
 		font-family: var(--font-mono);
-		@apply text-xs px-1.5 py-0.5 rounded border;
+		@apply text-xs px-1.5 py-0.5 border;
 		background-color: var(--color-bg-muted);
 		border-color: var(--color-border);
 		color: var(--color-fg);
+		border-radius: var(--ui-radius-sm);
 	}
 
-	/* Default form-control reset on dark */
-	hr {
-		border-color: var(--color-border);
-	}
+	hr { border-color: var(--color-border); }
 }
 
 @layer components {
+	/* ============================================================ */
+	/* Shared mixins                                                */
+	/* ============================================================ */
+
+	/* `.ui-ring` — single canonical focus indicator. Components compose:
+	 *   .btn { ... }
+	 *   .btn:focus-visible { box-shadow: var(--ui-focus-ring); }
+	 * or apply this helper class directly. */
+	.ui-ring:focus-visible {
+		outline: none;
+		box-shadow: var(--ui-focus-ring);
+	}
+
+	/* `.surface-elevated` — public class for Popover, Dropdown, Tooltip-rich,
+	 * Dialog, Sheet, Toast, nav-menu-content, etc. Each of those atoms also
+	 * extends this rule via selector lists below, so consumers can apply
+	 * either name. */
+	.surface-elevated,
+	.popover-content,
+	.dropdown-content,
+	.tooltip-rich,
+	.dialog-content,
+	.sheet-content,
+	.toast,
+	.nav-menu-content {
+		background-color: var(--color-bg-elevated);
+		color: var(--color-fg);
+		border: 1px solid var(--color-border);
+		border-radius: var(--ui-radius);
+		box-shadow: var(--ui-elev-2);
+	}
+
+	/* `.control-base` — public alias. Form-control atoms below extend this
+	 * rule via selector lists, so `.input`, `.textarea`, `.select`, etc. all
+	 * share one source of truth for size/padding/border/focus/disabled. */
+	.control-base,
+	.input,
+	.textarea,
+	.select,
+	.color-picker-text,
+	.date-picker-trigger {
+		@apply block w-full text-sm leading-none;
+		background-color: var(--color-bg);
+		color: var(--color-fg);
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--ui-radius);
+		height: var(--ui-h-md);
+		padding-inline: 0.75rem;
+		transition: border-color var(--ui-motion-fast) var(--ui-motion-ease),
+			background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
+	}
+	.control-base::placeholder,
+	.input::placeholder,
+	.textarea::placeholder,
+	.select::placeholder { color: var(--color-fg-subtle); }
+	.control-base:focus-visible,
+	.input:focus-visible,
+	.textarea:focus-visible,
+	.select:focus-visible,
+	.date-picker-trigger:focus-visible {
+		outline: none;
+		border-color: var(--color-ring);
+		box-shadow: var(--ui-focus-ring);
+	}
+	.control-base:disabled,
+	.input:disabled,
+	.textarea:disabled,
+	.select:disabled {
+		@apply cursor-not-allowed opacity-70;
+		background-color: var(--color-bg-muted);
+	}
+	.control-err,
+	.input-err,
+	.textarea-err,
+	.select-err {
+		border-color: var(--color-danger-500);
+	}
+	.control-err:focus-visible,
+	.input-err:focus-visible,
+	.textarea-err:focus-visible,
+	.select-err:focus-visible {
+		border-color: var(--color-danger-500);
+		box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-danger-500);
+	}
+
 	/* ============================================================ */
 	/* Button                                                       */
 	/* ============================================================ */
 	.btn {
 		@apply inline-flex items-center justify-center gap-2 text-sm font-medium leading-none whitespace-nowrap;
-		@apply transition-[background-color,color,border-color,transform,opacity] duration-150 ease-out;
 		@apply select-none cursor-pointer relative overflow-hidden;
 		@apply disabled:cursor-not-allowed disabled:opacity-60;
-		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-		--tw-ring-color: var(--color-ring);
-		--tw-ring-offset-color: var(--color-bg);
 		border-radius: var(--ui-radius);
 		height: var(--ui-h-md);
 		padding-inline: 0.875rem;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			color var(--ui-motion-fast) var(--ui-motion-ease),
+			border-color var(--ui-motion-fast) var(--ui-motion-ease),
+			transform var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease),
+			opacity var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.btn:not(:disabled):active {
-		transform: scale(0.97);
-	}
+	.btn:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.btn:not(:disabled):active { transform: scale(0.97); }
 
 	.btn-sm {
 		@apply text-xs;
 		height: var(--ui-h-sm);
 		padding-inline: 0.625rem;
 	}
-
 	.btn-lg {
 		@apply text-base;
 		height: var(--ui-h-lg);
@@ -125,23 +203,19 @@
 		background-color: var(--color-primary-600);
 		color: var(--color-fg-on-primary);
 	}
-	.btn-primary:hover {
-		background-color: var(--color-primary-700);
-	}
-	.btn-primary:active {
-		background-color: var(--color-primary-800);
-	}
+	.btn-primary:hover { background-color: var(--color-primary-700); }
+	.btn-primary:active { background-color: var(--color-primary-800); }
 
 	.btn-secondary {
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg);
 		border: 1px solid var(--color-border);
 	}
-	.btn-secondary:hover {
-		background-color: var(--color-bg-subtle);
-	}
-	.btn-secondary:active {
+	.btn-secondary:hover { background-color: var(--color-bg-subtle); }
+	.btn-secondary:active { background-color: var(--color-border); }
+	.btn-secondary[data-pressed='true'] {
 		background-color: var(--color-border);
+		border-color: var(--color-border-strong);
 	}
 
 	.btn-ghost {
@@ -152,19 +226,19 @@
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg);
 	}
+	.btn-ghost[data-pressed='true'] {
+		background-color: var(--color-bg-muted);
+		color: var(--color-fg);
+	}
 
 	.btn-danger {
 		background-color: var(--color-danger-600);
 		color: white;
 	}
-	.btn-danger:hover {
-		background-color: var(--color-danger-700);
-	}
-	.btn-danger:active {
-		background-color: var(--color-danger-800);
-	}
+	.btn-danger:hover { background-color: var(--color-danger-700); }
+	.btn-danger:active { background-color: var(--color-danger-800); }
 	.btn-danger:focus-visible {
-		--tw-ring-color: var(--color-danger-500);
+		box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-danger-500);
 	}
 
 	.btn-link {
@@ -176,38 +250,56 @@
 		color: var(--color-primary-400);
 	}
 
-	/* ============================================================ */
-	/* Spinner (used inside Btn loading state)                      */
-	/* ============================================================ */
+	/* Square icon-button — close buttons, calendar nav, chevron triggers, etc.
+	 * The selector list extends `.btn-icon` to consumer atoms so they share
+	 * one source of truth without `@apply`-ing across custom classes. */
+	.btn-icon,
+	.dialog-close,
+	.toast-close,
+	.combobox-trigger,
+	.calendar-nav,
+	.pagination-item {
+		@apply inline-flex items-center justify-center;
+		width: var(--ui-icon-btn-md);
+		height: var(--ui-icon-btn-md);
+		padding: 0;
+		border-radius: var(--ui-radius-sm);
+		color: var(--color-fg-muted);
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			color var(--ui-motion-fast) var(--ui-motion-ease);
+	}
+	.btn-icon:hover,
+	.dialog-close:hover,
+	.combobox-trigger:hover,
+	.calendar-nav:hover,
+	.pagination-item:hover {
+		background-color: var(--color-bg-muted);
+		color: var(--color-fg);
+	}
+	.btn-icon:focus-visible,
+	.dialog-close:focus-visible,
+	.toast-close:focus-visible,
+	.combobox-trigger:focus-visible,
+	.calendar-nav:focus-visible,
+	.pagination-item:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.btn-icon-sm,
+	.dialog-close,
+	.toast-close,
+	.combobox-trigger,
+	.calendar-nav { width: var(--ui-icon-btn-sm); height: var(--ui-icon-btn-sm); }
+	.btn-icon-lg { width: var(--ui-icon-btn-lg); height: var(--ui-icon-btn-lg); }
+
+	/* Spinner used inside Btn loading state */
 	.ui-spinner {
 		@apply inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent;
 	}
 
 	/* ============================================================ */
-	/* Inputs                                                       */
+	/* Form controls — base shared with .control-base above         */
 	/* ============================================================ */
-	.input {
-		@apply block w-full text-sm leading-none;
-		@apply transition-[border-color,background-color] duration-150 ease-out;
-		@apply focus:outline-none focus:ring-2;
-		@apply disabled:cursor-not-allowed disabled:opacity-70;
-		background-color: var(--color-bg);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
-		border-radius: var(--ui-radius);
-		height: var(--ui-h-md);
-		padding-inline: 0.75rem;
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
-	}
-	.input::placeholder {
-		color: var(--color-fg-subtle);
-	}
-	.input:focus {
-		border-color: var(--color-ring);
-	}
-	.input:disabled {
-		background-color: var(--color-bg-muted);
-	}
 	.input-sm {
 		@apply text-xs;
 		height: var(--ui-h-sm);
@@ -218,123 +310,53 @@
 		height: var(--ui-h-lg);
 		padding-inline: 0.875rem;
 	}
-	.input-err {
-		border-color: var(--color-danger-500);
-	}
-	.input-err:focus {
-		border-color: var(--color-danger-500);
-		--tw-ring-color: color-mix(in oklab, var(--color-danger-500) 30%, transparent);
-	}
 
-	/* Textarea */
 	.textarea {
-		@apply block w-full text-sm leading-snug px-3 py-2;
-		@apply transition-[border-color,background-color] duration-150 ease-out;
-		@apply focus:outline-none focus:ring-2;
-		@apply disabled:cursor-not-allowed disabled:opacity-70;
-		background-color: var(--color-bg);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
-		border-radius: var(--ui-radius);
+		@apply leading-snug;
+		padding-block: 0.5rem;
 		min-height: calc(var(--ui-h-md) * 2);
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
-	}
-	.textarea::placeholder {
-		color: var(--color-fg-subtle);
-	}
-	.textarea:focus {
-		border-color: var(--color-ring);
-	}
-	.textarea:disabled {
-		background-color: var(--color-bg-muted);
-	}
-	.textarea-err {
-		border-color: var(--color-danger-500);
-	}
-	.textarea-err:focus {
-		border-color: var(--color-danger-500);
-		--tw-ring-color: color-mix(in oklab, var(--color-danger-500) 30%, transparent);
+		height: auto;
 	}
 
-	/* Select */
-	.select {
-		@apply block w-full text-sm leading-none;
-		@apply transition-[border-color,background-color] duration-150 ease-out;
-		@apply focus:outline-none focus:ring-2;
-		@apply disabled:cursor-not-allowed disabled:opacity-70;
-		background-color: var(--color-bg);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
-		border-radius: var(--ui-radius);
-		height: var(--ui-h-md);
-		padding-inline: 0.75rem;
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
-	}
-	.select:focus {
-		border-color: var(--color-ring);
-	}
-	.select:disabled {
-		background-color: var(--color-bg-muted);
-	}
-	.select-err {
-		border-color: var(--color-danger-500);
-	}
-
-	/* Checkbox / Radio */
-	.checkbox {
-		@apply size-4 cursor-pointer rounded;
-		@apply focus:outline-none focus:ring-2 focus:ring-offset-1;
-		@apply disabled:cursor-not-allowed disabled:opacity-60;
-		border: 1px solid var(--color-border-strong);
-		accent-color: var(--color-primary-600);
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
-		--tw-ring-offset-color: var(--color-bg);
-	}
-	.checkbox-err {
-		border-color: var(--color-danger-500);
-	}
+	/* Checkbox / Radio — small square/round controls. Native `accent-color`
+	 * does the colored fill once checked. */
+	.checkbox,
 	.radio {
-		@apply size-4 cursor-pointer rounded-full;
-		@apply focus:outline-none focus:ring-2 focus:ring-offset-1;
+		@apply size-4 cursor-pointer;
 		@apply disabled:cursor-not-allowed disabled:opacity-60;
 		border: 1px solid var(--color-border-strong);
 		accent-color: var(--color-primary-600);
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
-		--tw-ring-offset-color: var(--color-bg);
+		transition: box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.radio-err {
-		border-color: var(--color-danger-500);
-	}
+	.checkbox { border-radius: var(--ui-radius-sm); }
+	.radio { border-radius: var(--ui-radius-full); }
+	.checkbox:focus-visible,
+	.radio:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.checkbox-err,
+	.radio-err { border-color: var(--color-danger-500); }
 
 	/* Switch */
 	.switch {
 		@apply relative inline-flex h-5 w-9 shrink-0 cursor-pointer appearance-none rounded-full;
-		@apply transition-colors duration-150 ease-out;
-		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
 		@apply disabled:cursor-not-allowed disabled:opacity-60;
 		background-color: var(--color-border-strong);
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
-		--tw-ring-offset-color: var(--color-bg);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.switch:checked {
-		background-color: var(--color-primary-600);
-	}
+	.switch:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.switch:checked { background-color: var(--color-primary-600); }
 	.switch::before {
 		content: '';
 		@apply absolute left-0.5 top-0.5 size-4 rounded-full;
-		@apply transition-transform duration-150 ease-out;
 		background-color: white;
+		transition: transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.switch:checked::before {
-		transform: translateX(1rem);
-	}
+	.switch:checked::before { transform: translateX(1rem); }
 
 	/* ============================================================ */
 	/* Field                                                        */
 	/* ============================================================ */
-	.field {
-		@apply flex flex-col;
-	}
+	.field { @apply flex flex-col; }
 	.field-label {
 		@apply mb-1 block text-sm font-medium;
 		color: var(--color-fg);
@@ -351,9 +373,7 @@
 		@apply mt-1 text-xs;
 		color: var(--color-danger-600);
 	}
-	.field-row {
-		@apply flex items-center gap-2;
-	}
+	.field-row { @apply flex items-center gap-2; }
 
 	.field-group {
 		@apply space-y-3 p-4;
@@ -365,31 +385,37 @@
 		color: var(--color-fg);
 	}
 
-	/* Form */
-	.form {
-		@apply space-y-4;
-	}
+	.form { @apply space-y-4; }
 
 	/* ============================================================ */
 	/* Dialog                                                       */
 	/* ============================================================ */
 	.dialog-overlay {
-		@apply fixed inset-0 z-50 backdrop-blur-sm opacity-0 transition-opacity duration-150;
+		@apply fixed inset-0 z-50 backdrop-blur-sm;
 		background-color: oklch(0% 0 0 / 0.5);
+		opacity: 0;
+		transition: opacity var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.dialog-overlay[data-state='open'] {
-		@apply opacity-100;
-	}
+	.dialog-overlay[data-state='open'] { opacity: 1; }
+
 	.dialog-content {
-		@apply fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 p-6;
-		@apply opacity-0 scale-95 transition duration-150 shadow-xl;
-		background-color: var(--color-bg-elevated);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border);
+		/* Centered via translate longhand so it doesn't compose with the
+		 * scale animation below. Tailwind v4 emits `translate:` for its
+		 * `-translate-x-*` utilities; mixing them with `transform:` here
+		 * would double the offset. */
+		@apply fixed left-1/2 top-1/2 z-50 w-full max-w-lg p-6;
+		translate: -50% -50%;
+		/* base surface comes from `.surface-elevated` selector list */
 		border-radius: var(--ui-radius-lg);
+		box-shadow: var(--ui-elev-3);
+		opacity: 0;
+		scale: 0.96;
+		transition: opacity var(--ui-motion-fast) var(--ui-motion-ease),
+			scale var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.dialog-content[data-state='open'] {
-		@apply opacity-100 scale-100;
+		opacity: 1;
+		scale: 1;
 	}
 	.dialog-title {
 		@apply text-lg font-semibold leading-tight tracking-tight;
@@ -399,92 +425,75 @@
 		@apply mt-1 text-sm;
 		color: var(--color-fg-muted);
 	}
-	.dialog-body {
-		@apply mt-4;
-	}
-	.dialog-actions {
-		@apply mt-6 flex items-center justify-end gap-2;
-	}
-	.dialog-close {
-		@apply absolute right-3 top-3 inline-flex size-7 items-center justify-center rounded-md;
-		@apply focus-visible:outline-none focus-visible:ring-2;
-		color: var(--color-fg-muted);
-		--tw-ring-color: var(--color-ring);
-	}
-	.dialog-close:hover {
-		background-color: var(--color-bg-muted);
-		color: var(--color-fg);
-	}
+	.dialog-body { @apply mt-4; }
+	.dialog-actions { @apply mt-6 flex items-center justify-end gap-2; }
+	.dialog-close { @apply absolute right-3 top-3; }
 
 	/* ============================================================ */
-	/* Sheet                                                        */
+	/* Sheet (and Drawer, which is just Sheet with side="left")     */
 	/* ============================================================ */
 	.sheet-content {
-		@apply fixed z-50 transition-transform duration-200 ease-out shadow-xl;
+		@apply fixed z-50 p-6;
 		background-color: var(--color-bg-elevated);
 		color: var(--color-fg);
 		border: 1px solid var(--color-border);
+		box-shadow: var(--ui-elev-3);
+		/* Same precaution as `.dialog-content`: drive the slide via the
+		 * `translate:` longhand and avoid mixing with `transform:` so they
+		 * don't compose. */
+		transition: translate var(--ui-motion-med) var(--ui-motion-ease);
 	}
-	.sheet-right {
-		@apply right-0 top-0 h-full w-full max-w-md translate-x-full p-6;
-	}
-	.sheet-right[data-state='open'] {
-		@apply translate-x-0;
-	}
-	.sheet-left {
-		@apply left-0 top-0 h-full w-full max-w-md -translate-x-full p-6;
-	}
-	.sheet-left[data-state='open'] {
-		@apply translate-x-0;
-	}
-	.sheet-top {
-		@apply left-0 top-0 w-full -translate-y-full p-6;
-	}
-	.sheet-top[data-state='open'] {
-		@apply translate-y-0;
-	}
-	.sheet-bottom {
-		@apply bottom-0 left-0 w-full translate-y-full p-6;
-	}
-	.sheet-bottom[data-state='open'] {
-		@apply translate-y-0;
-	}
-	.sheet-body {
-		@apply mt-4;
-	}
+	.sheet-right  { @apply right-0 top-0 h-full w-full max-w-md;  translate: 100% 0; }
+	.sheet-left   { @apply left-0 top-0 h-full w-full max-w-md;   translate: -100% 0; }
+	.sheet-top    { @apply left-0 top-0 w-full;                   translate: 0 -100%; }
+	.sheet-bottom { @apply bottom-0 left-0 w-full;                translate: 0 100%; }
+	.sheet-right[data-state='open'],
+	.sheet-left[data-state='open'],
+	.sheet-top[data-state='open'],
+	.sheet-bottom[data-state='open'] { translate: 0 0; }
+	.sheet-body { @apply mt-4; }
 
 	/* ============================================================ */
-	/* Popover / Dropdown / Tooltip                                 */
+	/* Popover / Dropdown / Tooltip — all surface-elevated          */
 	/* ============================================================ */
 	.popover-content {
-		@apply z-50 p-3 text-sm shadow-md;
-		@apply opacity-0 scale-95 transition duration-150;
-		background-color: var(--color-bg-elevated);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border);
-		border-radius: var(--ui-radius);
+		@apply z-50 p-3 text-sm;
+		/* base surface comes from `.surface-elevated` selector list */
+		opacity: 0;
+		transform: scale(0.96);
+		transition: opacity var(--ui-motion-fast) var(--ui-motion-ease),
+			transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.popover-content[data-state='open'] {
-		@apply opacity-100 scale-100;
+		opacity: 1;
+		transform: scale(1);
 	}
 
 	.dropdown-content {
-		@apply z-50 min-w-[8rem] p-1 text-sm shadow-md;
-		@apply opacity-0 scale-95 transition duration-150;
-		background-color: var(--color-bg-elevated);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border);
-		border-radius: var(--ui-radius);
+		@apply z-50 text-sm;
+		/* base surface comes from `.surface-elevated` selector list */
+		min-width: 8rem;
+		padding: 0.25rem;
+		opacity: 0;
+		transform: scale(0.96);
+		transition: opacity var(--ui-motion-fast) var(--ui-motion-ease),
+			transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.dropdown-content[data-state='open'] {
-		@apply opacity-100 scale-100;
+		opacity: 1;
+		transform: scale(1);
 	}
 	.dropdown-item {
-		@apply flex cursor-pointer select-none items-center px-2 py-1.5 text-sm outline-none rounded-sm;
+		@apply flex cursor-pointer select-none items-center gap-2 px-2 py-1.5 text-sm outline-none;
 		color: var(--color-fg);
+		border-radius: var(--ui-radius-sm);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.dropdown-item[data-highlighted] {
+	.dropdown-item:hover:not([data-disabled]),
+	.dropdown-item:focus-visible,
+	.dropdown-item[data-active='true'] {
 		background-color: var(--color-bg-muted);
+		outline: none;
 	}
 	.dropdown-item[data-disabled] {
 		@apply cursor-not-allowed opacity-50;
@@ -495,23 +504,29 @@
 	}
 
 	.tooltip-content {
-		@apply z-50 overflow-hidden px-2 py-1 text-xs shadow-md;
-		@apply opacity-0 scale-95 transition duration-150;
+		@apply z-50 px-2 py-1 text-xs;
 		background-color: var(--color-bg-inverse);
 		color: var(--color-bg);
 		border-radius: var(--ui-radius-sm);
+		box-shadow: var(--ui-elev-2);
+		opacity: 0;
+		transform: scale(0.96);
+		transition: opacity var(--ui-motion-fast) var(--ui-motion-ease),
+			transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.tooltip-content[data-state='delayed-open'],
-	.tooltip-content[data-state='instant-open'] {
-		@apply opacity-100 scale-100;
+	.tooltip-content[data-state='open'] {
+		opacity: 1;
+		transform: scale(1);
+	}
+	/* `.tooltip-rich` is in the `.surface-elevated` selector list above. */
+	.tooltip-rich {
+		@apply p-3 text-sm max-w-xs;
 	}
 
 	/* ============================================================ */
 	/* Tabs                                                         */
 	/* ============================================================ */
-	.tabs-root {
-		@apply space-y-3;
-	}
+	.tabs-root { @apply space-y-3; }
 	.tabs-list {
 		@apply inline-flex h-9 items-center justify-center p-1;
 		background-color: var(--color-bg-muted);
@@ -519,19 +534,23 @@
 		border-radius: var(--ui-radius);
 	}
 	.tabs-trigger {
-		@apply inline-flex items-center justify-center whitespace-nowrap px-3 py-1 text-sm font-medium rounded-sm;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
+		@apply inline-flex items-center justify-center whitespace-nowrap px-3 py-1 text-sm font-medium;
 		@apply disabled:cursor-not-allowed disabled:opacity-50;
 		color: var(--color-fg-muted);
-		--tw-ring-color: var(--color-ring);
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		border-radius: var(--ui-radius-sm);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
+	.tabs-trigger:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.tabs-trigger[aria-selected='true'],
 	.tabs-trigger[data-state='active'] {
 		background-color: var(--color-bg-elevated);
 		color: var(--color-fg);
 	}
-	.tabs-content {
-		@apply focus-visible:outline-none;
-	}
+	.tabs-content:focus-visible { outline: none; }
 
 	/* ============================================================ */
 	/* Toast                                                        */
@@ -540,22 +559,13 @@
 		@apply pointer-events-none fixed bottom-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2;
 	}
 	.toast {
-		@apply pointer-events-auto flex items-start gap-3 p-3 shadow-md;
-		background-color: var(--color-bg-elevated);
-		color: var(--color-fg);
-		border: 1px solid var(--color-border);
-		border-radius: var(--ui-radius);
-		animation: norns-toast-in 200ms ease-out;
+		@apply pointer-events-auto flex items-start gap-3 p-3;
+		/* base surface comes from `.surface-elevated` selector list */
+		animation: norns-toast-in var(--ui-motion-med) var(--ui-motion-ease);
 	}
 	@keyframes norns-toast-in {
-		from {
-			opacity: 0;
-			transform: translateX(1rem);
-		}
-		to {
-			opacity: 1;
-			transform: translateX(0);
-		}
+		from { opacity: 0; transform: translateX(1rem); }
+		to { opacity: 1; transform: translateX(0); }
 	}
 	.toast-info {
 		background-color: var(--color-info-bg);
@@ -577,22 +587,16 @@
 		color: var(--color-danger-fg);
 		border-color: var(--color-danger-border);
 	}
-	.toast-message {
-		@apply flex-1 text-sm leading-snug;
-	}
+	.toast-message { @apply flex-1 text-sm leading-snug; }
 	.toast-close {
-		@apply -mr-1 -mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded;
-		@apply focus-visible:outline-none focus-visible:ring-2;
+		@apply -mr-1 -mt-0.5;
 		color: currentColor;
 		opacity: 0.6;
-		--tw-ring-color: var(--color-ring);
 	}
-	.toast-close:hover {
-		opacity: 1;
-	}
+	.toast-close:hover { opacity: 1; background-color: transparent; color: currentColor; }
 
 	/* ============================================================ */
-	/* Card / Surface                                               */
+	/* Surface / Card                                                */
 	/* ============================================================ */
 	.surface {
 		background-color: var(--color-bg-elevated);
@@ -610,21 +614,15 @@
 		color: var(--color-fg);
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius-lg);
-		/* No overflow:hidden — would clip popovers / menu dropdowns inside.
-		 * Header & footer round their own corners explicitly. */
 	}
-	.card-padded {
-		@apply p-5;
-	}
+	.card-padded { @apply p-5; }
 	.card-header {
 		@apply px-5 pt-5 pb-3;
 		border-bottom: 1px solid var(--color-border);
 		border-top-left-radius: var(--ui-radius-lg);
 		border-top-right-radius: var(--ui-radius-lg);
 	}
-	.card-body {
-		@apply p-5;
-	}
+	.card-body { @apply p-5; }
 	.card-footer {
 		@apply px-5 py-3;
 		border-top: 1px solid var(--color-border);
@@ -635,16 +633,18 @@
 	.card-interactive {
 		@apply cursor-pointer no-underline;
 		color: inherit;
-		transition: border-color 150ms ease-out, transform 150ms ease-out, box-shadow 150ms ease-out;
+		transition: border-color var(--ui-motion-fast) var(--ui-motion-ease),
+			transform var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.card-interactive:hover {
 		border-color: var(--color-border-strong);
 		transform: translateY(-2px);
-		box-shadow: 0 12px 24px -8px oklch(0% 0 0 / 0.10);
+		box-shadow: var(--ui-elev-2);
 	}
 	.card-interactive:focus-visible {
-		outline: 2px solid var(--color-ring);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: var(--ui-focus-ring);
 	}
 
 	/* ============================================================ */
@@ -654,17 +654,11 @@
 		@apply flex items-start gap-3 p-3 text-sm;
 		border: 1px solid;
 		border-radius: var(--ui-radius);
-		animation: norns-banner-in 250ms cubic-bezier(0.21, 1.02, 0.73, 1) both;
+		animation: norns-banner-in var(--ui-motion-med) var(--ui-motion-ease) both;
 	}
 	@keyframes norns-banner-in {
-		from {
-			opacity: 0;
-			transform: translateY(-4px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
+		from { opacity: 0; transform: translateY(-4px); }
+		to { opacity: 1; transform: translateY(0); }
 	}
 	.banner-info {
 		background-color: var(--color-info-bg);
@@ -686,18 +680,12 @@
 		color: var(--color-danger-fg);
 		border-color: var(--color-danger-border);
 	}
-	.banner-icon {
-		@apply shrink-0 mt-0.5;
-	}
-	.banner-body {
-		@apply flex-1;
-	}
-	.banner-actions {
-		@apply shrink-0 flex gap-2 ml-auto;
-	}
+	.banner-icon { @apply shrink-0 mt-0.5; }
+	.banner-body { @apply flex-1; }
+	.banner-actions { @apply shrink-0 flex gap-2 ml-auto; }
 
 	/* ============================================================ */
-	/* Badge                                                        */
+	/* Badge / Chip                                                 */
 	/* ============================================================ */
 	.badge {
 		@apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium leading-none;
@@ -713,29 +701,12 @@
 		background-color: var(--color-primary-950);
 		color: var(--color-primary-200);
 	}
-	.badge-success {
-		background-color: var(--color-success-bg);
-		color: var(--color-success-fg);
-	}
-	.badge-warning {
-		background-color: var(--color-warning-bg);
-		color: var(--color-warning-fg);
-	}
-	.badge-danger {
-		background-color: var(--color-danger-bg);
-		color: var(--color-danger-fg);
-	}
-	.badge-info {
-		background-color: var(--color-info-bg);
-		color: var(--color-info-fg);
-	}
-	.badge-sm {
-		@apply text-[10px] px-1.5;
-	}
+	.badge-success { background-color: var(--color-success-bg); color: var(--color-success-fg); }
+	.badge-warning { background-color: var(--color-warning-bg); color: var(--color-warning-fg); }
+	.badge-danger  { background-color: var(--color-danger-bg);  color: var(--color-danger-fg); }
+	.badge-info    { background-color: var(--color-info-bg);    color: var(--color-info-fg); }
+	.badge-sm { @apply text-[10px] px-1.5; }
 
-	/* ============================================================ */
-	/* Chip                                                         */
-	/* ============================================================ */
 	.chip {
 		@apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium;
 		background-color: var(--color-bg-muted);
@@ -746,14 +717,16 @@
 	.chip-remove {
 		@apply -mr-1 inline-flex size-4 items-center justify-center rounded-full;
 		opacity: 0.6;
+		transition: opacity var(--ui-motion-fast) var(--ui-motion-ease),
+			background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.chip-remove:hover {
 		opacity: 1;
-		background-color: var(--color-border);
+		background-color: var(--color-bg-muted);
 	}
 
 	/* ============================================================ */
-	/* Avatar                                                       */
+	/* Avatar                                                        */
 	/* ============================================================ */
 	.avatar {
 		@apply relative inline-flex shrink-0 items-center justify-center overflow-hidden font-medium;
@@ -761,48 +734,35 @@
 		color: var(--color-fg);
 		border-radius: var(--ui-radius-full);
 	}
-	.avatar-sm {
-		@apply size-6 text-xs;
-	}
-	.avatar-md {
-		@apply size-8 text-sm;
-	}
-	.avatar-lg {
-		@apply size-12 text-base;
-	}
-	.avatar-xl {
-		@apply size-16 text-lg;
-	}
-	.avatar img {
-		@apply h-full w-full object-cover;
-	}
+	.avatar-sm { @apply size-6 text-xs; }
+	.avatar-md { @apply size-8 text-sm; }
+	.avatar-lg { @apply size-12 text-base; }
+	.avatar-xl { @apply size-16 text-lg; }
+	.avatar img { @apply h-full w-full object-cover; }
 
-	/* AvatarGroup */
-	.avatar-group {
-		@apply inline-flex items-center;
-	}
+	.avatar-group { @apply inline-flex items-center; }
 	.avatar-group-item,
 	.avatar-group-overflow {
-		@apply relative inline-flex transition-transform duration-150 ease-out;
+		@apply relative inline-flex;
 		margin-left: -0.5rem;
 		box-shadow: 0 0 0 2px var(--color-bg);
 		border-radius: var(--ui-radius-full);
+		transition: transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.avatar-group-item:first-child,
 	.avatar-group:has(.avatar-group-item:first-child) > .avatar-group-item:first-child {
 		margin-left: 0;
 	}
-	.avatar-group-item:hover {
-		transform: translateY(-2px);
-		z-index: 1;
-	}
+	.avatar-group-item:hover { transform: translateY(-2px); z-index: 1; }
 	.avatar-group-overflow {
 		@apply text-xs font-medium;
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg-muted);
 	}
 
-	/* GradientText */
+	/* ============================================================ */
+	/* Decorative buttons (CSS-only motion)                         */
+	/* ============================================================ */
 	.gradient-text {
 		background-clip: text;
 		-webkit-background-clip: text;
@@ -810,29 +770,20 @@
 		background-size: 200% 200%;
 		background-position: 0% 50%;
 	}
-	.gradient-text-anim {
-		animation: norns-gradient-shift 6s ease-in-out infinite;
-	}
+	.gradient-text-anim { animation: norns-gradient-shift 6s ease-in-out infinite; }
 	@keyframes norns-gradient-shift {
 		0%, 100% { background-position: 0% 50%; }
 		50% { background-position: 100% 50%; }
 	}
 
-	/* CopyButton */
-	.copy-btn-check {
-		animation: norns-copy-pop 250ms ease-out;
-	}
+	.copy-btn-check { animation: norns-copy-pop 250ms ease-out; }
 	@keyframes norns-copy-pop {
 		0% { transform: scale(0.5); opacity: 0; }
 		70% { transform: scale(1.15); }
 		100% { transform: scale(1); opacity: 1; }
 	}
 
-	/* ShinyButton — sweeping shine overlay */
-	.shiny-btn {
-		position: relative;
-		isolation: isolate;
-	}
+	.shiny-btn { position: relative; isolation: isolate; }
 	.shiny-btn-shine {
 		position: absolute;
 		inset: 0;
@@ -854,33 +805,21 @@
 		100% { background-position: -150% 0; }
 	}
 
-	/* RippleButton */
-	.ripple-btn {
-		position: relative;
-		overflow: hidden;
-	}
+	.ripple-btn { position: relative; overflow: hidden; }
 	.ripple-btn-ripple {
 		position: absolute;
 		pointer-events: none;
-		border-radius: 9999px;
+		border-radius: var(--ui-radius-full);
 		background-color: color-mix(in oklab, currentColor 35%, transparent);
 		transform: scale(0);
 		opacity: 0.6;
 		animation: norns-ripple 600ms ease-out forwards;
 	}
 	@keyframes norns-ripple {
-		to {
-			transform: scale(1);
-			opacity: 0;
-		}
+		to { transform: scale(1); opacity: 0; }
 	}
 
-	/* LiquidButton (motion subpath) */
-	.liquid-btn {
-		position: relative;
-		isolation: isolate;
-		overflow: hidden;
-	}
+	.liquid-btn { position: relative; isolation: isolate; overflow: hidden; }
 	.liquid-btn-blob {
 		position: absolute;
 		inset: -25%;
@@ -900,17 +839,12 @@
 		z-index: 1;
 	}
 
-	/* Sparkles (motion subpath) */
-	.sparkles-wrap {
-		@apply relative inline-block;
-	}
-	.sparkles-overlay {
-		@apply pointer-events-none absolute inset-0 overflow-hidden;
-	}
+	.sparkles-wrap { @apply relative inline-block; }
+	.sparkles-overlay { @apply pointer-events-none absolute inset-0 overflow-hidden; }
 	.sparkle {
 		position: absolute;
 		display: block;
-		border-radius: 9999px;
+		border-radius: var(--ui-radius-full);
 		background: var(--sparkle-color, var(--color-primary-400));
 		opacity: 0;
 		transform: scale(0);
@@ -918,16 +852,13 @@
 		animation-fill-mode: forwards;
 		filter: drop-shadow(0 0 4px var(--sparkle-color, var(--color-primary-400)));
 	}
-	.sparkles-paused .sparkle {
-		animation-play-state: paused;
-	}
+	.sparkles-paused .sparkle { animation-play-state: paused; }
 	@keyframes norns-sparkle {
 		0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
 		20%, 80% { opacity: 1; }
 		50% { transform: scale(1) rotate(180deg); }
 	}
 
-	/* GradientBackground (motion subpath) */
 	.gradient-bg {
 		@apply relative overflow-hidden;
 		background-image: linear-gradient(
@@ -945,7 +876,7 @@
 	}
 
 	/* ============================================================ */
-	/* Skeleton                                                     */
+	/* Skeleton / Progress                                          */
 	/* ============================================================ */
 	.skeleton {
 		@apply block;
@@ -953,38 +884,26 @@
 		border-radius: var(--ui-radius-sm);
 		animation: norns-skeleton-pulse 1.6s ease-in-out infinite;
 	}
-	.skeleton-circle {
-		border-radius: var(--ui-radius-full);
-	}
+	.skeleton-circle { border-radius: var(--ui-radius-full); }
 	@keyframes norns-skeleton-pulse {
 		0%, 100% { opacity: 1; }
 		50% { opacity: 0.5; }
 	}
 
-	/* ============================================================ */
-	/* Progress                                                     */
-	/* ============================================================ */
 	.progress {
 		@apply relative h-2 w-full overflow-hidden;
 		background-color: var(--color-bg-muted);
 		border-radius: var(--ui-radius-full);
 	}
 	.progress-bar {
-		@apply h-full transition-[width] duration-300 ease-out;
+		@apply h-full;
 		background-color: var(--color-primary-600);
 		border-radius: var(--ui-radius-full);
+		transition: width var(--ui-motion-slow) var(--ui-motion-ease);
 	}
-	.progress-bar-success {
-		background-color: var(--color-success-600);
-	}
-	.progress-bar-warning {
-		background-color: var(--color-warning-600);
-	}
-	.progress-bar-danger {
-		background-color: var(--color-danger-600);
-	}
-
-	/* Indeterminate (uses CSS keyframes only) */
+	.progress-bar-success { background-color: var(--color-success-600); }
+	.progress-bar-warning { background-color: var(--color-warning-600); }
+	.progress-bar-danger  { background-color: var(--color-danger-600); }
 	.progress-indeterminate .progress-bar {
 		width: 35%;
 		animation: norns-progress-indeterminate 1.4s ease-in-out infinite;
@@ -995,7 +914,7 @@
 	}
 
 	/* ============================================================ */
-	/* Header (composite)                                           */
+	/* Header / Hero / Stepper / Breadcrumbs / Pagination           */
 	/* ============================================================ */
 	.norns-header {
 		@apply flex items-center justify-between gap-4 px-6 py-3;
@@ -1011,25 +930,16 @@
 		@apply flex items-center gap-2 font-semibold;
 		color: var(--color-fg);
 	}
-	.norns-header-nav {
-		@apply flex items-center gap-1;
-	}
-	.norns-header-actions {
-		@apply flex items-center gap-2;
-	}
+	.norns-header-nav { @apply flex items-center gap-1; }
+	.norns-header-actions { @apply flex items-center gap-2; }
 
-	/* ============================================================ */
-	/* HeroBanner (composite)                                       */
-	/* ============================================================ */
 	.hero {
 		@apply relative overflow-hidden p-8 md:p-12;
 		background-color: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius-lg);
 	}
-	.hero-center {
-		@apply text-center;
-	}
+	.hero-center { @apply text-center; }
 	.hero-title {
 		@apply text-3xl font-bold tracking-tight md:text-4xl;
 		color: var(--color-fg);
@@ -1038,41 +948,26 @@
 		@apply mt-3 text-base md:text-lg max-w-prose;
 		color: var(--color-fg-muted);
 	}
-	.hero-center .hero-description {
-		@apply mx-auto;
-	}
-	.hero-actions {
-		@apply mt-6 flex flex-wrap items-center gap-3;
-	}
-	.hero-center .hero-actions {
-		@apply justify-center;
-	}
+	.hero-center .hero-description { @apply mx-auto; }
+	.hero-actions { @apply mt-6 flex flex-wrap items-center gap-3; }
+	.hero-center .hero-actions { @apply justify-center; }
 	.hero-image {
 		@apply pointer-events-none absolute inset-y-0 right-0 w-1/2 object-cover opacity-20;
 	}
 
-	/* ============================================================ */
-	/* Stepper                                                      */
-	/* ============================================================ */
-	.stepper {
-		@apply flex items-center gap-3;
-	}
-	.stepper-vertical {
-		@apply flex-col items-stretch;
-	}
+	.stepper { @apply flex items-center gap-3; }
+	.stepper-vertical { @apply flex-col items-stretch; }
 	.stepper-step {
 		@apply flex items-center gap-2 text-sm;
 		color: var(--color-fg-muted);
 	}
-	.stepper-step-current {
-		color: var(--color-fg);
-		font-weight: 600;
-	}
-	.stepper-step-complete {
-		color: var(--color-fg);
-	}
+	.stepper-step-current { color: var(--color-fg); font-weight: 600; }
+	.stepper-step-complete { color: var(--color-fg); }
 	.stepper-marker {
-		@apply inline-flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold;
+		@apply inline-flex shrink-0 items-center justify-center text-xs font-semibold;
+		width: var(--ui-icon-btn-md);
+		height: var(--ui-icon-btn-md);
+		border-radius: var(--ui-radius-full);
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg-muted);
 		border: 1px solid var(--color-border);
@@ -1087,145 +982,126 @@
 		color: white;
 		border-color: var(--color-success-600);
 	}
-	.stepper-divider {
-		@apply h-px flex-1;
-		background-color: var(--color-border);
-	}
-	.stepper-vertical .stepper-divider {
-		@apply h-6 w-px ml-3;
-	}
+	.stepper-divider { @apply h-px flex-1; background-color: var(--color-border); }
+	.stepper-vertical .stepper-divider { @apply h-6 w-px ml-3; }
 
-	/* ============================================================ */
-	/* Breadcrumbs                                                  */
-	/* ============================================================ */
 	.breadcrumbs {
 		@apply flex items-center gap-1 text-sm;
 		color: var(--color-fg-muted);
 	}
-	.breadcrumb-item {
-		@apply inline-flex items-center gap-1;
-	}
-	.breadcrumb-link {
-		color: var(--color-fg-muted);
-	}
-	.breadcrumb-link:hover {
-		color: var(--color-fg);
-	}
-	.breadcrumb-current {
-		color: var(--color-fg);
-		font-weight: 500;
-	}
+	.breadcrumb-item { @apply inline-flex items-center gap-1; }
+	.breadcrumb-link { color: var(--color-fg-muted); }
+	.breadcrumb-link:hover { color: var(--color-fg); }
+	.breadcrumb-current { color: var(--color-fg); font-weight: 500; }
 	.breadcrumb-separator {
 		@apply mx-1 select-none;
 		color: var(--color-fg-subtle);
 	}
 
-	/* ============================================================ */
-	/* Pagination                                                   */
-	/* ============================================================ */
-	.pagination {
-		@apply inline-flex items-center gap-1;
-	}
+	.pagination { @apply inline-flex items-center gap-1; }
 	.pagination-item {
-		@apply inline-flex size-8 items-center justify-center text-sm;
-		color: var(--color-fg-muted);
-		border-radius: var(--ui-radius-sm);
+		/* base + hover come from `.btn-icon` selector list above. The pagination
+		 * variant is full-md icon-button size (8x8 in original), so override
+		 * the small default. */
+		width: var(--ui-icon-btn-md);
+		height: var(--ui-icon-btn-md);
 	}
-	.pagination-item:hover {
-		background-color: var(--color-bg-muted);
-		color: var(--color-fg);
-	}
-	.pagination-item-active {
-		background-color: var(--color-primary-600);
-		color: white;
-	}
+	.pagination-item-active,
 	.pagination-item-active:hover {
-		background-color: var(--color-primary-700);
+		background-color: var(--color-primary-600);
 		color: white;
 	}
 	.pagination-item:disabled {
 		@apply cursor-not-allowed opacity-40;
 	}
 	.pagination-ellipsis {
-		@apply inline-flex size-8 items-center justify-center text-sm select-none;
+		@apply inline-flex items-center justify-center text-sm select-none;
+		width: var(--ui-icon-btn-md);
+		height: var(--ui-icon-btn-md);
 		color: var(--color-fg-subtle);
 	}
 
 	/* ============================================================ */
-	/* Accordion                                                    */
+	/* Accordion / Collapsible — both built on <details>            */
 	/* ============================================================ */
 	.accordion {
-		@apply divide-y;
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 	}
-	.accordion :where(.divide-y) > * {
-		border-color: var(--color-border);
-	}
-	.accordion-item {
-		border-bottom: 1px solid var(--color-border);
-	}
-	.accordion-item:last-child {
-		border-bottom: none;
-	}
+	.accordion-item { border-bottom: 1px solid var(--color-border); }
+	.accordion-item:last-child { border-bottom: none; }
 	.accordion-trigger {
-		@apply flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-medium;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
+		@apply flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-medium cursor-pointer;
 		color: var(--color-fg);
-		background-color: transparent;
-		--tw-ring-color: var(--color-ring);
+		background: transparent;
+		list-style: none;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.accordion-trigger:hover {
-		background-color: var(--color-bg-muted);
-	}
-	.accordion-trigger[data-state='open'] .accordion-chevron {
+	.accordion-trigger::-webkit-details-marker { display: none; }
+	.accordion-trigger:hover { background-color: var(--color-bg-muted); }
+	.accordion-trigger:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.accordion-item[open] > .accordion-trigger > .accordion-chevron {
 		transform: rotate(180deg);
 	}
 	.accordion-chevron {
-		@apply size-4 shrink-0 transition-transform duration-150;
+		@apply size-4 shrink-0;
 		color: var(--color-fg-muted);
+		transition: transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.accordion-content {
 		@apply px-4 pb-3 text-sm;
 		color: var(--color-fg-muted);
 	}
 
-	/* ============================================================ */
-	/* Separator                                                    */
-	/* ============================================================ */
-	.separator {
-		background-color: var(--color-border);
+	.collapsible {
+		border: 1px solid var(--color-border);
+		border-radius: var(--ui-radius);
+		background-color: var(--color-bg-elevated);
 	}
-	.separator-horizontal {
-		@apply h-px w-full;
+	.collapsible-trigger {
+		@apply flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium cursor-pointer;
+		color: var(--color-fg);
+		background: transparent;
+		list-style: none;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.separator-vertical {
-		@apply w-px h-full self-stretch;
+	.collapsible-trigger::-webkit-details-marker { display: none; }
+	.collapsible-trigger:hover { background-color: var(--color-bg-muted); }
+	.collapsible-trigger:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.collapsible[open] > .collapsible-trigger > .collapsible-chevron {
+		transform: rotate(90deg);
+	}
+	.collapsible-chevron {
+		@apply size-4 shrink-0;
+		color: var(--color-fg-muted);
+		transition: transform var(--ui-motion-fast) var(--ui-motion-ease);
+	}
+	.collapsible-title { @apply flex-1; }
+	.collapsible-content {
+		@apply px-3 pb-3 pt-1 text-sm;
+		color: var(--color-fg-muted);
 	}
 
 	/* ============================================================ */
-	/* Toolbar                                                      */
+	/* Separator / Toolbar                                          */
 	/* ============================================================ */
+	.separator { background-color: var(--color-border); }
+	.separator-horizontal { @apply h-px w-full; }
+	.separator-vertical { @apply w-px h-full self-stretch; }
+
 	.toolbar {
 		@apply flex items-center gap-1 p-1;
 		background-color: var(--color-bg-muted);
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 	}
-	.toolbar-vertical {
-		@apply flex-col items-stretch;
-	}
+	.toolbar-vertical { @apply flex-col items-stretch; }
 
 	/* ============================================================ */
-	/* ButtonGroup                                                  */
+	/* ButtonGroup — covers `.btn`, `.btn-secondary[data-pressed]`  */
 	/* ============================================================ */
-	.btn-group {
-		@apply inline-flex;
-	}
-	.btn-group > .btn,
-	.btn-group > .toggle-btn {
-		border-radius: 0;
-	}
+	.btn-group { @apply inline-flex; }
+	.btn-group > * { border-radius: 0; }
 	.btn-group > :first-child {
 		border-top-left-radius: var(--ui-radius);
 		border-bottom-left-radius: var(--ui-radius);
@@ -1234,95 +1110,19 @@
 		border-top-right-radius: var(--ui-radius);
 		border-bottom-right-radius: var(--ui-radius);
 	}
-	.btn-group > * + * {
-		margin-left: -1px;
-	}
-	.btn-group-vertical {
-		@apply flex-col;
-	}
-	.btn-group-vertical > * {
-		width: 100%;
-	}
+	.btn-group > * + * { margin-left: -1px; }
+
+	.btn-group-vertical { @apply flex-col; }
+	.btn-group-vertical > * { width: 100%; border-radius: 0; }
 	.btn-group-vertical > :first-child {
-		border-radius: 0;
 		border-top-left-radius: var(--ui-radius);
 		border-top-right-radius: var(--ui-radius);
 	}
 	.btn-group-vertical > :last-child {
-		border-radius: 0;
 		border-bottom-left-radius: var(--ui-radius);
 		border-bottom-right-radius: var(--ui-radius);
 	}
-	.btn-group-vertical > * + * {
-		margin-left: 0;
-		margin-top: -1px;
-	}
-
-	/* ============================================================ */
-	/* ToggleButton                                                 */
-	/* ============================================================ */
-	.toggle-btn {
-		@apply inline-flex items-center justify-center gap-1.5 text-sm font-medium;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
-		@apply disabled:cursor-not-allowed disabled:opacity-60;
-		height: var(--ui-h-md);
-		padding-inline: 0.625rem;
-		background-color: transparent;
-		color: var(--color-fg-muted);
-		border: 1px solid var(--color-border);
-		border-radius: var(--ui-radius);
-		--tw-ring-color: var(--color-ring);
-	}
-	.toggle-btn:hover {
-		background-color: var(--color-bg-muted);
-		color: var(--color-fg);
-	}
-	.toggle-btn[data-state='on'] {
-		background-color: var(--color-bg-muted);
-		color: var(--color-fg);
-		border-color: var(--color-border-strong);
-	}
-	.toggle-btn-sm {
-		height: var(--ui-h-sm);
-		@apply text-xs px-2;
-	}
-	.toggle-btn-lg {
-		height: var(--ui-h-lg);
-		@apply text-base px-3;
-	}
-
-	/* ============================================================ */
-	/* Collapsible                                                  */
-	/* ============================================================ */
-	.collapsible {
-		border: 1px solid var(--color-border);
-		border-radius: var(--ui-radius);
-		background-color: var(--color-bg-elevated);
-	}
-	.collapsible-trigger {
-		@apply flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
-		color: var(--color-fg);
-		background-color: transparent;
-		--tw-ring-color: var(--color-ring);
-	}
-	.collapsible-trigger:hover {
-		background-color: var(--color-bg-muted);
-	}
-	.collapsible-chevron {
-		@apply size-4 shrink-0 transition-transform duration-150;
-		color: var(--color-fg-muted);
-	}
-	.collapsible-chevron-open {
-		transform: rotate(90deg);
-	}
-	.collapsible-title {
-		@apply flex-1;
-	}
-	.collapsible-content {
-		@apply px-3 pb-3 pt-1 text-sm;
-		color: var(--color-fg-muted);
-	}
+	.btn-group-vertical > * + * { margin-left: 0; margin-top: -1px; }
 
 	/* ============================================================ */
 	/* NumberInput                                                  */
@@ -1335,15 +1135,22 @@
 		@apply text-center;
 		border-radius: 0;
 		min-width: 4rem;
+		-moz-appearance: textfield;
+	}
+	.number-input-field::-webkit-outer-spin-button,
+	.number-input-field::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
 	}
 	.number-step {
-		@apply inline-flex items-center justify-center px-2;
+		@apply inline-flex items-center justify-center px-2 cursor-pointer;
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg);
 		border: 1px solid var(--color-border-strong);
-		--tw-ring-color: var(--color-ring);
 		height: var(--ui-h-md);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
+	.number-step:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
 	.number-step:first-child {
 		border-top-left-radius: var(--ui-radius);
 		border-bottom-left-radius: var(--ui-radius);
@@ -1354,44 +1161,28 @@
 		border-bottom-right-radius: var(--ui-radius);
 		border-left: none;
 	}
-	.number-step:hover:not(:disabled) {
-		background-color: var(--color-bg-subtle);
-	}
-	.number-step:disabled {
-		@apply cursor-not-allowed opacity-40;
-	}
-	.number-input-field {
-		border-radius: 0;
-	}
-	/* Hide native spinners since we have our own buttons */
-	.number-input-field::-webkit-outer-spin-button,
-	.number-input-field::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-	.number-input-field {
-		-moz-appearance: textfield;
-	}
+	.number-step:hover:not(:disabled) { background-color: var(--color-bg-subtle); }
+	.number-step:disabled { @apply cursor-not-allowed opacity-40; }
 
 	/* ============================================================ */
 	/* OtpField                                                     */
 	/* ============================================================ */
-	.otp-field {
-		@apply inline-flex gap-2;
-	}
+	.otp-field { @apply inline-flex gap-2; }
 	.otp-cell {
 		@apply text-center font-mono text-lg;
-		@apply focus:outline-none focus:ring-2;
 		width: 2.75rem;
 		height: 3rem;
 		background-color: var(--color-bg);
 		color: var(--color-fg);
 		border: 1px solid var(--color-border-strong);
 		border-radius: var(--ui-radius);
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
+		transition: border-color var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.otp-cell:focus {
+	.otp-cell:focus-visible {
+		outline: none;
 		border-color: var(--color-ring);
+		box-shadow: var(--ui-focus-ring);
 	}
 
 	/* ============================================================ */
@@ -1399,44 +1190,40 @@
 	/* ============================================================ */
 	.tags-input {
 		@apply flex w-full flex-wrap items-center gap-1.5 px-2 py-1.5;
-		@apply transition-colors focus-within:ring-2;
 		min-height: var(--ui-h-md);
 		background-color: var(--color-bg);
 		color: var(--color-fg);
 		border: 1px solid var(--color-border-strong);
 		border-radius: var(--ui-radius);
-		--tw-ring-color: color-mix(in oklab, var(--color-ring) 30%, transparent);
+		transition: border-color var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
 	}
 	.tags-input:focus-within {
+		outline: none;
 		border-color: var(--color-ring);
+		box-shadow: var(--ui-focus-ring);
 	}
-	.tags-input-err {
-		border-color: var(--color-danger-500);
-	}
+	.tags-input-err { border-color: var(--color-danger-500); }
 	.tags-input-field {
 		@apply min-w-[6rem] flex-1 text-sm outline-none;
 		background: transparent;
 		color: var(--color-fg);
 	}
-	.tags-input-field::placeholder {
-		color: var(--color-fg-subtle);
-	}
+	.tags-input-field::placeholder { color: var(--color-fg-subtle); }
 
 	/* ============================================================ */
 	/* Timeline                                                     */
 	/* ============================================================ */
-	.timeline {
-		@apply list-none p-0 m-0 relative;
-	}
+	.timeline { @apply list-none p-0 m-0 relative; }
 	.timeline-item {
 		@apply relative grid pl-10 pb-6;
 		grid-template-columns: 1fr;
 	}
-	.timeline-item:last-child {
-		@apply pb-0;
-	}
+	.timeline-item:last-child { @apply pb-0; }
 	.timeline-dot {
-		@apply absolute left-0 inline-flex size-7 items-center justify-center rounded-full text-white;
+		@apply absolute left-0 inline-flex items-center justify-center rounded-full text-white;
+		width: var(--ui-icon-btn-md);
+		height: var(--ui-icon-btn-md);
 		background-color: var(--color-primary-600);
 		top: 0;
 	}
@@ -1451,85 +1238,94 @@
 		bottom: -0.5rem;
 		background-color: var(--color-border);
 	}
-	.timeline-time {
-		@apply text-xs;
-		color: var(--color-fg-subtle);
-	}
-	.timeline-title {
-		@apply text-sm font-semibold;
-		color: var(--color-fg);
-	}
-	.timeline-description {
-		@apply text-sm mt-0.5;
-		color: var(--color-fg-muted);
-	}
+	.timeline-time { @apply text-xs; color: var(--color-fg-subtle); }
+	.timeline-title { @apply text-sm font-semibold; color: var(--color-fg); }
+	.timeline-description { @apply text-sm mt-0.5; color: var(--color-fg-muted); }
 
 	/* ============================================================ */
 	/* Combobox / Autocomplete / MultiSelect                        */
+	/* (Listbox styling — uses dropdown-content + dropdown-item)    */
 	/* ============================================================ */
-	.combobox-input-wrap {
-		@apply relative inline-flex w-full items-stretch;
+	.combobox-input-wrap { @apply relative inline-flex w-full items-stretch; }
+	.combobox-trigger { @apply absolute right-1 top-1/2 -translate-y-1/2; }
+	/* Combobox-listbox is rendered with class="dropdown-content combobox-listbox"
+	 * so it inherits the elevated surface; this rule adds size constraints. */
+	.combobox-listbox {
+		max-height: 16rem;
+		overflow-y: auto;
+		min-width: 12rem;
 	}
-	.combobox-input {
-		@apply pr-9;
-	}
-	.combobox-trigger {
-		@apply absolute right-1 top-1/2 -translate-y-1/2 inline-flex size-7 items-center justify-center rounded;
+	.combobox-empty {
+		@apply px-2 py-1.5 text-sm;
 		color: var(--color-fg-muted);
 	}
-	.combobox-trigger:hover {
-		background-color: var(--color-bg-muted);
+
+	/* MultiSelect — uses `.tags-input` as the wrapper so selected chips
+	 * render inline with the typed input. The `.multi-select` modifier
+	 * makes the wrapper a click target that focuses the inner input. */
+	.multi-select { cursor: text; }
+	.multi-select-toggle {
+		@apply inline-flex items-center justify-center;
+		width: var(--ui-icon-btn-sm);
+		height: var(--ui-icon-btn-sm);
+		padding: 0;
+		border-radius: var(--ui-radius-sm);
+		color: var(--color-fg-muted);
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
+	.multi-select-toggle:hover {
+		background-color: var(--color-bg-muted);
+		color: var(--color-fg);
+	}
+	.multi-select-toggle:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
 
 	/* ============================================================ */
-	/* Navigation menu (Hierarchical / Mega) — CSS-only hover/focus  */
-	/* No JS, no Bits-UI dep. Submenus open on hover OR keyboard     */
-	/* focus inside the parent <li>.                                  */
+	/* Navigation menu (Hierarchical / Mega) — CSS-only hover/focus */
 	/* ============================================================ */
-	.nav-menu {
-		@apply relative z-10;
-	}
-	.nav-menu-list {
-		@apply flex items-center gap-0 list-none p-0 m-0 flex-wrap;
-	}
-	.nav-menu-item {
-		@apply relative;
-	}
+	.nav-menu { @apply relative z-10; }
+	.nav-menu-list { @apply flex items-center gap-0 list-none p-0 m-0 flex-wrap; }
+	.nav-menu-item { @apply relative; }
 	.nav-menu-trigger {
-		@apply inline-flex items-center gap-1 px-3 text-sm font-medium rounded-md;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
-		@apply cursor-pointer select-none;
+		@apply inline-flex items-center gap-1 px-3 text-sm font-medium cursor-pointer select-none;
 		height: var(--ui-h-md);
 		color: var(--color-fg-muted);
 		background-color: transparent;
-		--tw-ring-color: var(--color-ring);
+		border-radius: var(--ui-radius-sm);
 		text-decoration: none;
 		border: none;
 		font-family: inherit;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
+	.nav-menu-trigger:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
 	.nav-menu-trigger:hover {
 		color: var(--color-fg);
 		background-color: var(--color-bg-muted);
 	}
 	.nav-menu-chevron {
-		@apply transition-transform duration-200 shrink-0;
+		@apply shrink-0;
+		transition: transform var(--ui-motion-med) var(--ui-motion-ease);
 	}
 	.nav-menu-content {
-		@apply absolute top-full left-0 mt-1 z-50;
-		@apply opacity-0 invisible -translate-y-1 transition-[opacity,transform,visibility] duration-200 ease-out;
-		background-color: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--ui-radius);
-		box-shadow:
-			0 10px 32px -8px oklch(0% 0 0 / 0.18),
-			0 4px 8px -4px oklch(0% 0 0 / 0.06);
+		@apply absolute top-full left-0 mt-1 z-50 invisible;
+		/* base surface comes from `.surface-elevated` selector list */
 		min-width: 14rem;
 		padding: 0.25rem;
+		opacity: 0;
+		transform: translateY(-4px);
+		transition: opacity var(--ui-motion-med) var(--ui-motion-ease),
+			transform var(--ui-motion-med) var(--ui-motion-ease),
+			visibility var(--ui-motion-med) var(--ui-motion-ease);
 	}
-	/* Open on hover, keyboard focus inside, OR aria-expanded=true. */
 	.nav-menu-item:hover > .nav-menu-content,
 	.nav-menu-item:focus-within > .nav-menu-content {
-		@apply opacity-100 visible translate-y-0;
+		@apply visible;
+		opacity: 1;
+		transform: translateY(0);
 	}
 	.nav-menu-item:hover > .nav-menu-trigger,
 	.nav-menu-item:focus-within > .nav-menu-trigger {
@@ -1541,15 +1337,14 @@
 		transform: rotate(180deg);
 	}
 	.nav-menu-link {
-		@apply flex items-start gap-2 px-3 py-2 text-sm rounded transition-colors;
+		@apply flex items-start gap-2 px-3 py-2 text-sm;
 		color: var(--color-fg);
 		text-decoration: none;
+		border-radius: var(--ui-radius-sm);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.nav-menu-link:hover {
-		background-color: var(--color-bg-muted);
-	}
+	.nav-menu-link:hover { background-color: var(--color-bg-muted); }
 
-	/* MegaMenu — wider, multi-column, anchored to the row not the trigger. */
 	.mega-menu-grid {
 		@apply grid gap-6 p-5;
 		min-width: 32rem;
@@ -1557,86 +1352,46 @@
 	.mega-menu-grid.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.mega-menu-grid.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 	.mega-menu-grid.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-	.mega-menu-column {
-		@apply flex flex-col gap-1;
-	}
+	.mega-menu-column { @apply flex flex-col gap-1; }
 	.mega-menu-title {
 		@apply text-[11px] uppercase tracking-wider px-3 mb-1 font-semibold;
 		color: var(--color-fg-subtle);
 	}
 
 	/* ============================================================ */
-	/* ScrollArea                                                   */
-	/* ============================================================ */
-	.scroll-area-viewport {
-		@apply h-full w-full rounded-[inherit];
-	}
-	.scroll-area-scrollbar {
-		@apply flex select-none touch-none p-0.5 transition-colors;
-		background-color: transparent;
-	}
-	.scroll-area-scrollbar[data-orientation='vertical'] {
-		width: 0.5rem;
-	}
-	.scroll-area-scrollbar[data-orientation='horizontal'] {
-		height: 0.5rem;
-	}
-	.scroll-area-thumb {
-		@apply relative flex-1 rounded-full;
-		background-color: var(--color-border-strong);
-	}
-	.scroll-area-thumb:hover {
-		background-color: var(--color-fg-subtle);
-	}
-
-	/* ============================================================ */
 	/* ColorPicker                                                  */
 	/* ============================================================ */
-	.color-picker {
-		@apply inline-flex items-center gap-2;
-	}
+	.color-picker { @apply inline-flex items-center gap-2; }
 	.color-picker-swatch {
 		@apply inline-block size-9 cursor-pointer overflow-hidden;
 		border: 1px solid var(--color-border-strong);
 		border-radius: var(--ui-radius);
 	}
-	.color-picker-text {
-		@apply font-mono;
-		width: 8.5rem;
-	}
+	.color-picker-text { @apply font-mono; width: 8.5rem; }
 
 	/* ============================================================ */
 	/* Uploader                                                     */
 	/* ============================================================ */
 	.uploader-root {
 		@apply flex w-full flex-col items-center justify-center gap-2 p-6 text-center cursor-pointer;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
 		background-color: var(--color-bg-subtle);
 		color: var(--color-fg);
 		border: 2px dashed var(--color-border-strong);
 		border-radius: var(--ui-radius);
-		--tw-ring-color: var(--color-ring);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			border-color var(--ui-motion-fast) var(--ui-motion-ease),
+			box-shadow var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.uploader-root:hover {
-		background-color: var(--color-bg-muted);
-	}
+	.uploader-root:hover { background-color: var(--color-bg-muted); }
+	.uploader-root:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
 	.uploader-dragging {
 		background-color: color-mix(in oklab, var(--color-primary-500) 6%, var(--color-bg-muted));
 		border-color: var(--color-primary-500);
 	}
-	.uploader-text {
-		@apply flex flex-col items-center gap-0.5;
-	}
-	.uploader-primary {
-		@apply text-sm font-medium;
-	}
-	.uploader-helper {
-		@apply text-xs;
-		color: var(--color-fg-muted);
-	}
-	.uploader-list {
-		@apply mt-2 flex flex-col gap-1 list-none p-0;
-	}
+	.uploader-text { @apply flex flex-col items-center gap-0.5; }
+	.uploader-primary { @apply text-sm font-medium; }
+	.uploader-helper { @apply text-xs; color: var(--color-fg-muted); }
+	.uploader-list { @apply mt-2 flex flex-col gap-1 list-none p-0; }
 	.uploader-item {
 		@apply flex items-center gap-2 px-2 py-1.5;
 		background-color: var(--color-bg-muted);
@@ -1644,107 +1399,75 @@
 	}
 
 	/* ============================================================ */
-	/* Date pickers (Popover-based) + custom Calendar               */
+	/* Date / Time pickers + custom Calendar                        */
 	/* ============================================================ */
 	.date-picker-trigger {
 		@apply inline-flex items-center gap-2 cursor-pointer text-left w-full;
 		min-width: 12rem;
 	}
-	.date-picker-trigger[disabled] {
-		@apply opacity-60 cursor-not-allowed;
-	}
+	.date-picker-trigger[disabled] { @apply opacity-60 cursor-not-allowed; }
 
-	.calendar {
-		@apply select-none;
-	}
+	.calendar { @apply select-none; }
 	.calendar-header {
 		@apply flex items-center justify-between gap-1 mb-2;
 	}
 	.calendar-heading-btn {
-		@apply flex-1 text-sm font-semibold rounded py-1 px-2 transition-colors;
+		@apply flex-1 text-sm font-semibold py-1 px-2 cursor-pointer;
 		color: var(--color-fg);
 		background: transparent;
 		border: none;
-		cursor: pointer;
+		border-radius: var(--ui-radius-sm);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.calendar-heading-btn:hover {
-		background-color: var(--color-bg-muted);
-	}
-	.calendar-nav {
-		@apply inline-flex size-7 items-center justify-center rounded transition-colors;
-		color: var(--color-fg-muted);
-		background: transparent;
-		border: none;
-		cursor: pointer;
-	}
-	.calendar-nav:hover {
-		background-color: var(--color-bg-muted);
-		color: var(--color-fg);
-	}
+	.calendar-heading-btn:hover { background-color: var(--color-bg-muted); }
+	.calendar-heading-btn:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	/* `.calendar-nav` is in the `.btn-icon` selector list above. */
 	.calendar-row {
 		@apply grid gap-0.5;
 		grid-template-columns: repeat(7, minmax(0, 1fr));
 	}
-	.calendar-weekdays {
-		@apply mb-1;
-	}
+	.calendar-weekdays { @apply mb-1; }
 	.calendar-weekday {
 		@apply text-center text-[11px] font-medium uppercase py-1;
 		color: var(--color-fg-subtle);
 	}
 	.calendar-day {
-		@apply h-9 w-full inline-flex items-center justify-center rounded-md text-sm transition-colors;
+		@apply h-9 w-full inline-flex items-center justify-center text-sm cursor-pointer;
 		color: var(--color-fg);
 		background: transparent;
 		border: none;
-		cursor: pointer;
+		border-radius: var(--ui-radius-sm);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.calendar-day:hover:not(:disabled) {
-		background-color: var(--color-bg-muted);
-	}
-	.calendar-day:focus-visible {
-		outline: 2px solid var(--color-ring);
-		outline-offset: -2px;
-	}
-	.calendar-day-outside {
-		color: var(--color-fg-subtle);
-	}
+	.calendar-day:hover:not(:disabled) { background-color: var(--color-bg-muted); }
+	.calendar-day:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.calendar-day-outside { color: var(--color-fg-subtle); }
 	.calendar-day-today {
 		font-weight: 600;
 		box-shadow: inset 0 0 0 1px var(--color-border-strong);
 	}
-	.calendar-day-selected {
+	.calendar-day-selected,
+	.calendar-day-selected:hover:not(:disabled) {
 		background-color: var(--color-primary-600);
 		color: white;
 		font-weight: 600;
 	}
-	.calendar-day-selected:hover:not(:disabled) {
-		background-color: var(--color-primary-700);
-	}
+	.calendar-day-selected:hover:not(:disabled) { background-color: var(--color-primary-700); }
 	.calendar-day-in-range {
 		background-color: color-mix(in oklab, var(--color-primary-500) 12%, transparent);
 		border-radius: 0;
 	}
-	.calendar-day:disabled {
-		@apply opacity-30 cursor-not-allowed;
-	}
+	.calendar-day:disabled { @apply opacity-30 cursor-not-allowed; }
 
-	/* TimePicker — scrollable hour/minute columns */
-	.time-picker-popover {
-		min-width: 14rem;
-	}
-	.time-picker-grid {
-		@apply flex items-stretch gap-1;
-	}
+	.time-picker-popover { min-width: 14rem; }
+	.time-picker-grid { @apply flex items-stretch gap-1; }
 	.time-picker-col {
 		@apply flex-1 flex flex-col gap-0.5 overflow-y-auto py-1;
 		max-height: 14rem;
 		scroll-snap-type: y mandatory;
 		scrollbar-width: thin;
 	}
-	.time-picker-col::-webkit-scrollbar {
-		width: 4px;
-	}
+	.time-picker-col::-webkit-scrollbar { width: 4px; }
 	.time-picker-col::-webkit-scrollbar-thumb {
 		background-color: var(--color-border-strong);
 		border-radius: 2px;
@@ -1754,25 +1477,23 @@
 		color: var(--color-fg-muted);
 	}
 	.time-picker-cell {
-		@apply h-8 inline-flex items-center justify-center rounded text-sm font-mono tabular-nums transition-colors;
+		@apply h-8 inline-flex items-center justify-center text-sm font-mono tabular-nums cursor-pointer;
 		color: var(--color-fg);
 		background: transparent;
 		border: none;
-		cursor: pointer;
+		border-radius: var(--ui-radius-sm);
 		scroll-snap-align: center;
 		flex-shrink: 0;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.time-picker-cell:hover {
-		background-color: var(--color-bg-muted);
-	}
-	.time-picker-cell-selected {
+	.time-picker-cell:hover { background-color: var(--color-bg-muted); }
+	.time-picker-cell-selected,
+	.time-picker-cell-selected:hover {
 		background-color: var(--color-primary-600);
 		color: white;
 		font-weight: 600;
 	}
-	.time-picker-cell-selected:hover {
-		background-color: var(--color-primary-700);
-	}
+	.time-picker-cell-selected:hover { background-color: var(--color-primary-700); }
 
 	/* ============================================================ */
 	/* DataTable                                                    */
@@ -1782,42 +1503,25 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 	}
-	.data-table {
-		@apply w-full text-sm;
-		border-collapse: collapse;
-	}
+	.data-table { @apply w-full text-sm; border-collapse: collapse; }
 	.data-table th,
-	.data-table td {
-		@apply px-3 py-2 text-left align-middle;
-	}
+	.data-table td { @apply px-3 py-2 text-left align-middle; }
 	.data-table thead th {
 		@apply font-semibold;
 		color: var(--color-fg);
 		background-color: var(--color-bg-muted);
 		border-bottom: 1px solid var(--color-border);
 	}
-	.data-table-sticky thead th {
-		@apply sticky top-0 z-10;
-	}
-	.data-table tbody tr {
-		border-bottom: 1px solid var(--color-border);
-	}
-	.data-table tbody tr:last-child {
-		border-bottom: none;
-	}
-	.data-table tbody tr:hover {
-		background-color: var(--color-bg-muted);
-	}
+	.data-table-sticky thead th { @apply sticky top-0 z-10; }
+	.data-table tbody tr { border-bottom: 1px solid var(--color-border); }
+	.data-table tbody tr:last-child { border-bottom: none; }
+	.data-table tbody tr:hover { background-color: var(--color-bg-muted); }
 	.data-table-striped tbody tr:nth-child(even) {
 		background-color: var(--color-bg-subtle);
 	}
 	.data-table-dense th,
-	.data-table-dense td {
-		@apply py-1;
-	}
-	.data-table-row-clickable {
-		@apply cursor-pointer;
-	}
+	.data-table-dense td { @apply py-1; }
+	.data-table-row-clickable { @apply cursor-pointer; }
 	.data-table-empty td {
 		@apply text-center py-6;
 		color: var(--color-fg-muted);
@@ -1829,49 +1533,53 @@
 		font: inherit;
 		cursor: pointer;
 	}
-	.data-table-sort:hover {
-		color: var(--color-primary-600);
-	}
+	.data-table-sort:hover { color: var(--color-primary-600); }
 
 	/* ============================================================ */
-	/* Tree (recursive)                                             */
+	/* Tree                                                         */
 	/* ============================================================ */
-	.tree {
-		@apply text-sm;
-		color: var(--color-fg);
-	}
-	.tree ul {
-		@apply list-none p-0 m-0;
-	}
+	.tree { @apply text-sm; color: var(--color-fg); }
+	.tree ul { @apply list-none p-0 m-0; }
 	.tree-row {
-		@apply flex w-full items-center gap-2 py-1 pr-2 text-left rounded-sm;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
+		@apply flex w-full items-center gap-2 py-1 pr-2 text-left cursor-pointer;
 		color: var(--color-fg);
 		background-color: transparent;
-		--tw-ring-color: var(--color-ring);
+		border-radius: var(--ui-radius-sm);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.tree-row:hover {
-		background-color: var(--color-bg-muted);
-	}
-	.tree-row-selected {
+	.tree-row:hover { background-color: var(--color-bg-muted); }
+	.tree-row:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.tree-row-selected,
+	.tree-row-selected:hover {
 		background-color: color-mix(in oklab, var(--color-primary-500) 12%, transparent);
 		color: var(--color-fg);
 	}
-	.tree-row-selected:hover {
-		background-color: color-mix(in oklab, var(--color-primary-500) 18%, transparent);
-	}
 	.tree-chevron {
-		@apply inline-flex size-4 shrink-0 items-center justify-center transition-transform duration-150;
+		@apply inline-flex size-4 shrink-0 items-center justify-center;
 		color: var(--color-fg-muted);
+		transition: transform var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.tree-chevron-open {
-		transform: rotate(90deg);
+	.tree-chevron-open { transform: rotate(90deg); }
+	.tree-chevron-spacer { @apply inline-block size-4 shrink-0; }
+	.tree-label { @apply truncate; }
+
+	/* ============================================================ */
+	/* ScrollArea                                                   */
+	/* Atom-defined so the overflow rules ship in atoms.css; cannot  */
+	/* rely on Tailwind utility generation inside library `cn()`    */
+	/* calls because Tailwind v4 doesn't scan workspace-dep sources */
+	/* by default.                                                  */
+	/* ============================================================ */
+	.norns-scroll-area {
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
-	.tree-chevron-spacer {
-		@apply inline-block size-4 shrink-0;
+	.norns-scroll-area-horizontal {
+		overflow-x: auto;
+		overflow-y: hidden;
 	}
-	.tree-label {
-		@apply truncate;
+	.norns-scroll-area-both {
+		overflow: auto;
 	}
 
 	/* ============================================================ */
@@ -1883,37 +1591,32 @@
 		background-color: var(--color-bg-muted);
 	}
 	.carousel-track {
-		@apply flex h-full transition-transform duration-500 ease-out;
+		@apply flex h-full;
+		transition: transform 500ms var(--ui-motion-ease);
 	}
-	.carousel-slide {
-		@apply h-full w-full shrink-0;
-	}
+	.carousel-slide { @apply h-full w-full shrink-0; }
 	.carousel-arrow {
-		@apply absolute top-1/2 -translate-y-1/2 inline-flex size-9 items-center justify-center;
-		@apply transition-colors focus-visible:outline-none focus-visible:ring-2;
+		@apply absolute top-1/2 -translate-y-1/2 inline-flex items-center justify-center cursor-pointer;
+		width: var(--ui-icon-btn-lg);
+		height: var(--ui-icon-btn-lg);
 		background-color: color-mix(in oklab, var(--color-bg) 70%, transparent);
 		color: var(--color-fg);
 		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius-full);
-		--tw-ring-color: var(--color-ring);
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.carousel-arrow:hover {
-		background-color: var(--color-bg);
-	}
-	.carousel-arrow-prev {
-		@apply left-3;
-	}
-	.carousel-arrow-next {
-		@apply right-3;
-	}
+	.carousel-arrow:hover { background-color: var(--color-bg); }
+	.carousel-arrow:focus-visible { outline: none; box-shadow: var(--ui-focus-ring); }
+	.carousel-arrow-prev { @apply left-3; }
+	.carousel-arrow-next { @apply right-3; }
 	.carousel-dots {
 		@apply absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5;
 	}
 	.carousel-dot {
-		@apply size-2 rounded-full transition-colors;
+		@apply size-2 rounded-full cursor-pointer;
 		background-color: color-mix(in oklab, var(--color-bg-inverse) 50%, transparent);
+		border: none;
+		transition: background-color var(--ui-motion-fast) var(--ui-motion-ease);
 	}
-	.carousel-dot-active {
-		background-color: var(--color-bg-inverse);
-	}
+	.carousel-dot-active { background-color: var(--color-bg-inverse); }
 }

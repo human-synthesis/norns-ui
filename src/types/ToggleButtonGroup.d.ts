@@ -10,9 +10,10 @@ export type ToggleGroupItem = {
 
 export type ToggleButtonGroupProps = {
 	items?: ToggleGroupItem[];
-	value?: string | string[];
+	value?: string | string[] | undefined;
 	multiple?: boolean;
 	disabled?: boolean;
+	label?: string;
 	class?: string;
 };
 

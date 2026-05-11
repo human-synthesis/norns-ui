@@ -66,7 +66,6 @@ export function presetUI() {
 
 			// 0.0.4 — composite layer
 			Header: c('Header'),
-			Drawer: c('Drawer'),
 			HeroBanner: c('HeroBanner'),
 			Stepper: c('Stepper'),
 			Breadcrumbs: c('Breadcrumbs'),
@@ -90,12 +89,10 @@ export function presetUI() {
 			Video: c('Video'),
 			Timeline: c('Timeline'),
 
-			// 0.0.4 — wave B: medium / Bits-UI-backed
+			// 0.0.4 — wave B: medium-complexity (custom; ex Bits-UI-backed)
 			Autocomplete: c('Autocomplete'),
 			MultiSelect: c('MultiSelect'),
 			ContextMenu: c('ContextMenu'),
-			RichTooltip: c('RichTooltip'),
-			PreviewCard: c('PreviewCard'),
 			ScrollArea: c('ScrollArea'),
 			ColorPicker: c('ColorPicker'),
 			Uploader: c('Uploader'),

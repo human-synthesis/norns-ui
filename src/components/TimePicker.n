@@ -1,70 +1,58 @@
-PopoverRoot(bind:open)
-	PopoverTrigger.input.date-picker-trigger(
-		type="button"
-		disabled!="{disabled}"
-		id!="{resolvedId}"
-		aria-label!="{label ?? 'Pick a time'}"
-		class!="{hasError ? 'input-err' : ''}"
-	)
-		Icon(name="lucide:clock" size="size-4" class="text-fg-muted shrink-0")
-		span.flex-1.text-left.font-mono.tabular-nums
-			| {value || placeholder}
-		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
-	PopoverPortal
-		PopoverContent.popover-content(
-			class="p-2 time-picker-popover"
-			onOpenAutoFocus!="{(e) => e.preventDefault()}"
-			onCloseAutoFocus!="{(e) => e.preventDefault()}"
+Popover(bind:open class="p-2 time-picker-popover")
+	+snippet('trigger')
+		button.input.date-picker-trigger(
+			type="button"
+			disabled!="{disabled}"
+			id!="{resolvedId}"
+			aria-label!="{label ?? 'Pick a time'}"
+			class!="{hasError ? 'input-err' : ''}"
 		)
-			.time-picker-grid
-				.time-picker-col(role="listbox" aria-label="Hour" bind:this!="{hourCol}")
-					+each('hours as h')
-						button.time-picker-cell(
-							type="button"
-							class!="{h === currentHour ? 'time-picker-cell-selected' : ''}"
-							onclick!="{() => setHour(h)}"
-							data-time-h!="{h}"
-						)
-							| {pad(h)}
-				.time-picker-sep :
-				.time-picker-col(role="listbox" aria-label="Minute" bind:this!="{minuteCol}")
-					+each('minutes as m')
-						button.time-picker-cell(
-							type="button"
-							class!="{m === currentMinute ? 'time-picker-cell-selected' : ''}"
-							onclick!="{() => setMinute(m)}"
-							data-time-m!="{m}"
-						)
-							| {pad(m)}
-				+if('hourCycle === 12')
-					.time-picker-col(role="listbox" aria-label="AM/PM")
-						button.time-picker-cell(
-							type="button"
-							class!="{period === 'AM' ? 'time-picker-cell-selected' : ''}"
-							onclick!="{() => setPeriod('AM')}"
-						)
-							| AM
-						button.time-picker-cell(
-							type="button"
-							class!="{period === 'PM' ? 'time-picker-cell-selected' : ''}"
-							onclick!="{() => setPeriod('PM')}"
-						)
-							| PM
-			.flex.justify-between.gap-2.mt-2.pt-2(class="border-t border-border")
-				button.btn.btn-ghost.btn-sm(type="button" onclick!="{clearValue}") Clear
-				button.btn.btn-primary.btn-sm(type="button" onclick!="{() => open = false}") Done
+			Icon(name="lucide:clock" size="size-4" class="text-fg-muted shrink-0")
+			span.flex-1.text-left.font-mono.tabular-nums
+				| {value || placeholder}
+			Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
+	.time-picker-grid
+		.time-picker-col(role="listbox" aria-label="Hour" bind:this!="{hourCol}")
+			+each('hours as h')
+				button.time-picker-cell(
+					type="button"
+					class!="{h === currentHour ? 'time-picker-cell-selected' : ''}"
+					onclick!="{() => setHour(h)}"
+					data-time-h!="{h}"
+				)
+					| {pad(h)}
+		.time-picker-sep :
+		.time-picker-col(role="listbox" aria-label="Minute" bind:this!="{minuteCol}")
+			+each('minutes as m')
+				button.time-picker-cell(
+					type="button"
+					class!="{m === currentMinute ? 'time-picker-cell-selected' : ''}"
+					onclick!="{() => setMinute(m)}"
+					data-time-m!="{m}"
+				)
+					| {pad(m)}
+		+if('hourCycle === 12')
+			.time-picker-col(role="listbox" aria-label="AM/PM")
+				button.time-picker-cell(
+					type="button"
+					class!="{period === 'AM' ? 'time-picker-cell-selected' : ''}"
+					onclick!="{() => setPeriod('AM')}"
+				)
+					| AM
+				button.time-picker-cell(
+					type="button"
+					class!="{period === 'PM' ? 'time-picker-cell-selected' : ''}"
+					onclick!="{() => setPeriod('PM')}"
+				)
+					| PM
+	.flex.justify-between.gap-2.mt-2.pt-2(class="border-t border-border")
+		button.btn.btn-ghost.btn-sm(type="button" onclick!="{clearValue}") Clear
+		button.btn.btn-primary.btn-sm(type="button" onclick!="{() => open = false}") Done
 
 <script>
-	import { Popover } from 'bits-ui'
 	import { getContext } from 'svelte'
+	import Popover from './Popover.n'
 	import Icon from './Icon.n'
-
-	{
-		Root: PopoverRoot
-		Trigger: PopoverTrigger
-		Portal: PopoverPortal
-		Content: PopoverContent
-	} := Popover
 
 	{
 		value = $bindable('')
@@ -151,16 +139,15 @@ PopoverRoot(bind:open)
 	hourCol .= $state null
 	minuteCol .= $state null
 
-	// When the popover opens, scroll each column to its currently-selected cell.
 	$effect =>
 		return unless open && (hourCol || minuteCol)
 		queueMicrotask =>
 			scrollSelected hourCol, currentHour, 'data-time-h'
 			scrollSelected minuteCol, currentMinute, 'data-time-m'
 
-	scrollSelected := (col, value, attr) =>
+	scrollSelected := (col, val, attr) =>
 		return unless col
-		target := col.querySelector `[${attr}="${value}"]`
+		target := col.querySelector `[${attr}="${val}"]`
 		return unless target
 		col.scrollTop = target.offsetTop - col.clientHeight / 2 + target.clientHeight / 2
 </script>

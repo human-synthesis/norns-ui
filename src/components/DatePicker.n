@@ -1,40 +1,28 @@
-PopoverRoot(bind:open)
-	PopoverTrigger.input.date-picker-trigger(
-		type="button"
-		disabled!="{disabled}"
-		id!="{resolvedId}"
-		aria-label!="{label ?? 'Pick a date'}"
-		class!="{hasError ? 'input-err' : ''}"
-	)
-		Icon(name="lucide:calendar" size="size-4" class="text-fg-muted shrink-0")
-		span.flex-1.text-left.truncate
-			| {value ? formatted : placeholder}
-		Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
-	PopoverPortal
-		PopoverContent.popover-content(
-			class="p-3 w-[20rem]"
-			onOpenAutoFocus!="{(e) => e.preventDefault()}"
-			onCloseAutoFocus!="{(e) => e.preventDefault()}"
+Popover(bind:open class="p-3 w-[20rem]")
+	+snippet('trigger')
+		button.input.date-picker-trigger(
+			type="button"
+			disabled!="{disabled}"
+			id!="{resolvedId}"
+			aria-label!="{label ?? 'Pick a date'}"
+			class!="{hasError ? 'input-err' : ''}"
 		)
-			Calendar(
-				bind:value
-				min!="{min}"
-				max!="{max}"
-				onchange!="{handleChange}"
-			)
+			Icon(name="lucide:calendar" size="size-4" class="text-fg-muted shrink-0")
+			span.flex-1.text-left.truncate
+				| {value ? formatted : placeholder}
+			Icon(name="lucide:chevron-down" size="size-3.5" class="text-fg-muted shrink-0")
+	Calendar(
+		bind:value
+		min!="{min}"
+		max!="{max}"
+		onchange!="{handleChange}"
+	)
 
 <script>
-	import { Popover } from 'bits-ui'
 	import { getContext } from 'svelte'
+	import Popover from './Popover.n'
 	import Icon from './Icon.n'
 	import Calendar from './Calendar.n'
-
-	{
-		Root: PopoverRoot
-		Trigger: PopoverTrigger
-		Portal: PopoverPortal
-		Content: PopoverContent
-	} := Popover
 
 	{
 		value = $bindable('')

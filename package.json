@@ -1,6 +1,6 @@
 {
 	"name": "@human-synthesis/norns-ui",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "UI library for the Norns ecosystem — Pug + Civet components on Tailwind v4.",
 	"license": "MIT",
 	"author": "Daniel Teodoroiu (https://humansynthesis.ai)",
@@ -22,6 +22,8 @@
 		".": "./src/index.js",
 		"./auto-import": "./src/auto-import.js",
 		"./cn": "./src/lib/cn.js",
+		"./behaviors": "./src/lib/behaviors/index.js",
+		"./behaviors/*": "./src/lib/behaviors/*",
 		"./toast": "./src/lib/toast.svelte.js",
 		"./styles": "./src/styles/index.css",
 		"./styles/tokens": "./src/styles/tokens.css",
@@ -46,10 +48,10 @@
 		}
 	},
 	"dependencies": {
+		"@floating-ui/dom": "^1.7.6",
 		"@fontsource-variable/outfit": "^5.2.8",
 		"@iconify-json/lucide": "^1.2.105",
 		"@iconify/svelte": "^5.2.1",
-		"bits-ui": "^2.18.1",
 		"motion": "^12.38.0",
 		"tailwind-merge": "^2.5.0"
 	},

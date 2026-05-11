@@ -145,6 +145,31 @@
 	--ui-h-sm: 1.75rem; /* 28px */
 	--ui-h-md: 2.25rem; /* 36px */
 	--ui-h-lg: 2.75rem; /* 44px */
+
+	/* Square icon-button sizes (close buttons, nav arrows, chevron triggers).
+	 * Distinct from full button heights above. */
+	--ui-icon-btn-sm: 1.5rem;  /* 24px */
+	--ui-icon-btn-md: 1.75rem; /* 28px */
+	--ui-icon-btn-lg: 2.25rem; /* 36px */
+
+	/* Motion timings — shared so animations feel coordinated. */
+	--ui-motion-fast: 150ms;
+	--ui-motion-med: 200ms;
+	--ui-motion-slow: 300ms;
+	--ui-motion-ease: cubic-bezier(0.2, 0, 0, 1);
+
+	/* Elevation — the only shadow vocabulary in the library.
+	 * elev-1: subtle (cards, hover-lifts)
+	 * elev-2: floating menus, popovers, tooltips
+	 * elev-3: dialogs, sheets
+	 */
+	--ui-elev-1: 0 1px 2px oklch(0% 0 0 / 0.06), 0 1px 3px oklch(0% 0 0 / 0.04);
+	--ui-elev-2: 0 4px 12px -2px oklch(0% 0 0 / 0.08), 0 2px 4px -1px oklch(0% 0 0 / 0.04);
+	--ui-elev-3: 0 16px 32px -8px oklch(0% 0 0 / 0.18), 0 4px 8px -4px oklch(0% 0 0 / 0.06);
+
+	/* Single canonical focus indicator. 2px halo on the surface color + 2px
+	 * ring color outside it, so the ring stays visible on any background. */
+	--ui-focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ring);
 }
 
 /* === Dark theme ===
@@ -172,6 +197,14 @@
 
 	/* Ring brightens slightly so it stays visible on dark surfaces */
 	--color-ring: var(--color-primary-400);
+
+	/* Dark-mode elevation — true-black shadow on dark bg disappears, so we
+	 * lean on darker shadow + the existing border to convey depth. */
+	--ui-elev-1: 0 1px 2px oklch(0% 0 0 / 0.4);
+	--ui-elev-2: 0 4px 12px -2px oklch(0% 0 0 / 0.5), 0 2px 4px -1px oklch(0% 0 0 / 0.3);
+	--ui-elev-3: 0 16px 32px -8px oklch(0% 0 0 / 0.6), 0 4px 8px -4px oklch(0% 0 0 / 0.4);
+
+	--ui-focus-ring: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-ring);
 
 	/* Feedback — flip to deep tinted bg + light fg */
 	--color-success-bg: oklch(28% 0.05 152);

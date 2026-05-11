@@ -2,9 +2,10 @@ import type { Component, Snippet } from 'svelte';
 
 export type DropdownItem = {
 	label?: string;
+	icon?: string;
 	separator?: boolean;
 	disabled?: boolean;
-	onSelect?: (event: Event) => void;
+	onSelect?: () => void;
 };
 
 export type DropdownProps = {

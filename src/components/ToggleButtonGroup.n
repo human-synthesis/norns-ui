@@ -1,14 +1,19 @@
-ToggleGroupRoot(
-	type!="{multiple ? 'multiple' : 'single'}"
-	bind:value
+.btn-group(
+	role="group"
+	aria-label!="{label}"
 	class!="{classes}"
-	disabled!="{disabled}"
+	use:rovingTabindex!="{{ orientation: 'horizontal' }}"
 )
 	+each('items as item')
-		ToggleGroupItem.toggle-btn(
-			value!="{item.value}"
-			disabled!="{item.disabled}"
+		button(
+			type="button"
+			class!="{itemClasses(item.value)}"
+			data-roving
+			data-pressed!="{isActive(item.value) ? 'true' : undefined}"
+			aria-pressed!="{isActive(item.value)}"
+			disabled!="{disabled || item.disabled}"
 			aria-label!="{item.label}"
+			onclick!="{() => toggle(item.value)}"
 		)
 			+if('item.icon')
 				Icon(name!="{item.icon}" size="size-4")
@@ -16,19 +21,34 @@ ToggleGroupRoot(
 				span {item.label}
 
 <script>
-	import { ToggleGroup } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { rovingTabindex } from '@human-synthesis/norns-ui/behaviors/rovingTabindex.svelte.js'
 	import Icon from './Icon.n'
-
-	{ Root: ToggleGroupRoot, Item: ToggleGroupItem } := ToggleGroup
 
 	{
 		items = []
 		value = $bindable(undefined)
 		multiple = false
 		disabled = false
+		label = 'Toggle group'
 		class: extra = ''
 	} .= $props()
 
-	classes := cn 'btn-group toggle-group', extra
+	classes := cn extra
+
+	isActive := (v) =>
+		if multiple
+			Array.isArray(value) && value.includes v
+		else
+			value === v
+
+	itemClasses := (v) => cn 'btn btn-secondary'
+
+	toggle := (v) =>
+		return if disabled
+		if multiple
+			cur := Array.isArray(value) ? value : []
+			value = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]
+		else
+			value = value === v ? undefined : v
 </script>

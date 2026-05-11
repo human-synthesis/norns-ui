@@ -21,7 +21,7 @@ export { default as Select } from './components/Select.n';
 export { default as Switch } from './components/Switch.n';
 export { default as Textarea } from './components/Textarea.n';
 
-// Phase 3 — behavior tier (Bits UI)
+// Phase 3 — behavior tier (custom on @floating-ui/dom + behaviors module)
 export { default as Dialog } from './components/Dialog.n';
 export { default as Sheet } from './components/Sheet.n';
 export { default as Popover } from './components/Popover.n';
@@ -44,7 +44,6 @@ export { default as ProgressCircular } from './components/ProgressCircular.n';
 
 // 0.0.4 — composite layer
 export { default as Header } from './components/Header.n';
-export { default as Drawer } from './components/Drawer.n';
 export { default as HeroBanner } from './components/HeroBanner.n';
 export { default as Stepper } from './components/Stepper.n';
 export { default as Breadcrumbs } from './components/Breadcrumbs.n';
@@ -72,8 +71,6 @@ export { default as Timeline } from './components/Timeline.n';
 export { default as Autocomplete } from './components/Autocomplete.n';
 export { default as MultiSelect } from './components/MultiSelect.n';
 export { default as ContextMenu } from './components/ContextMenu.n';
-export { default as RichTooltip } from './components/RichTooltip.n';
-export { default as PreviewCard } from './components/PreviewCard.n';
 export { default as ScrollArea } from './components/ScrollArea.n';
 export { default as ColorPicker } from './components/ColorPicker.n';
 export { default as Uploader } from './components/Uploader.n';

@@ -5,6 +5,7 @@ export type CollapsibleProps = {
 	title?: string;
 	trigger?: Snippet;
 	children?: Snippet;
+	onopenchange?: (open: boolean) => void;
 	class?: string;
 };
 

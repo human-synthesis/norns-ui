@@ -7,6 +7,9 @@ export type MultiSelectProps = {
 	open?: boolean;
 	placeholder?: string;
 	disabled?: boolean;
+	name?: string;
+	id?: string;
+	error?: boolean;
 };
 
 declare const MultiSelect: Component<MultiSelectProps>;

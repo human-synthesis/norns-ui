@@ -4,7 +4,8 @@ export type ToggleButtonProps = {
 	pressed?: boolean;
 	disabled?: boolean;
 	icon?: string;
-	variant?: 'default' | 'outline';
+	/** Any `.btn-*` variant. The toggle visual state is controlled by `data-pressed`. */
+	variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'link';
 	size?: 'sm' | 'md' | 'lg';
 	onpressedchange?: (pressed: boolean) => void;
 	children?: Snippet;

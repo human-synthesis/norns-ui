@@ -1,39 +1,55 @@
-ComboboxRoot(bind:value bind:open type="single")
-	.combobox-input-wrap
-		ComboboxInput.input.combobox-input(
-			placeholder!="{placeholder}"
-			disabled!="{disabled}"
-			oninput!="{(e) => term = e.currentTarget.value}"
-			id!="{resolvedId}"
-			aria-invalid!="{hasError ? 'true' : undefined}"
-		)
-		ComboboxTrigger.combobox-trigger(aria-label="Toggle options")
-			Icon(name="lucide:chevrons-up-down" size="size-4")
-	ComboboxPortal
-		ComboboxContent.dropdown-content
-			ComboboxViewport
-				+each('filtered as item')
-					ComboboxItem.dropdown-item(value!="{item.value}" label!="{item.label}")
-						Icon(name="lucide:check" size="size-3.5" class="opacity-0 data-[selected]:opacity-100")
-						span {item.label}
-				+if('filtered.length === 0')
-					.dropdown-item(class="text-fg-muted")
-						| No matches
+.combobox-input-wrap(use:refAction bind:this!="{wrapEl}")
+	input.input.combobox-input(
+		bind:this!="{inputEl}"
+		type="text"
+		bind:value!="{term}"
+		placeholder!="{placeholder}"
+		disabled!="{disabled}"
+		role="combobox"
+		aria-expanded!="{open}"
+		aria-controls!="{listboxId}"
+		aria-autocomplete="list"
+		aria-activedescendant!="{open && filtered[active] ? optionId(active) : undefined}"
+		id!="{resolvedId}"
+		aria-invalid!="{hasError ? 'true' : undefined}"
+		oninput!="{onInput}"
+		onkeydown!="{onKeyDown}"
+		onfocus!="{() => open = true}"
+		onblur!="{onBlur}"
+	)
+	button.combobox-trigger(type="button" tabindex="-1" aria-label="Toggle options" onclick!="{toggle}")
+		Icon(name="lucide:chevrons-up-down" size="size-4")
+
++if('open && filtered.length > 0')
+	ul(
+		use:portal
+		use:floatAction
+		use:clickOutside!="{[onClose, open, wrapEl]}"
+		class="dropdown-content combobox-listbox"
+		data-state="open"
+		id!="{listboxId}"
+		role="listbox"
+	)
+		+each('filtered as item, i (item.value)')
+			li.dropdown-item(
+				role="option"
+				id!="{optionId(i)}"
+				aria-selected!="{value === item.value}"
+				data-active!="{i === active ? 'true' : undefined}"
+				onpointerdown!="{(e) => { e.preventDefault(); pick(item) }}"
+			)
+				Icon(name="lucide:check" size="size-3.5" class!="{value === item.value ? '' : 'opacity-0'}")
+				span {item.label}
++if('open && filtered.length === 0')
+	div(use:portal use:floatAction use:clickOutside!="{[onClose, open, wrapEl]}" class="dropdown-content combobox-listbox" data-state="open")
+		.combobox-empty No matches
 
 <script>
-	import { Combobox } from 'bits-ui'
-	import Icon from './Icon.n'
 	import { getContext } from 'svelte'
-
-	{
-		Root: ComboboxRoot
-		Input: ComboboxInput
-		Trigger: ComboboxTrigger
-		Portal: ComboboxPortal
-		Content: ComboboxContent
-		Viewport: ComboboxViewport
-		Item: ComboboxItem
-	} := Combobox
+	import Icon from './Icon.n'
+	import { portal } from '@human-synthesis/norns-ui/behaviors/portal.svelte.js'
+	import { clickOutside } from '@human-synthesis/norns-ui/behaviors/clickOutside.svelte.js'
+	import { useFloating } from '@human-synthesis/norns-ui/behaviors/floating.svelte.js'
 
 	{
 		items = []
@@ -50,10 +66,69 @@ ComboboxRoot(bind:value bind:open type="single")
 	resolvedId := providedId ?? field?.id
 	hasError := explicitError || field?.hasError || false
 
+	uid := Math.random().toString(36).slice(2, 8)
+	listboxId := `listbox-${uid}`
+	optionId := (i) => `option-${uid}-${i}`
+
+	{ reference: refAction, floating: floatAction } := useFloating
+		placement: 'bottom-start'
+		offset: 4
+		matchWidth: true
+
 	term .= $state ''
+	active .= $state 0
+	inputEl .= $state null
+	wrapEl .= $state null
+
+	// Reset term to selected label when value changes externally.
+	$effect =>
+		if value !== undefined
+			match := items.find (it) => it.value === value
+			term = match?.label ?? '' if match && term !== match.label
 
 	filtered := $derived.by =>
 		return items unless term
 		t := term.toLowerCase()
 		items.filter (it) => it.label.toLowerCase().includes(t)
+
+	$effect =>
+		active = 0 if active >= filtered.length
+
+	onInput := =>
+		open = true
+		active = 0
+
+	toggle := =>
+		open = !open
+		inputEl?.focus() if open
+
+	onClose := => open = false
+
+	onBlur := =>
+		// Close after click handlers complete; pointerdown picks before this fires.
+		setTimeout (=> open = false), 100
+
+	pick := (item) =>
+		value = item.value
+		term = item.label
+		open = false
+
+	onKeyDown := (e) =>
+		switch e.key
+			when 'ArrowDown'
+				e.preventDefault()
+				open = true
+				active = Math.min(filtered.length - 1, active + 1)
+			when 'ArrowUp'
+				e.preventDefault()
+				open = true
+				active = Math.max(0, active - 1)
+			when 'Enter'
+				if open && filtered[active]
+					e.preventDefault()
+					pick filtered[active]
+			when 'Escape'
+				open = false
+			when 'Tab'
+				open = false
 </script>

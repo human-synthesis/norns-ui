@@ -1,32 +1,29 @@
-CollapsibleRoot(bind:open class!="{classes}")
-	CollapsibleTrigger.collapsible-trigger
-		.collapsible-chevron(class!="{open ? 'collapsible-chevron-open' : ''}")
+details.collapsible(class!="{classes}" bind:open ontoggle!="{onToggle}")
+	summary.collapsible-trigger
+		.collapsible-chevron
 			Icon(name="lucide:chevron-right" size="size-4")
 		+if('title')
 			span.collapsible-title {title}
 		+if('!title && trigger')
 			| {@render trigger()}
-	CollapsibleContent.collapsible-content
+	.collapsible-content
 		| {@render children?.()}
 
 <script>
-	import { Collapsible } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
 	import Icon from './Icon.n'
-
-	{
-		Root: CollapsibleRoot
-		Trigger: CollapsibleTrigger
-		Content: CollapsibleContent
-	} := Collapsible
 
 	{
 		open = $bindable(false)
 		title
 		trigger
 		children
+		onopenchange
 		class: extra = ''
 	} .= $props()
 
 	classes := cn 'collapsible', extra
+
+	onToggle := (e) =>
+		onopenchange?.(e.target.open)
 </script>

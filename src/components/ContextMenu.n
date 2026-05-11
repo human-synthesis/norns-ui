@@ -1,48 +1,67 @@
-ContextMenuRoot
-	ContextMenuTrigger(class!="{triggerClass ?? ''}")
-		| {@render trigger?.()}
-	ContextMenuPortal
-		ContextMenuContent.dropdown-content
-			| {@render renderItems(items)}
+span(class!="{triggerClass ?? ''}" oncontextmenu!="{onContext}")
+	| {@render trigger?.()}
 
-+snippet('renderItems', list)
-	+each('list as item')
-		+if('item.separator')
-			ContextMenuSeparator.dropdown-separator
-		+if('!item.separator && !item.children')
-			ContextMenuItem.dropdown-item(disabled!="{item.disabled}" onSelect!="{item.onSelect}")
-				+if('item.icon')
-					Icon(name!="{item.icon}" size="size-3.5")
-				span {item.label}
-		+if('!item.separator && item.children')
-			ContextMenuSubRoot
-				ContextMenuSubTrigger.dropdown-item(disabled!="{item.disabled}")
++if('open')
+	div(
+		use:portal
+		use:clickOutside!="{[onClose, open]}"
+		use:escape!="{[onClose, open]}"
+		use:rovingTabindex!="{{ orientation: 'vertical', selector: '[data-roving]' }}"
+		bind:this!="{menuEl}"
+		class="dropdown-content"
+		data-state="open"
+		role="menu"
+		style="position: absolute"
+	)
+		+each('items as item')
+			+if('item.separator')
+				.dropdown-separator(role="separator")
+			+if('!item.separator')
+				button.dropdown-item(
+					type="button"
+					role="menuitem"
+					data-roving
+					data-disabled!="{item.disabled ? '' : undefined}"
+					disabled!="{item.disabled}"
+					onclick!="{() => onItem(item)}"
+				)
 					+if('item.icon')
-						Icon(name!="{item.icon}" size="size-3.5")
+						Icon(name!="{item.icon}" size="size-3.5" class="text-fg-muted shrink-0")
 					span.flex-1 {item.label}
-					Icon(name="lucide:chevron-right" size="size-3.5")
-				ContextMenuSubContent.dropdown-content
-					| {@render renderItems(item.children)}
 
 <script>
-	import { ContextMenu } from 'bits-ui'
+	import { positionAt } from '@human-synthesis/norns-ui/behaviors/floating.svelte.js'
+	import { portal } from '@human-synthesis/norns-ui/behaviors/portal.svelte.js'
+	import { clickOutside } from '@human-synthesis/norns-ui/behaviors/clickOutside.svelte.js'
+	import { escape } from '@human-synthesis/norns-ui/behaviors/escape.svelte.js'
+	import { rovingTabindex } from '@human-synthesis/norns-ui/behaviors/rovingTabindex.svelte.js'
 	import Icon from './Icon.n'
-
-	{
-		Root: ContextMenuRoot
-		Trigger: ContextMenuTrigger
-		Portal: ContextMenuPortal
-		Content: ContextMenuContent
-		Item: ContextMenuItem
-		Separator: ContextMenuSeparator
-		Sub: ContextMenuSubRoot
-		SubTrigger: ContextMenuSubTrigger
-		SubContent: ContextMenuSubContent
-	} := ContextMenu
 
 	{
 		items = []
 		trigger
 		triggerClass
 	} := $props()
+
+	open .= $state false
+	menuEl .= $state null
+	clickX .= 0
+	clickY .= 0
+
+	onContext := (e) =>
+		e.preventDefault()
+		clickX = e.clientX
+		clickY = e.clientY
+		open = true
+
+	$effect =>
+		return unless open && menuEl
+		positionAt menuEl, clickX, clickY, { placement: 'right-start' }
+
+	onClose := => open = false
+
+	onItem := (item) =>
+		return if item.disabled
+		item.onSelect?.()
+		open = false
 </script>

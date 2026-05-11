@@ -1,31 +1,19 @@
-AccordionRoot(
-	type!="{multiple ? 'multiple' : 'single'}"
-	bind:value
-	class!="{classes}"
-)
-	+each('items as item')
-		AccordionItem.accordion-item(value!="{item.value}")
-			AccordionHeader
-				AccordionTrigger.accordion-trigger
-					span
-						| {item.title}
-					.accordion-chevron
-						Icon(name="lucide:chevron-down" size="size-4")
-			AccordionContent.accordion-content
+.accordion(class!="{classes}")
+	+each('items as item (item.value)')
+		details.accordion-item(
+			open!="{isOpen(item.value)}"
+			ontoggle!="{(e) => onToggle(item.value, e.target.open)}"
+		)
+			summary.accordion-trigger
+				span {item.title}
+				.accordion-chevron
+					Icon(name="lucide:chevron-down" size="size-4")
+			.accordion-content
 				| {@render item.content?.()}
 
 <script>
-	import { Accordion } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
 	import Icon from './Icon.n'
-
-	{
-		Root: AccordionRoot
-		Item: AccordionItem
-		Header: AccordionHeader
-		Trigger: AccordionTrigger
-		Content: AccordionContent
-	} := Accordion
 
 	{
 		items = []
@@ -35,4 +23,17 @@ AccordionRoot(
 	} .= $props()
 
 	classes := cn 'accordion', extra
+
+	isOpen := (v) =>
+		if multiple
+			Array.isArray(value) && value.includes v
+		else
+			value === v
+
+	onToggle := (v, isNowOpen) =>
+		if multiple
+			cur := Array.isArray(value) ? value : []
+			value = isNowOpen ? [...new Set([...cur, v])] : cur.filter((x) => x !== v)
+		else
+			value = isNowOpen ? v : (value === v ? undefined : value)
 </script>

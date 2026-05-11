@@ -1,31 +1,20 @@
-ScrollAreaRoot.scroll-area(class!="{classes}" type!="{type}")
-	ScrollAreaViewport.scroll-area-viewport
-		| {@render children?.()}
-	ScrollAreaScrollbar.scroll-area-scrollbar(orientation="vertical")
-		ScrollAreaThumb.scroll-area-thumb
-	+if('horizontal')
-		ScrollAreaScrollbar.scroll-area-scrollbar.scroll-area-scrollbar-h(orientation="horizontal")
-			ScrollAreaThumb.scroll-area-thumb
-	ScrollAreaCorner
+div(class!="{classes}")
+	| {@render children?.()}
 
 <script>
-	import { ScrollArea } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
 
 	{
-		Root: ScrollAreaRoot
-		Viewport: ScrollAreaViewport
-		Scrollbar: ScrollAreaScrollbar
-		Thumb: ScrollAreaThumb
-		Corner: ScrollAreaCorner
-	} := ScrollArea
-
-	{
-		type = 'hover'
 		horizontal = false
 		children
 		class: extra = ''
 	} := $props()
 
-	classes := cn 'relative overflow-hidden', extra
+	// Atoms defined in atoms.css — see `.norns-scroll-area*` rules. The
+	// utility-class approach (`overflow-y-auto overflow-x-hidden`) cannot
+	// be used here because Tailwind's content scanner doesn't see strings
+	// inside library-side `cn()` calls.
+	classes := cn
+		horizontal ? 'norns-scroll-area-horizontal' : 'norns-scroll-area'
+		extra
 </script>

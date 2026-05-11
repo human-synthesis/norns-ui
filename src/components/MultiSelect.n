@@ -1,56 +1,158 @@
-ComboboxRoot(bind:value bind:open type="multiple")
-	.combobox-input-wrap
-		ComboboxInput.input.combobox-input(
-			placeholder!="{placeholder}"
-			disabled!="{disabled}"
-			oninput!="{(e) => term = e.currentTarget.value}"
-		)
-		ComboboxTrigger.combobox-trigger(aria-label="Toggle options")
-			Icon(name="lucide:chevrons-up-down" size="size-4")
-	+if('value.length > 0')
-		.flex.flex-wrap.gap-1.mt-2
-			+each('value as v')
-				span.chip
-					| {labelOf(v)}
-	ComboboxPortal
-		ComboboxContent.dropdown-content
-			ComboboxViewport
-				+each('filtered as item')
-					ComboboxItem.dropdown-item(value!="{item.value}" label!="{item.label}")
-						Icon(name="lucide:check" size="size-3.5" class="opacity-0 data-[selected]:opacity-100")
-						span {item.label}
-				+if('filtered.length === 0')
-					.dropdown-item(class="text-fg-muted")
-						| No matches
+.tags-input.multi-select(
+	use:refAction
+	bind:this!="{wrapEl}"
+	class!="{hasError ? 'tags-input-err' : ''}"
+	onclick!="{focusInput}"
+)
+	+each('value as v')
+		span.chip
+			| {labelOf(v)}
+			button.chip-remove(
+				type="button"
+				aria-label="Remove"
+				onclick!="{(e) => { e.stopPropagation(); unpick(v) }}"
+				onpointerdown!="{(e) => e.stopPropagation()}"
+			)
+				Icon(name="lucide:x" size="size-3")
+	input.tags-input-field(
+		bind:this!="{inputEl}"
+		type="text"
+		bind:value!="{term}"
+		placeholder!="{value.length === 0 ? placeholder : ''}"
+		disabled!="{disabled}"
+		role="combobox"
+		aria-expanded!="{open}"
+		aria-controls!="{listboxId}"
+		aria-autocomplete="list"
+		id!="{resolvedId}"
+		aria-invalid!="{hasError ? 'true' : undefined}"
+		oninput!="{onInput}"
+		onkeydown!="{onKeyDown}"
+		onfocus!="{() => open = true}"
+		onblur!="{onBlur}"
+	)
+	button.multi-select-toggle.shrink-0(
+		type="button"
+		tabindex="-1"
+		aria-label="Toggle options"
+		onclick!="{(e) => { e.stopPropagation(); toggle() }}"
+	)
+		Icon(name="lucide:chevrons-up-down" size="size-4")
+
++if('open && filtered.length > 0')
+	ul(
+		use:portal
+		use:floatAction
+		use:clickOutside!="{[onClose, open, wrapEl]}"
+		class="dropdown-content combobox-listbox"
+		data-state="open"
+		id!="{listboxId}"
+		role="listbox"
+		aria-multiselectable="true"
+	)
+		+each('filtered as item, i (item.value)')
+			li.dropdown-item(
+				role="option"
+				aria-selected!="{value.includes(item.value)}"
+				data-active!="{i === active ? 'true' : undefined}"
+				onpointerdown!="{(e) => { e.preventDefault(); pick(item) }}"
+			)
+				Icon(name="lucide:check" size="size-3.5" class!="{value.includes(item.value) ? '' : 'opacity-0'}")
+				span {item.label}
++if('open && filtered.length === 0')
+	div(use:portal use:floatAction use:clickOutside!="{[onClose, open, wrapEl]}" class="dropdown-content combobox-listbox" data-state="open")
+		.combobox-empty No matches
 
 <script>
-	import { Combobox } from 'bits-ui'
+	import { getContext } from 'svelte'
 	import Icon from './Icon.n'
-
-	{
-		Root: ComboboxRoot
-		Input: ComboboxInput
-		Trigger: ComboboxTrigger
-		Portal: ComboboxPortal
-		Content: ComboboxContent
-		Viewport: ComboboxViewport
-		Item: ComboboxItem
-	} := Combobox
+	import { portal } from '@human-synthesis/norns-ui/behaviors/portal.svelte.js'
+	import { clickOutside } from '@human-synthesis/norns-ui/behaviors/clickOutside.svelte.js'
+	import { useFloating } from '@human-synthesis/norns-ui/behaviors/floating.svelte.js'
 
 	{
 		items = []
 		value = $bindable([])
 		open = $bindable(false)
-		placeholder = 'Search…'
+		placeholder = 'Pick options…'
 		disabled = false
+		name
+		id: providedId
+		error: explicitError = false
 	} .= $props()
 
+	field := getContext 'norns-ui:field'
+	resolvedId := providedId ?? field?.id
+	hasError := explicitError || field?.hasError || false
+
+	uid := Math.random().toString(36).slice(2, 8)
+	listboxId := `listbox-${uid}`
+
+	{ reference: refAction, floating: floatAction } := useFloating
+		placement: 'bottom-start'
+		offset: 4
+		matchWidth: true
+
 	term .= $state ''
+	active .= $state 0
+	inputEl .= $state null
+	wrapEl .= $state null
 
 	filtered := $derived.by =>
 		return items unless term
 		t := term.toLowerCase()
 		items.filter (it) => it.label.toLowerCase().includes(t)
 
+	$effect =>
+		active = 0 if active >= filtered.length
+
 	labelOf := (v) => items.find((it) => it.value === v)?.label ?? v
+
+	focusInput := => inputEl?.focus()
+
+	onInput := =>
+		open = true
+		active = 0
+
+	toggle := =>
+		open = !open
+		inputEl?.focus() if open
+
+	onClose := => open = false
+
+	onBlur := =>
+		setTimeout (=> open = false), 100
+
+	pick := (item) =>
+		if value.includes(item.value)
+			value = value.filter (v) => v !== item.value
+		else
+			value = [...value, item.value]
+		term = ''
+
+	unpick := (v) =>
+		value = value.filter (x) => x !== v
+		inputEl?.focus()
+
+	onKeyDown := (e) =>
+		switch e.key
+			when 'ArrowDown'
+				e.preventDefault()
+				open = true
+				active = Math.min(filtered.length - 1, active + 1)
+			when 'ArrowUp'
+				e.preventDefault()
+				open = true
+				active = Math.max(0, active - 1)
+			when 'Enter'
+				if open && filtered[active]
+					e.preventDefault()
+					pick filtered[active]
+			when 'Backspace'
+				if !term && value.length > 0
+					value = value.slice(0, -1)
+			when 'Escape'
+				open = false
+			when 'Tab'
+				open = false
 </script>

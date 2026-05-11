@@ -1,15 +1,29 @@
-DialogRoot(bind:open)
-	+if('trigger')
-		DialogTrigger(class!="{triggerClass ?? undefined}")
-			| {@render trigger()}
-	DialogPortal
-		DialogOverlay(class!="{overlayClasses}")
-		DialogContent(class!="{contentClasses}" data-side!="{side}")
++if('trigger')
+	span(class!="{triggerClass ?? ''}" onclick!="{() => open = true}")
+		| {@render trigger()}
+
++if('open')
+	div(use:portal use:scrollLock)
+		div(
+			data-state="open"
+			class!="{overlayClasses}"
+			onclick!="{onOverlayClick}"
+		)
+		div(
+			role="dialog"
+			aria-modal="true"
+			aria-label!="{title ?? ariaLabel}"
+			class!="{contentClasses}"
+			data-state="open"
+			data-side!="{side}"
+			use:focusTrap
+			use:escape!="{[onClose, open]}"
+		)
 			+if('title')
-				DialogTitle.dialog-title
+				h2.dialog-title
 					| {title}
 			+if('description')
-				DialogDescription.dialog-description
+				p.dialog-description
 					| {description}
 			+if('children')
 				.sheet-body
@@ -18,23 +32,15 @@ DialogRoot(bind:open)
 				.dialog-actions
 					| {@render actions()}
 			+if('!hideClose')
-				DialogClose.dialog-close(aria-label="Close")
+				button.dialog-close(type="button" aria-label="Close" onclick!="{onClose}")
 					| ✕
 
 <script>
-	import { Dialog } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
-
-	{
-		Root: DialogRoot
-		Trigger: DialogTrigger
-		Portal: DialogPortal
-		Overlay: DialogOverlay
-		Content: DialogContent
-		Title: DialogTitle
-		Description: DialogDescription
-		Close: DialogClose
-	} := Dialog
+	import { portal } from '@human-synthesis/norns-ui/behaviors/portal.svelte.js'
+	import { scrollLock } from '@human-synthesis/norns-ui/behaviors/scrollLock.svelte.js'
+	import { focusTrap } from '@human-synthesis/norns-ui/behaviors/focusTrap.svelte.js'
+	import { escape } from '@human-synthesis/norns-ui/behaviors/escape.svelte.js'
 
 	{
 		open = $bindable(false)
@@ -42,6 +48,8 @@ DialogRoot(bind:open)
 		title
 		description
 		hideClose = false
+		dismissable = true
+		ariaLabel
 		trigger
 		actions
 		children
@@ -52,4 +60,10 @@ DialogRoot(bind:open)
 
 	overlayClasses := cn 'dialog-overlay', overlayClass
 	contentClasses := cn 'sheet-content', `sheet-${side}`, extra
+
+	onClose := => open = false
+
+	onOverlayClick := (e) =>
+		return unless dismissable
+		open = false if e.target === e.currentTarget
 </script>

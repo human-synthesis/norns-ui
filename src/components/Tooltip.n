@@ -1,34 +1,67 @@
-TooltipProvider(delayDuration!="{delay}")
-	TooltipRoot
-		TooltipTrigger(class!="{triggerClass ?? undefined}")
-			| {@render trigger?.()}
-		TooltipPortal
-			TooltipContent(class!="{contentClasses}" side!="{side}" sideOffset!="{sideOffset}")
-				| {content ?? ''}
-				| {@render children?.()}
+span.tooltip-trigger-wrap(
+	use:refAction
+	class!="{triggerClass ?? ''}"
+	onmouseenter!="{onEnter}"
+	onmouseleave!="{onLeave}"
+	onfocusin!="{onEnter}"
+	onfocusout!="{onLeave}"
+)
+	| {@render trigger?.()}
+
++if('open')
+	div(
+		use:portal
+		use:floatAction
+		role="tooltip"
+		class!="{contentClasses}"
+		data-state="open"
+	)
+		+if('content')
+			| {content}
+		+if('children')
+			| {@render children()}
 
 <script>
-	import { Tooltip } from 'bits-ui'
 	import { cn } from '@human-synthesis/norns-ui/cn'
-
-	{
-		Provider: TooltipProvider
-		Root: TooltipRoot
-		Trigger: TooltipTrigger
-		Portal: TooltipPortal
-		Content: TooltipContent
-	} := Tooltip
+	import { portal } from '@human-synthesis/norns-ui/behaviors/portal.svelte.js'
+	import { useFloating } from '@human-synthesis/norns-ui/behaviors/floating.svelte.js'
 
 	{
 		content
 		side = 'top'
+		align = 'center'
 		sideOffset = 6
 		delay = 300
+		rich = false
 		trigger
 		children
 		triggerClass
 		class: extra = ''
-	} .= $props()
+	} := $props()
 
-	contentClasses := cn 'tooltip-content', extra
+	open .= $state false
+	openTimer .= null
+	closeTimer .= null
+
+	placement := align === 'center' ? side : `${side}-${align}`
+
+	{ reference: refAction, floating: floatAction } := useFloating
+		placement: placement
+		offset: sideOffset
+
+	contentClasses := cn rich ? 'tooltip-rich' : 'tooltip-content', extra
+
+	clear := =>
+		clearTimeout openTimer if openTimer
+		clearTimeout closeTimer if closeTimer
+		openTimer = null
+		closeTimer = null
+
+	onEnter := =>
+		clear()
+		openTimer = setTimeout (=> open = true), delay
+
+	onLeave := =>
+		clear()
+		closeTimer = setTimeout (=> open = false), 100
 </script>
