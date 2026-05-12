@@ -8,3 +8,4 @@ dist
 !.env.example
 *.tokens
 .zed
+bun.lock

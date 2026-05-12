@@ -55,6 +55,7 @@ export function presetUI() {
 			// 0.0.4 — display layer
 			Icon: c('Icon'),
 			Card: c('Card'),
+			Window: c('Window'),
 			Surface: c('Surface'),
 			Banner: c('Banner'),
 			Badge: c('Badge'),

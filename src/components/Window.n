@@ -1,0 +1,43 @@
+.norns-window(class!="{classes}")
+	+if('!hideHeader')
+		header.norns-window-header
+			.norns-window-title.truncate {title}
+			.norns-window-actions
+				+if('actions')
+					| {@render actions()}
+				+if('onClose')
+					button.norns-window-close(type="button" aria-label="Close" onclick!="{onClose}")
+						| ✕
+	section.norns-window-body(class!="{bodyClasses}")
+		| {@render children?.()}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	// Layout-only window: chrome (header + close + custom actions) wrapping
+	// a body slot. Sizing is the caller's responsibility — pass dimensions
+	// via `class` (e.g. `class="w-[520px] h-[380px]"`) or compose inside a
+	// parent that constrains the box (a SvelteFlow node, a fixed panel,
+	// a flex child, etc).
+	//
+	// Header layout: title on the left (truncated), then a flex row of
+	// caller-provided action elements (via the `actions` snippet), then an
+	// optional `✕` close button when `onClose` is supplied. The close button
+	// is rendered after the snippet so the snippet can position icons / chips
+	// alongside it.
+	//
+	// `hideHeader` removes the entire header bar (useful for windows that
+	// already have their own custom chrome but still want the rounded shell).
+	{
+		title = ''
+		hideHeader = false
+		onClose
+		actions
+		children
+		class: extra = ''
+		bodyClass = ''
+	} := $props()
+
+	classes := cn 'norns-window', extra
+	bodyClasses := cn 'norns-window-body', bodyClass
+</script>

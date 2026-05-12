@@ -653,6 +653,70 @@
 	}
 
 	/* ============================================================ */
+	/* Window                                                       */
+	/* ============================================================ */
+	.norns-window {
+		display: flex;
+		flex-direction: column;
+		background-color: var(--color-bg-elevated);
+		color: var(--color-fg);
+		border: 1px solid var(--color-border);
+		border-radius: var(--ui-radius-lg);
+		overflow: hidden;
+		box-shadow: var(--ui-elev-1, 0 1px 2px rgb(0 0 0 / 0.04));
+	}
+	.norns-window-header {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.4rem 0.625rem;
+		border-bottom: 1px solid var(--color-border);
+		background-color: var(--color-bg-subtle);
+		user-select: none;
+		cursor: move;
+	}
+	.norns-window-title {
+		flex: 1;
+		min-width: 0;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--color-fg);
+	}
+	.norns-window-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		flex-shrink: 0;
+	}
+	.norns-window-close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: var(--ui-radius-sm);
+		background: transparent;
+		color: var(--color-fg-muted);
+		border: 0;
+		cursor: pointer;
+		font-size: 0.85rem;
+		line-height: 1;
+		padding: 0;
+	}
+	.norns-window-close:hover {
+		background: var(--color-bg-muted);
+		color: var(--color-fg);
+	}
+	.norns-window-body {
+		flex: 1;
+		min-height: 0;
+		overflow: auto;
+		background-color: var(--color-bg);
+	}
+
+	/* ============================================================ */
 	/* Banner                                                       */
 	/* ============================================================ */
 	.banner {
