@@ -1,12 +1,12 @@
 .norns-window(class!="{classes}")
 	+if('!hideHeader')
-		header.norns-window-header
+		header.norns-window-header(ondblclick!="{onHeaderDoubleClick}")
 			.norns-window-title.truncate {title}
 			.norns-window-actions
 				+if('actions')
 					| {@render actions()}
 				+if('onClose')
-					button.norns-window-close(type="button" aria-label="Close" onclick!="{onClose}")
+					button.norns-window-close.nodrag(type="button" aria-label="Close" onclick!="{onClose}")
 						Icon(name="lucide:x" size="size-3.5")
 	section.norns-window-body(class!="{bodyClasses}")
 		| {@render children?.()}
@@ -27,12 +27,21 @@
 	// close button is rendered after the snippet so the snippet can
 	// position icons / chips alongside it.
 	//
+	// The close button carries `.nodrag`; SvelteFlow (and any other drag
+	// system that uses that convention) treats clicks on it as non-draggy.
+	// Buttons added via the `actions` snippet should be marked the same way
+	// by the consumer — they're caller-owned.
+	//
+	// `onHeaderDoubleClick` fires on dblclick over the header bar. Useful
+	// for "double-click title to maximize" patterns in windowed UIs.
+	//
 	// `hideHeader` removes the entire header bar (useful for windows that
 	// already have their own custom chrome but still want the rounded shell).
 	{
 		title = ''
 		hideHeader = false
 		onClose
+		onHeaderDoubleClick
 		actions
 		children
 		class: extra = ''
