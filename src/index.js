@@ -83,6 +83,7 @@ export { default as DateRangePicker } from './components/DateRangePicker.n';
 export { default as TimePicker } from './components/TimePicker.n';
 export { default as Calendar } from './components/Calendar.n';
 export { default as DataTable } from './components/DataTable.n';
+export { default as Table } from './components/Table.n';
 
 // 0.0.5 — CSS-only motion components
 export { default as AvatarGroup } from './components/AvatarGroup.n';
@@ -98,3 +99,4 @@ export { cn } from './lib/cn.js';
 export { variantClasses } from './lib/variants.js';
 export { presetUI } from './auto-import.js';
 export { toast, notify, dismiss, clear } from './lib/toast.svelte.js';
+export { contracts } from './contracts.js';

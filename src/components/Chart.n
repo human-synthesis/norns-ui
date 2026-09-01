@@ -1,0 +1,129 @@
+figure.chart-root(class!="{rootClasses}")
+	svg(viewBox!="{`0 0 ${W} ${H}`}" role="img" aria-label!="{label}" preserveAspectRatio="none")
+		line.chart-axis(x1!="{pad}" y1!="{H - pad}" x2!="{W - pad}" y2!="{H - pad}")
+		+if('type === "bar"')
+			+each('points as p (p.i)')
+				rect.chart-bar(
+					x!="{p.x - barW / 2}"
+					y!="{p.y}"
+					width!="{barW}"
+					height!="{H - pad - p.y}"
+				)
+		+if('type === "line" || type === "area"')
+			+if('type === "area"')
+				path.chart-area(d!="{areaPath}")
+			path.chart-line(d!="{linePath}")
+			+each('points as p (p.i)')
+				circle.chart-dot(cx!="{p.x}" cy!="{p.y}" r="2.5")
+	+if('showLabels')
+		.chart-labels
+			+each('points as p (p.i)')
+				span.chart-label {p.label}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		data = []
+		type = 'bar'
+		x = undefined
+		y = undefined
+		label = 'chart'
+		labels = true
+		class: extra = ''
+	} .= $props()
+
+	W := 600
+	H := 200
+	pad := 8
+
+	rootClasses := $derived cn('chart', `chart-${type}`, extra)
+
+	rows := $derived Array.isArray(data) ? data : []
+
+	xKey := $derived.by => {
+		return x if x
+		const first = rows[0] ?? {}
+		Object.keys(first).find((k) => typeof first[k] !== 'number') ?? Object.keys(first)[0]
+	}
+
+	yKey := $derived.by => {
+		return y if y
+		const first = rows[0] ?? {}
+		Object.keys(first).find((k) => typeof first[k] === 'number' && k !== xKey)
+	}
+
+	values := $derived rows.map((row) => Number(row?.[yKey]) || 0)
+	maxV := $derived Math.max(1, ...values)
+
+	points := $derived.by => {
+		const n = rows.length
+		return [] if n === 0
+		const span = W - pad * 2
+		const step = n > 1 ? span / (n - 1) : 0
+		rows.map (row, i) =>
+			const v = Number(row?.[yKey]) || 0
+			{
+				i
+				x: n > 1 ? pad + step * i : W / 2
+				y: H - pad - (v / maxV) * (H - pad * 2)
+				v
+				label: String(row?.[xKey] ?? i + 1)
+			}
+	}
+
+	barW := $derived.by => {
+		const n = Math.max(1, points.length)
+		Math.max(4, Math.min(48, ((W - pad * 2) / n) * 0.6))
+	}
+
+	linePath := $derived points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')
+
+	areaPath := $derived.by => {
+		return '' if points.length === 0
+		const first = points[0]
+		const last = points[points.length - 1]
+		`${linePath} L${last.x},${H - pad} L${first.x},${H - pad} Z`
+	}
+
+	showLabels := $derived labels !== false && labels !== 'false' && points.length > 0
+</script>
+
+<style>
+	.chart-root {
+		display: grid;
+		gap: 0.25rem;
+		margin: 0;
+	}
+	svg {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+	.chart-axis {
+		stroke: var(--color-border, color-mix(in oklab, currentColor 20%, transparent));
+		stroke-width: 1;
+	}
+	.chart-bar {
+		fill: var(--color-accent, currentColor);
+		opacity: 0.85;
+	}
+	.chart-line {
+		fill: none;
+		stroke: var(--color-accent, currentColor);
+		stroke-width: 2;
+	}
+	.chart-area {
+		fill: var(--color-accent, currentColor);
+		opacity: 0.15;
+	}
+	.chart-dot {
+		fill: var(--color-accent, currentColor);
+	}
+	.chart-labels {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.6875rem;
+		opacity: 0.7;
+	}
+</style>

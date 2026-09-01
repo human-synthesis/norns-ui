@@ -63,6 +63,7 @@ export function presetUI() {
 			Avatar: c('Avatar'),
 			Skeleton: c('Skeleton'),
 			Progress: c('Progress'),
+			Spinner: c('Spinner'),
 			ProgressCircular: c('ProgressCircular'),
 
 			// 0.0.4 — composite layer
@@ -106,6 +107,15 @@ export function presetUI() {
 			TimePicker: c('TimePicker'),
 			Calendar: c('Calendar'),
 			DataTable: c('DataTable'),
+			Table: c('Table'),
+
+			// U-03 — data views
+			Kanban: c('Kanban'),
+			Chart: c('Chart'),
+
+			// U-04 — data tier (Combobox is Autocomplete's ARIA name; same component)
+			Listbox: c('Listbox'),
+			Combobox: c('Autocomplete'),
 
 			// 0.0.5 — CSS-only motion components
 			AvatarGroup: c('AvatarGroup'),

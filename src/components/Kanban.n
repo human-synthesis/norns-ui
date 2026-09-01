@@ -1,0 +1,181 @@
+.kanban-root(class!="{rootClasses}")
+	+each('cols as col (col.key)')
+		section.kanban-column(
+			class!="{dropTarget === col.key ? 'kanban-column-active' : ''}"
+			ondragover!="{(e) => onDragOver(e, col.key)}"
+			ondragleave!="{() => onDragLeave(col.key)}"
+			ondrop!="{(e) => onDrop(e, col.key)}"
+		)
+			header.kanban-column-header
+				span.kanban-column-title {col.label}
+				span.kanban-column-count {col.cards.length}
+			.kanban-cards
+				+if('col.cards.length === 0')
+					.kanban-empty {emptyMessage}
+				+each('col.cards as card, i (cardId(card) ?? i)')
+					article.kanban-card(
+						draggable!="{movable}"
+						ondragstart!="{(e) => onDragStart(e, card, col.key)}"
+						onclick!="{oncardclick ? () => oncardclick(card) : undefined}"
+						class!="{oncardclick ? 'kanban-card-clickable' : ''}"
+					)
+						.kanban-card-title {titleOf(card)}
+						+if('subtitle && card[subtitle] != null')
+							.kanban-card-subtitle {card[subtitle]}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+
+	{
+		data = {}
+		columns = undefined
+		title = undefined
+		subtitle = undefined
+		onMove = undefined
+		oncardclick = undefined
+		emptyMessage = 'No cards'
+		class: extra = ''
+	} .= $props()
+
+	// local overlay so a drop lands instantly; server truth wins on reload
+	moves .= $state({})
+
+	movable := $derived onMove !== undefined
+	rootClasses := $derived cn('kanban', extra)
+
+	labelOf := (key) => {
+		const spaced = String(key).replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+		return spaced.charAt(0).toUpperCase() + spaced.slice(1)
+	}
+
+	cardId := (card) => card?.id ?? card?.key ?? undefined
+
+	titleOf := (card) => {
+		if title then return card?.[title]
+		card?.title ?? card?.subject ?? card?.name ?? cardId(card) ?? ''
+	}
+
+	grouped := $derived (data && typeof data === 'object' && !Array.isArray(data)) ? data : {}
+
+	keys := $derived.by => {
+		const source = columns ?? Object.keys(grouped)
+		return typeof source === 'string'
+			? source.split(',').map((s) => s.trim()).filter(Boolean)
+			: source
+	}
+
+	cols := $derived.by => {
+		const out = keys.map (key) =>
+			{ key, label: labelOf(key), cards: [] }
+		const byKey = new Map(out.map((c) => [c.key, c]))
+		for (const [key, cards] of Object.entries(grouped))
+			for (const card of Array.isArray(cards) ? cards : [])
+				const to = moves[cardId(card)] ?? key
+				byKey.get(to)?.cards.push(card)
+		out
+	}
+
+	dragged .= $state(undefined)
+	dropTarget .= $state(undefined)
+
+	onDragStart := (e, card, from) =>
+		dragged = { card, from }
+		e.dataTransfer?.setData('text/plain', String(cardId(card) ?? ''))
+		if e.dataTransfer then e.dataTransfer.effectAllowed = 'move'
+
+	onDragOver := (e, key) =>
+		return unless movable and dragged
+		e.preventDefault()
+		dropTarget = key
+
+	onDragLeave := (key) =>
+		if dropTarget === key then dropTarget = undefined
+
+	submitMove := (card, to) =>
+		if typeof onMove is 'function'
+			onMove(card, to)
+		else if typeof onMove is 'string'
+			// generated pages bind onMove to a "?/action" form-action URL; the
+			// action's input contract is strict, so only `id` goes over the wire —
+			// the transition itself is what the bound action means by "move"
+			const body = new FormData()
+			body.set('id', String(cardId(card) ?? ''))
+			fetch(onMove, { method: 'POST', body }).catch(=> undefined)
+
+	onDrop := (e, to) =>
+		dropTarget = undefined
+		return unless dragged
+		e.preventDefault()
+		{ card, from } := dragged
+		dragged = undefined
+		return if from === to
+		moves = { ...moves, [cardId(card)]: to }
+		submitMove(card, to)
+</script>
+
+<style>
+	.kanban-root {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(14rem, 1fr);
+		gap: var(--spacing-3, 0.75rem);
+		align-items: start;
+		overflow-x: auto;
+	}
+	.kanban-column {
+		background: var(--color-surface-2, color-mix(in oklab, currentColor 4%, transparent));
+		border-radius: var(--radius-lg, 0.5rem);
+		padding: var(--spacing-2, 0.5rem);
+		display: grid;
+		gap: var(--spacing-2, 0.5rem);
+	}
+	.kanban-column-active {
+		outline: 2px dashed var(--color-accent, currentColor);
+		outline-offset: -2px;
+	}
+	.kanban-column-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		padding-inline: var(--spacing-1, 0.25rem);
+	}
+	.kanban-column-count {
+		opacity: 0.6;
+		font-variant-numeric: tabular-nums;
+	}
+	.kanban-cards {
+		display: grid;
+		gap: var(--spacing-2, 0.5rem);
+		min-height: 2rem;
+	}
+	.kanban-card {
+		background: var(--color-surface, canvas);
+		border: 1px solid var(--color-border, color-mix(in oklab, currentColor 12%, transparent));
+		border-radius: var(--radius-md, 0.375rem);
+		padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+		display: grid;
+		gap: 0.125rem;
+	}
+	.kanban-card[draggable='true'] {
+		cursor: grab;
+	}
+	.kanban-card-clickable {
+		cursor: pointer;
+	}
+	.kanban-card-title {
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+	.kanban-card-subtitle {
+		font-size: 0.75rem;
+		opacity: 0.7;
+	}
+	.kanban-empty {
+		font-size: 0.75rem;
+		opacity: 0.6;
+		padding: var(--spacing-2, 0.5rem);
+		text-align: center;
+	}
+</style>

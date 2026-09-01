@@ -1,0 +1,141 @@
+ul.listbox(
+	role="listbox"
+	tabindex="0"
+	aria-multiselectable!="{multiple ? 'true' : undefined}"
+	aria-activedescendant!="{items.length > 0 ? optionId(active) : undefined}"
+	aria-disabled!="{disabled ? 'true' : undefined}"
+	class!="{rootClasses}"
+	onkeydown!="{onKeyDown}"
+)
+	+if('normalized.length === 0')
+		li.listbox-empty {emptyMessage}
+	+each('normalized as item, i (item.value)')
+		li.listbox-option(
+			role="option"
+			id!="{optionId(i)}"
+			aria-selected!="{isSelected(item.value)}"
+			aria-disabled!="{item.disabled ? 'true' : undefined}"
+			data-active!="{i === active ? 'true' : undefined}"
+			onpointerdown!="{(e) => { e.preventDefault(); pick(item, i) }}"
+		)
+			Icon(name="lucide:check" size="size-3.5" class!="{isSelected(item.value) ? '' : 'opacity-0'}")
+			span {item.label}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import Icon from './Icon.n'
+
+	{
+		items = []
+		value = $bindable(undefined)
+		multiple = false
+		disabled = false
+		emptyMessage = 'No options'
+		onchange = undefined
+		class: extra = ''
+	} .= $props()
+
+	uid := Math.random().toString(36).slice(2, 8)
+	optionId := (i) => `listbox-${uid}-${i}`
+
+	normalized := $derived items.map (it) =>
+		typeof it === 'object' and it !== null ? it : { value: it, label: String(it) }
+
+	selected := $derived.by =>
+		return new Set(Array.isArray(value) ? value : []) if multiple
+		new Set(value === undefined ? [] : [value])
+
+	isSelected := (v) => selected.has(v)
+
+	active .= $state 0
+
+	pick := (item, i) =>
+		return if disabled or item.disabled
+		active = i
+		if multiple
+			current := Array.isArray(value) ? value : []
+			value = isSelected(item.value)
+				? current.filter (v) => v !== item.value
+				: [...current, item.value]
+		else
+			value = item.value
+		onchange?(value)
+
+	step := (delta) =>
+		return if normalized.length === 0
+		next .= active
+		loop
+			next = Math.min(normalized.length - 1, Math.max(0, next + delta))
+			break unless normalized[next]?.disabled and next > 0 and next < normalized.length - 1
+		active = next
+
+	onKeyDown := (e) =>
+		return if disabled
+		switch e.key
+			when 'ArrowDown'
+				e.preventDefault()
+				step 1
+			when 'ArrowUp'
+				e.preventDefault()
+				step -1
+			when 'Home'
+				e.preventDefault()
+				active = 0
+			when 'End'
+				e.preventDefault()
+				active = Math.max(0, normalized.length - 1)
+			when 'Enter', ' '
+				e.preventDefault()
+				item := normalized[active]
+				pick(item, active) if item
+
+	rootClasses := $derived cn('listbox-root', disabled && 'listbox-disabled', extra)
+</script>
+
+<style>
+	.listbox {
+		display: grid;
+		gap: 1px;
+		margin: 0;
+		padding: var(--spacing-1, 0.25rem);
+		list-style: none;
+		border: 1px solid var(--color-border, color-mix(in oklab, currentColor 12%, transparent));
+		border-radius: var(--radius-md, 0.375rem);
+		max-height: 16rem;
+		overflow-y: auto;
+	}
+	.listbox:focus-visible {
+		outline: 2px solid var(--color-accent, currentColor);
+		outline-offset: 1px;
+	}
+	.listbox-option {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-2, 0.5rem);
+		padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+		border-radius: var(--radius-sm, 0.25rem);
+		font-size: 0.875rem;
+		cursor: pointer;
+		user-select: none;
+	}
+	.listbox-option[data-active='true'] {
+		background: color-mix(in oklab, currentColor 8%, transparent);
+	}
+	.listbox-option[aria-selected='true'] {
+		font-weight: 500;
+	}
+	.listbox-option[aria-disabled='true'] {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	.listbox-disabled {
+		opacity: 0.6;
+		pointer-events: none;
+	}
+	.listbox-empty {
+		font-size: 0.8125rem;
+		opacity: 0.6;
+		padding: var(--spacing-2, 0.5rem);
+		text-align: center;
+	}
+</style>

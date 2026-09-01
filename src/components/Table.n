@@ -1,0 +1,81 @@
+.table-root(class!="{rootClasses}")
+	DataTable(
+		columns!="{cols}"
+		rows!="{pageRows}"
+		striped!="{striped}"
+		dense!="{dense}"
+		stickyHeader!="{stickyHeader}"
+		emptyMessage!="{emptyMessage}"
+		onrowclick!="{onrowclick}"
+		bind:sortKey
+		bind:sortDir
+	)
+	+if('showFooter')
+		.table-footer
+			span.table-total {total} {total === 1 ? 'row' : 'rows'}
+			Pagination(bind:page total!="{total}" pageSize!="{size}")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import DataTable from './DataTable.n'
+	import Pagination from './Pagination.n'
+
+	{
+		data = []
+		columns = undefined
+		pageSize = 20
+		striped = false
+		dense = false
+		stickyHeader = false
+		emptyMessage = 'No data'
+		onrowclick
+		class: extra = ''
+	} .= $props()
+
+	sortKey .= $state(undefined)
+	sortDir .= $state('asc')
+	page .= $state(1)
+
+	rows := $derived Array.isArray(data) ? data : []
+	size := $derived Math.max(0, Number(pageSize) || 0)
+
+	labelOf := (key) => {
+		const spaced = String(key).replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+		return spaced.charAt(0).toUpperCase() + spaced.slice(1)
+	}
+
+	cols := $derived.by => {
+		const source = columns ?? Object.keys(rows[0] ?? {})
+		const list = typeof source === 'string'
+			? source.split(',').map((s) => s.trim()).filter(Boolean)
+			: source
+		return list.map((col) =>
+			typeof col === 'string'
+				? { key: col, label: labelOf(col), sortable: true }
+				: { sortable: true, ...col }
+		)
+	}
+
+	sorted := $derived.by => {
+		if (!sortKey) return rows
+		const key = sortKey
+		const dir = sortDir === 'desc' ? -1 : 1
+		return [...rows].sort((a, b) => {
+			const x = a?.[key]
+			const y = b?.[key]
+			if (x === y) return 0
+			const base = typeof x === 'number' && typeof y === 'number'
+				? x - y
+				: String(x ?? '').localeCompare(String(y ?? ''))
+			return dir * (base > 0 ? 1 : base < 0 ? -1 : 0)
+		})
+	}
+
+	total := $derived sorted.length
+	totalPages := $derived size > 0 ? Math.max(1, Math.ceil(total / size)) : 1
+	current := $derived Math.min(page, totalPages)
+	pageRows := $derived size > 0 ? sorted.slice((current - 1) * size, current * size) : sorted
+	showFooter := $derived size > 0 && total > size
+
+	rootClasses := $derived cn(extra)
+</script>

@@ -1604,6 +1604,14 @@
 	}
 	.data-table-sort:hover { color: var(--color-primary-600); }
 
+	/* Table — paginated wrapper around DataTable */
+	.table-root { @apply flex w-full flex-col gap-3; }
+	.table-footer { @apply flex items-center justify-between gap-3; }
+	.table-total {
+		@apply text-xs;
+		color: var(--color-fg-muted);
+	}
+
 	/* ============================================================ */
 	/* Tree                                                         */
 	/* ============================================================ */
