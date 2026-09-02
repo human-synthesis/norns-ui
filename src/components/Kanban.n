@@ -11,7 +11,11 @@
 				span.kanban-column-count {col.cards.length}
 			.kanban-cards
 				+if('col.cards.length === 0')
-					.kanban-empty {emptyMessage}
+					.kanban-empty
+						+if('empty')
+							| {@render empty()}
+						+if('!empty')
+							| {emptyMessage}
 				+each('col.cards as card, i (cardId(card) ?? i)')
 					article.kanban-card(
 						draggable!="{movable}"
@@ -19,12 +23,16 @@
 						onclick!="{oncardclick ? () => oncardclick(card) : undefined}"
 						class!="{oncardclick ? 'kanban-card-clickable' : ''}"
 					)
-						.kanban-card-title {titleOf(card)}
-						+if('subtitle && card[subtitle] != null')
-							.kanban-card-subtitle {card[subtitle]}
+						+if('renderCard')
+							| {@render renderCard(card)}
+						+if('!renderCard')
+							.kanban-card-title {titleOf(card)}
+							+if('subtitle && card[subtitle] != null')
+								.kanban-card-subtitle {card[subtitle]}
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { optimisticOverlay } from '@human-synthesis/norns-ui/behaviors/optimistic.svelte.js'
 
 	{
 		data = {}
@@ -34,11 +42,13 @@
 		onMove = undefined
 		oncardclick = undefined
 		emptyMessage = 'No cards'
+		card: renderCard = undefined
+		empty = undefined
 		class: extra = ''
 	} .= $props()
 
 	// local overlay so a drop lands instantly; server truth wins on reload
-	moves .= $state({})
+	moves := optimisticOverlay()
 
 	movable := $derived onMove !== undefined
 	rootClasses := $derived cn('kanban', extra)
@@ -70,7 +80,7 @@
 		const byKey = new Map(out.map((c) => [c.key, c]))
 		for (const [key, cards] of Object.entries(grouped))
 			for (const card of Array.isArray(cards) ? cards : [])
-				const to = moves[cardId(card)] ?? key
+				const to = moves.get(cardId(card), key)
 				byKey.get(to)?.cards.push(card)
 		out
 	}
@@ -109,7 +119,7 @@
 		{ card, from } := dragged
 		dragged = undefined
 		return if from === to
-		moves = { ...moves, [cardId(card)]: to }
+		moves.set(cardId(card), to)
 		submitMove(card, to)
 </script>
 

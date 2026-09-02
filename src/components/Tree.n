@@ -1,5 +1,5 @@
 ul.tree(class!="{classes}" role="tree")
-	+each('items as node')
+	+each('list as node')
 		| {@render renderNode(node, 0)}
 
 +snippet('renderNode', node, depth)
@@ -33,12 +33,14 @@ ul.tree(class!="{classes}" role="tree")
 	import Icon from './Icon.n'
 
 	{
-		items = []
+		items = undefined
+		data = undefined
 		expanded = $bindable([])
 		selected = $bindable(undefined)
 		class: extra = ''
 	} .= $props()
 
+	list := items ?? data ?? []
 	classes := cn 'tree', extra
 
 	hasChildren := (node) => Array.isArray(node.children) && node.children.length > 0

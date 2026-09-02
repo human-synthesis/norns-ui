@@ -12,3 +12,4 @@ export { focusTrap } from './focusTrap.svelte.js';
 export { lock as scrollLockAcquire, unlock as scrollLockRelease, scrollLock } from './scrollLock.svelte.js';
 export { useFloating, positionAt } from './floating.svelte.js';
 export { rovingTabindex } from './rovingTabindex.svelte.js';
+export { optimisticOverlay } from './optimistic.svelte.js';

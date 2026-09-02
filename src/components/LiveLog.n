@@ -1,0 +1,64 @@
+pre.live-log(class!="{classes}" bind:this!="{el}" aria-live="polite")
+	| {lines.join('\n')}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { streamSource as openStream, roomChannel as openRoom } from '@human-synthesis/norns/live-client'
+
+	{
+		streamSource = undefined
+		roomChannel = undefined
+		receive = '*'
+		maxLines = 200
+		class: extra = ''
+	} .= $props()
+
+	lines .= $state([])
+	el .= $state(undefined)
+
+	classes := $derived cn('live-log', extra)
+
+	append := (frame) =>
+		line := typeof frame === 'string' ? frame : JSON.stringify(frame)
+		lines = [...lines, line].slice(-Math.max(1, Number(maxLines) || 200))
+
+	$effect =>
+		return unless roomChannel
+		ch := openRoom(roomChannel)
+		off := ch.on(receive, append)
+		=>
+			off()
+			ch.close()
+
+	$effect =>
+		return unless streamSource
+		let stopped = false
+		(async =>
+			try
+				for await (const frame of openStream(streamSource))
+					return if stopped
+					append(frame)
+			catch
+				return
+		)()
+		=> stopped = true
+
+	$effect =>
+		lines
+		el?.scrollTo?.(0, el.scrollHeight)
+		return
+</script>
+
+<style>
+	.live-log {
+		font-family: var(--font-mono, ui-monospace, monospace);
+		font-size: 0.8125rem;
+		line-height: 1.5;
+		max-height: 20rem;
+		overflow-y: auto;
+		margin: 0;
+		padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+		border-radius: var(--radius-md, 0.375rem);
+		background: var(--color-surface-2, color-mix(in oklab, currentColor 5%, transparent));
+	}
+</style>

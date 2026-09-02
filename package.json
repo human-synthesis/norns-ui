@@ -15,6 +15,7 @@
 	],
 	"scripts": {
 		"test": "bun test",
+		"build:manifest": "bun scripts/build-manifest.mjs",
 		"check:shims": "bun scripts/check-shims.mjs",
 		"check:shims:strict": "bun scripts/check-shims.mjs --strict"
 	},
@@ -30,6 +31,7 @@
 		"./styles/atoms": "./src/styles/atoms.css",
 		"./components/*": "./src/components/*",
 		"./contracts": "./src/contracts.js",
+		"./manifest": "./src/palette-manifest.json",
 		"./motion": "./src/motion/index.js",
 		"./motion/*": "./src/motion/*",
 		"./package.json": "./package.json"

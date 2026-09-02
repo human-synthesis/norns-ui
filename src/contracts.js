@@ -20,6 +20,9 @@ import * as v from 'valibot';
 const NAME = '[A-Za-z_][A-Za-z0-9_]*';
 export const QUERY_ADDRESS = new RegExp(`^${NAME}\\.Query\\.${NAME}$`);
 export const ACTION_ADDRESS = new RegExp(`^${NAME}\\.Action\\.${NAME}$`);
+export const SNIPPET_ADDRESS = new RegExp(`^${NAME}\\.Snippet\\.${NAME}$`);
+export const STREAM_ADDRESS = new RegExp(`^${NAME}\\.Endpoint\\.${NAME}$`);
+export const ROOM_ADDRESS = new RegExp(`^${NAME}\\.Worker\\.${NAME}$`);
 
 export const query = () =>
 	v.pipe(v.string(), v.regex(QUERY_ADDRESS, 'expected a Query address (module.Query.name)'));
@@ -29,6 +32,17 @@ export const action = () =>
 
 /** A pass-through prop value — string/number/boolean literal from the spec. */
 export const literal = () => v.union([v.string(), v.number(), v.boolean()]);
+
+export const snippet = () =>
+	v.pipe(v.string(), v.regex(SNIPPET_ADDRESS, 'expected a Snippet address (module.Snippet.name)'));
+
+/** A `stream:` Endpoint binding — the emitter turns it into a streamSource URL. */
+export const stream = () =>
+	v.pipe(v.string(), v.regex(STREAM_ADDRESS, 'expected an Endpoint address (module.Endpoint.name)'));
+
+/** A `room: true` Worker binding — the emitter turns it into a roomChannel name. */
+export const room = () =>
+	v.pipe(v.string(), v.regex(ROOM_ADDRESS, 'expected a Worker address (module.Worker.name)'));
 
 const opt = (schema) => v.optional(schema);
 
@@ -41,6 +55,8 @@ export const contracts = {
 		dense: opt(literal()),
 		stickyHeader: opt(literal()),
 		emptyMessage: opt(literal()),
+		cell: opt(snippet()),
+		empty: opt(snippet()),
 		class: opt(literal())
 	}),
 	DataTable: v.strictObject({
@@ -52,6 +68,8 @@ export const contracts = {
 		emptyMessage: opt(literal()),
 		sortKey: opt(literal()),
 		sortDir: opt(literal()),
+		cell: opt(snippet()),
+		empty: opt(snippet()),
 		class: opt(literal())
 	}),
 	Kanban: v.strictObject({
@@ -61,6 +79,8 @@ export const contracts = {
 		title: opt(literal()),
 		subtitle: opt(literal()),
 		emptyMessage: opt(literal()),
+		card: opt(snippet()),
+		empty: opt(snippet()),
 		class: opt(literal())
 	}),
 	Chart: v.strictObject({
@@ -133,5 +153,120 @@ export const contracts = {
 		pageSize: opt(literal()),
 		siblingCount: opt(literal()),
 		class: opt(literal())
+	}),
+	Checkbox: v.strictObject({
+		name: opt(literal()),
+		checked: opt(literal()),
+		required: opt(literal()),
+		disabled: opt(literal()),
+		error: opt(literal()),
+		class: opt(literal())
+	}),
+	Switch: v.strictObject({
+		name: opt(literal()),
+		checked: opt(literal()),
+		required: opt(literal()),
+		disabled: opt(literal()),
+		error: opt(literal()),
+		class: opt(literal())
+	}),
+	Textarea: v.strictObject({
+		name: opt(literal()),
+		value: opt(literal()),
+		placeholder: opt(literal()),
+		rows: opt(literal()),
+		required: opt(literal()),
+		disabled: opt(literal()),
+		error: opt(literal()),
+		class: opt(literal())
+	}),
+	DatePicker: v.strictObject({
+		name: opt(literal()),
+		value: opt(literal()),
+		min: opt(literal()),
+		max: opt(literal()),
+		placeholder: opt(literal()),
+		label: opt(literal()),
+		disabled: opt(literal()),
+		error: opt(literal()),
+		id: opt(literal()),
+		class: opt(literal())
+	}),
+	Uploader: v.strictObject({
+		multiple: opt(literal()),
+		accept: opt(literal()),
+		disabled: opt(literal()),
+		placeholder: opt(literal()),
+		helper: opt(literal()),
+		class: opt(literal())
+	}),
+	Timeline: v.strictObject({
+		data: query(),
+		class: opt(literal())
+	}),
+	Tree: v.strictObject({
+		data: query(),
+		class: opt(literal())
+	}),
+	Calendar: v.strictObject({
+		value: opt(literal()),
+		range: opt(literal()),
+		min: opt(literal()),
+		max: opt(literal()),
+		label: opt(literal()),
+		class: opt(literal())
+	}),
+	StreamText: v.strictObject({
+		streamSource: stream(),
+		autostart: opt(literal()),
+		class: opt(literal())
+	}),
+	ChatThread: v.strictObject({
+		roomChannel: room(),
+		send: opt(literal()),
+		receive: opt(literal()),
+		placeholder: opt(literal()),
+		sendLabel: opt(literal()),
+		emptyMessage: opt(literal()),
+		message: opt(snippet()),
+		class: opt(literal())
+	}),
+	Feed: v.strictObject({
+		streamSource: opt(stream()),
+		roomChannel: opt(room()),
+		receive: opt(literal()),
+		max: opt(literal()),
+		emptyMessage: opt(literal()),
+		item: opt(snippet()),
+		class: opt(literal())
+	}),
+	PresenceAvatars: v.strictObject({
+		roomChannel: room(),
+		max: opt(literal()),
+		size: opt(literal()),
+		label: opt(literal()),
+		showCount: opt(literal()),
+		class: opt(literal())
+	}),
+	LiveLog: v.strictObject({
+		streamSource: opt(stream()),
+		roomChannel: opt(room()),
+		receive: opt(literal()),
+		maxLines: opt(literal()),
+		class: opt(literal())
 	})
+};
+
+/**
+ * Snippet slot signatures: tag → prop → ordered arg names the component
+ * passes when it renders the slot. The generator checks a bound Snippet
+ * unit's declared `args` against this signature (exact names, exact order),
+ * so a mismatch refuses at generate time.
+ */
+export const snippetSlots = {
+	Table: { cell: ['row', 'column', 'value'], empty: [] },
+	DataTable: { cell: ['row', 'column', 'value'], empty: [] },
+	Kanban: { card: ['card'], empty: [] },
+	ChatThread: { message: ['message'] },
+	Feed: { item: ['item'] }
 };

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import * as v from 'valibot';
-import { contracts, query, action, literal } from '../src/contracts.js';
+import { contracts, query, action, literal, snippet, snippetSlots } from '../src/contracts.js';
 
 const parse = (name, props) => v.safeParse(contracts[name], props);
 
@@ -76,5 +76,55 @@ describe('contracts', () => {
 		expect(v.safeParse(query(), 'crm.Entity.Deal').success).toBe(false);
 		expect(v.safeParse(action(), 'crm.Action.move').success).toBe(true);
 		expect(v.safeParse(action(), 'not an address').success).toBe(false);
+	});
+
+	test('snippet helper pins the Snippet address shape', () => {
+		expect(v.safeParse(snippet(), 'crm.Snippet.statusCell').success).toBe(true);
+		expect(v.safeParse(snippet(), 'crm.Query.listDeals').success).toBe(false);
+		expect(v.safeParse(snippet(), 'not an address').success).toBe(false);
+	});
+
+	test('Table/DataTable/Kanban accept Snippet slot bindings', () => {
+		expect(
+			parse('Table', { data: 'crm.Query.listDeals', cell: 'crm.Snippet.statusCell' }).success
+		).toBe(true);
+		expect(
+			parse('DataTable', { data: 'crm.Query.listDeals', empty: 'crm.Snippet.noRows' }).success
+		).toBe(true);
+		expect(
+			parse('Kanban', { data: 'deals.Query.byStage', card: 'deals.Snippet.dealCard' }).success
+		).toBe(true);
+		expect(parse('Table', { data: 'crm.Query.listDeals', cell: 'crm.Query.listDeals' }).success).toBe(
+			false
+		);
+	});
+
+	test('realtime contracts pin stream/room bindings (U-09)', () => {
+		expect(parse('StreamText', { streamSource: 'games.Endpoint.chat' }).success).toBe(true);
+		expect(parse('StreamText', { streamSource: 'games.Worker.matchRoom' }).success).toBe(false);
+		expect(parse('StreamText', {}).success).toBe(false);
+		expect(
+			parse('ChatThread', { roomChannel: 'games.Worker.matchRoom', send: 'chat' }).success
+		).toBe(true);
+		expect(parse('ChatThread', { roomChannel: 'games.Endpoint.chat' }).success).toBe(false);
+		expect(
+			parse('Feed', { roomChannel: 'games.Worker.matchRoom', item: 'games.Snippet.eventRow' })
+				.success
+		).toBe(true);
+		expect(parse('PresenceAvatars', { roomChannel: 'games.Worker.matchRoom', max: 3 }).success).toBe(
+			true
+		);
+		expect(parse('LiveLog', { streamSource: 'ops.Endpoint.logs', maxLines: 50 }).success).toBe(true);
+	});
+
+	test('snippetSlots signatures match what the components render', () => {
+		expect(snippetSlots.Table.cell).toEqual(['row', 'column', 'value']);
+		expect(snippetSlots.DataTable.cell).toEqual(['row', 'column', 'value']);
+		expect(snippetSlots.Kanban.card).toEqual(['card']);
+		for (const [tag, slotProps] of Object.entries(snippetSlots)) {
+			expect(contracts[tag], tag).toBeDefined();
+			for (const prop of Object.keys(slotProps))
+				expect(contracts[tag].entries[prop], `${tag}.${prop}`).toBeDefined();
+		}
 	});
 });

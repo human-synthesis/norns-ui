@@ -1,0 +1,4188 @@
+{
+	"library": "@human-synthesis/norns-ui",
+	"version": "0.1.0",
+	"counts": {
+		"components": 78,
+		"motion": 5,
+		"behaviors": 9,
+		"tokens": 99
+	},
+	"components": [
+		{
+			"name": "Accordion",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/Accordion.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "AccordionItem[]",
+					"required": false
+				},
+				{
+					"name": "multiple",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "value",
+					"type": "string | string[]",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Audio",
+			"category": "media",
+			"import": "@human-synthesis/norns-ui/components/Audio.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "src",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "sources",
+					"type": "AudioSource[]",
+					"required": false
+				},
+				{
+					"name": "controls",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "autoplay",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "loop",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "muted",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "preload",
+					"type": "'none' | 'metadata' | 'auto'",
+					"required": false
+				},
+				{
+					"name": "fallback",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Autocomplete",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Autocomplete.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "ComboboxItem[]",
+					"required": false
+				},
+				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Avatar",
+			"category": "media",
+			"import": "@human-synthesis/norns-ui/components/Avatar.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "src",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false,
+					"doc": "Display name; first + last initial used as fallback when `src` is missing."
+				},
+				{
+					"name": "size",
+					"type": "AvatarSize",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "AvatarGroup",
+			"category": "media",
+			"import": "@human-synthesis/norns-ui/components/AvatarGroup.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "AvatarGroupItem[]",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "AvatarSize",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Badge",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/Badge.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "BadgeVariant",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "BadgeSize",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"variant": "literal",
+				"size": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"badge": null,
+				"variant": "success"
+			}
+		},
+		{
+			"name": "Banner",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/Banner.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "BannerVariant",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false,
+					"doc": "Iconify icon name (e.g. `\"lucide:alert-triangle\"`)."
+				},
+				{
+					"name": "actions",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"variant": "literal",
+				"icon": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"banner": null,
+				"variant": "info"
+			}
+		},
+		{
+			"name": "Breadcrumbs",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/Breadcrumbs.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "BreadcrumbItem[]",
+					"required": false
+				},
+				{
+					"name": "separator",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Btn",
+			"category": "action",
+			"import": "@human-synthesis/norns-ui/components/Btn.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "BtnVariant",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "BtnSize",
+					"required": false
+				},
+				{
+					"name": "loading",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "type",
+					"type": "'button' | 'submit' | 'reset'",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "href",
+					"type": "string",
+					"required": false,
+					"doc": "When set, renders as an `<a>` styled like the button."
+				},
+				{
+					"name": "target",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "rel",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "leading",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "trailing",
+					"type": "Snippet",
+					"required": false
+				}
+			],
+			"bindings": {
+				"variant": "literal",
+				"size": "literal",
+				"type": "literal",
+				"icon": "literal",
+				"href": "literal",
+				"disabled": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"btn": null,
+				"variant": "primary",
+				"type": "submit"
+			}
+		},
+		{
+			"name": "ButtonGroup",
+			"category": "action",
+			"import": "@human-synthesis/norns-ui/components/ButtonGroup.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "orientation",
+					"type": "'horizontal' | 'vertical'",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Calendar",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Calendar.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false,
+					"doc": "ISO YYYY-MM-DD. Bindable."
+				},
+				{
+					"name": "rangeValue",
+					"type": "CalendarDateRange",
+					"required": false,
+					"doc": "Range mode. Bindable. Use instead of `value` when `range` is true."
+				},
+				{
+					"name": "range",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "min",
+					"type": "string",
+					"required": false,
+					"doc": "ISO YYYY-MM-DD inclusive."
+				},
+				{
+					"name": "max",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "onchange",
+					"type": "(next: string | CalendarDateRange) => void",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"value": "literal",
+				"range": "literal",
+				"min": "literal",
+				"max": "literal",
+				"label": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"calendar": null,
+				"value": "2026-01-15"
+			}
+		},
+		{
+			"name": "Card",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/Card.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "padded",
+					"type": "boolean",
+					"required": false,
+					"doc": "Wrap body in `.card-body` (default true). Set false for full-bleed content."
+				},
+				{
+					"name": "interactive",
+					"type": "boolean",
+					"required": false,
+					"doc": "Apply `.card-interactive` hover/focus treatment. Implicit if `href` is set."
+				},
+				{
+					"name": "href",
+					"type": "string",
+					"required": false,
+					"doc": "Renders as `<a>` instead of `<div>` when set."
+				},
+				{
+					"name": "target",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "rel",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "header",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "footer",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"padded": "literal",
+				"interactive": "literal",
+				"href": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"card": null,
+				"padded": true
+			}
+		},
+		{
+			"name": "Carousel",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/Carousel.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "slides",
+					"type": "CarouselSlide[]",
+					"required": false
+				},
+				{
+					"name": "index",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "autoplay",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "interval",
+					"type": "number",
+					"required": false,
+					"doc": "Autoplay interval in milliseconds. Default 5000."
+				},
+				{
+					"name": "aspect",
+					"type": "'video' | 'square' | 'wide' | 'none'",
+					"required": false,
+					"doc": "Default aspect ratio applied if no explicit `class=\"aspect-...\"` is passed."
+				},
+				{
+					"name": "children",
+					"type": "Snippet<[CarouselSlide, number]>",
+					"required": false,
+					"doc": "Custom slide renderer; receives `(slide, i)` and runs only for slides without `src`."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Chart",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Chart.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "data",
+					"type": "Record<string, unknown>[]",
+					"required": false,
+					"doc": "Rows to plot — typically a generated Query result."
+				},
+				{
+					"name": "type",
+					"type": "ChartType",
+					"required": false
+				},
+				{
+					"name": "x",
+					"type": "string",
+					"required": false,
+					"doc": "Field for the x axis / labels. Defaults to the first string field."
+				},
+				{
+					"name": "y",
+					"type": "string",
+					"required": false,
+					"doc": "Field for the y axis values. Defaults to the first numeric field."
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "Accessible label for the rendered svg."
+				},
+				{
+					"name": "labels",
+					"type": "boolean",
+					"required": false,
+					"doc": "Show per-point x labels under the plot."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"data": "query",
+				"type": "literal",
+				"x": "literal",
+				"y": "literal",
+				"label": "literal",
+				"labels": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"chart": "deals.Query.amounts",
+				"type": "bar",
+				"x": "title",
+				"y": "amount"
+			}
+		},
+		{
+			"name": "ChatThread",
+			"category": "realtime",
+			"import": "@human-synthesis/norns-ui/components/ChatThread.n",
+			"bindability": [
+				"spec-bindable",
+				"snippet-extensible"
+			],
+			"props": [
+				{
+					"name": "roomChannel",
+					"type": "string",
+					"required": false,
+					"doc": "Room name — a generated Page binds a `room: true` Worker here."
+				},
+				{
+					"name": "send",
+					"type": "string",
+					"required": false,
+					"doc": "Message type sent by the composer (default 'chat')."
+				},
+				{
+					"name": "receive",
+					"type": "string",
+					"required": false,
+					"doc": "Message type appended to the thread (defaults to `send`)."
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "sendLabel",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "emptyMessage",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "message",
+					"type": "Snippet<[ChatMessage]>",
+					"required": false,
+					"doc": "Message renderer snippet — replaces the default from/text row."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"roomChannel": "room",
+				"send": "literal",
+				"receive": "literal",
+				"placeholder": "literal",
+				"sendLabel": "literal",
+				"emptyMessage": "literal",
+				"message": "snippet",
+				"class": "literal"
+			},
+			"example": {
+				"chatThread": {
+					"room": "games.Worker.matchRoom",
+					"sends": [
+						"chat"
+					],
+					"receives": [
+						"chat"
+					]
+				}
+			},
+			"snippetSlots": {
+				"message": [
+					"message"
+				]
+			}
+		},
+		{
+			"name": "Checkbox",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Checkbox.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "checked",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"name": "literal",
+				"checked": "literal",
+				"required": "literal",
+				"disabled": "literal",
+				"error": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"checkbox": null,
+				"name": "done",
+				"checked": true
+			}
+		},
+		{
+			"name": "Chip",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/Chip.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "removable",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "onremove",
+					"type": "(event: MouseEvent) => void",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Collapsible",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/Collapsible.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "title",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "onopenchange",
+					"type": "(open: boolean) => void",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ColorPicker",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/ColorPicker.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false,
+					"doc": "Hex value with leading `#`. Bindable."
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "hideCopy",
+					"type": "boolean",
+					"required": false,
+					"doc": "Hide the clipboard-copy button."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ContextMenu",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/ContextMenu.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "ContextMenuItem[]",
+					"required": false
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "triggerClass",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "CopyButton",
+			"category": "action",
+			"import": "@human-synthesis/norns-ui/components/CopyButton.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string | number",
+					"required": false
+				},
+				{
+					"name": "variant",
+					"type": "'primary' | 'secondary' | 'ghost' | 'danger' | 'link'",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "oncopy",
+					"type": "(value: string | number) => void",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "DataTable",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/DataTable.n",
+			"bindability": [
+				"spec-bindable",
+				"snippet-extensible"
+			],
+			"props": [
+				{
+					"name": "columns",
+					"type": "DataTableColumn[]",
+					"required": false
+				},
+				{
+					"name": "rows",
+					"type": "Record<string, unknown>[]",
+					"required": false
+				},
+				{
+					"name": "striped",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "dense",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "stickyHeader",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "emptyMessage",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "sortKey",
+					"type": "string",
+					"required": false,
+					"doc": "Currently-sorted column key. Bindable."
+				},
+				{
+					"name": "sortDir",
+					"type": "'asc' | 'desc'",
+					"required": false
+				},
+				{
+					"name": "onrowclick",
+					"type": "(row: Record<string, unknown>, index: number) => void",
+					"required": false
+				},
+				{
+					"name": "cell",
+					"type": "Snippet<[Record<string, unknown>, string, unknown]>",
+					"required": false,
+					"doc": "Cell renderer snippet — receives (row, columnKey, value)."
+				},
+				{
+					"name": "empty",
+					"type": "Snippet",
+					"required": false,
+					"doc": "Rendered instead of emptyMessage when there are no rows."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"data": "query",
+				"columns": "literal",
+				"striped": "literal",
+				"dense": "literal",
+				"stickyHeader": "literal",
+				"emptyMessage": "literal",
+				"sortKey": "literal",
+				"sortDir": "literal",
+				"cell": "snippet",
+				"empty": "snippet",
+				"class": "literal"
+			},
+			"example": {
+				"dataTable": "crm.Query.listDeals",
+				"columns": "name,amount"
+			},
+			"snippetSlots": {
+				"cell": [
+					"row",
+					"column",
+					"value"
+				],
+				"empty": []
+			}
+		},
+		{
+			"name": "DatePicker",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/DatePicker.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false,
+					"doc": "ISO date string (YYYY-MM-DD). Bindable."
+				},
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false,
+					"doc": "Whether the popover is open. Bindable."
+				},
+				{
+					"name": "min",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "closeOnSelect",
+					"type": "boolean",
+					"required": false,
+					"doc": "Close the popover automatically once a date is picked (default true)."
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "aria-label override; defaults to \"Pick a date\"."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"name": "literal",
+				"value": "literal",
+				"min": "literal",
+				"max": "literal",
+				"placeholder": "literal",
+				"label": "literal",
+				"disabled": "literal",
+				"error": "literal",
+				"id": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"datePicker": null,
+				"name": "due",
+				"placeholder": "Pick a date"
+			}
+		},
+		{
+			"name": "DateRangePicker",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/DateRangePicker.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "DateRange",
+					"required": false
+				},
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false,
+					"doc": "Whether the popover is open. Bindable."
+				},
+				{
+					"name": "min",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Dialog",
+			"category": "overlay",
+			"import": "@human-synthesis/norns-ui/components/Dialog.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "title",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "description",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "hideClose",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "dismissable",
+					"type": "boolean",
+					"required": false,
+					"doc": "Close on overlay click and Escape. Default true."
+				},
+				{
+					"name": "ariaLabel",
+					"type": "string",
+					"required": false,
+					"doc": "Used as `aria-label` on the dialog when no `title` is provided."
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "actions",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "triggerClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "overlayClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Dropdown",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/Dropdown.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "side",
+					"type": "'top' | 'right' | 'bottom' | 'left'",
+					"required": false
+				},
+				{
+					"name": "align",
+					"type": "'start' | 'center' | 'end'",
+					"required": false
+				},
+				{
+					"name": "sideOffset",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "items",
+					"type": "DropdownItem[]",
+					"required": false
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "triggerClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Feed",
+			"category": "realtime",
+			"import": "@human-synthesis/norns-ui/components/Feed.n",
+			"bindability": [
+				"spec-bindable",
+				"snippet-extensible"
+			],
+			"props": [
+				{
+					"name": "streamSource",
+					"type": "string",
+					"required": false,
+					"doc": "SSE endpoint URL — frames append as entries."
+				},
+				{
+					"name": "roomChannel",
+					"type": "string",
+					"required": false,
+					"doc": "Room name — received frames append as entries."
+				},
+				{
+					"name": "receive",
+					"type": "string",
+					"required": false,
+					"doc": "Room message type to append ('*' for all, the default)."
+				},
+				{
+					"name": "max",
+					"type": "number | string",
+					"required": false,
+					"doc": "Newest entries kept (default 100)."
+				},
+				{
+					"name": "emptyMessage",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "item",
+					"type": "Snippet<[unknown]>",
+					"required": false,
+					"doc": "Entry renderer snippet — replaces the default text/JSON line."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"streamSource": "stream",
+				"roomChannel": "room",
+				"receive": "literal",
+				"max": "literal",
+				"emptyMessage": "literal",
+				"item": "snippet",
+				"class": "literal"
+			},
+			"example": {
+				"feed": {
+					"stream": "ops.Endpoint.events"
+				}
+			},
+			"snippetSlots": {
+				"item": [
+					"item"
+				]
+			}
+		},
+		{
+			"name": "Field",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Field.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "Label text rendered above the control. Used as id-derivation fallback if no `id`/`name` is given."
+				},
+				{
+					"name": "help",
+					"type": "string",
+					"required": false,
+					"doc": "Helper text shown below the control when there's no error."
+				},
+				{
+					"name": "error",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false,
+					"doc": "Adds a red asterisk after the label. Cosmetic; pair with `required` on the actual input."
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false,
+					"doc": "Explicit id for the control. Otherwise: `name`, then slugified `label`, then undefined."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false,
+					"doc": "Optional class merged into the field wrapper."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false,
+					"doc": "Snippet that renders the actual control. Children should call `<Input />`, `<Textarea />`, etc."
+				}
+			],
+			"bindings": {
+				"label": "literal",
+				"help": "literal",
+				"error": "literal",
+				"name": "literal",
+				"required": "literal",
+				"id": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"field": null,
+				"label": "Email",
+				"name": "email"
+			}
+		},
+		{
+			"name": "FieldGroup",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/FieldGroup.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "legend",
+					"type": "string",
+					"required": false,
+					"doc": "Optional legend text rendered as the fieldset's `<legend>`."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Form",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Form.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "method",
+					"type": "'GET' | 'POST'",
+					"required": false
+				},
+				{
+					"name": "action",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "enctype",
+					"type": "'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain'",
+					"required": false
+				},
+				{
+					"name": "form",
+					"type": "FormActionResult",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				}
+			],
+			"bindings": {
+				"action": "action",
+				"method": "literal",
+				"enctype": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"form": "crm.Action.createDeal",
+				"method": "POST"
+			}
+		},
+		{
+			"name": "GradientText",
+			"category": "typography",
+			"import": "@human-synthesis/norns-ui/components/GradientText.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "from",
+					"type": "string",
+					"required": false,
+					"doc": "Start color. Default `var(--color-primary-500)`. Accepts any CSS color."
+				},
+				{
+					"name": "to",
+					"type": "string",
+					"required": false,
+					"doc": "End color. Default `var(--color-info-500)`."
+				},
+				{
+					"name": "via",
+					"type": "string",
+					"required": false,
+					"doc": "Optional middle stop."
+				},
+				{
+					"name": "animate",
+					"type": "boolean",
+					"required": false,
+					"doc": "Animate the gradient via background-position keyframes. Default true."
+				},
+				{
+					"name": "angle",
+					"type": "number",
+					"required": false,
+					"doc": "Gradient angle in degrees. Default 90."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Header",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/Header.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "sticky",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "brand",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "nav",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "actions",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "HeroBanner",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/HeroBanner.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "title",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "description",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "image",
+					"type": "string",
+					"required": false,
+					"doc": "Background/decorative image src; rendered with reduced opacity behind the content."
+				},
+				{
+					"name": "align",
+					"type": "'left' | 'center'",
+					"required": false
+				},
+				{
+					"name": "gradient",
+					"type": "boolean",
+					"required": false,
+					"doc": "Apply animated `GradientText` to the title. Default false."
+				},
+				{
+					"name": "actions",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "HierarchicalMenu",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/HierarchicalMenu.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "HierarchicalMenuItem[]",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "aria-label for the <nav> wrapper."
+				},
+				{
+					"name": "onSelect",
+					"type": "(item: HierarchicalMenuItem) => void",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Icon",
+			"category": "media",
+			"import": "@human-synthesis/norns-ui/components/Icon.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "name",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "size",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "flip",
+					"type": "'horizontal' | 'vertical' | 'horizontal,vertical'",
+					"required": false
+				},
+				{
+					"name": "rotate",
+					"type": "90 | 180 | 270 | string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Image",
+			"category": "media",
+			"import": "@human-synthesis/norns-ui/components/Image.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "src",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "alt",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "loading",
+					"type": "'lazy' | 'eager'",
+					"required": false
+				},
+				{
+					"name": "fit",
+					"type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
+					"required": false
+				},
+				{
+					"name": "rounded",
+					"type": "boolean | 'sm' | 'md' | 'lg' | 'full'",
+					"required": false
+				},
+				{
+					"name": "width",
+					"type": "number | string",
+					"required": false
+				},
+				{
+					"name": "height",
+					"type": "number | string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Input",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Input.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string | number",
+					"required": false
+				},
+				{
+					"name": "type",
+					"type": "InputType",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "InputSize",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false,
+					"doc": "Force the error styling regardless of the parent Field's error state."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"name": "literal",
+				"type": "literal",
+				"value": "literal",
+				"placeholder": "literal",
+				"required": "literal",
+				"size": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"input": null,
+				"name": "email",
+				"type": "email",
+				"placeholder": "you@example.com"
+			}
+		},
+		{
+			"name": "Kanban",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Kanban.n",
+			"bindability": [
+				"spec-bindable",
+				"snippet-extensible"
+			],
+			"props": [
+				{
+					"name": "data",
+					"type": "Record<string, KanbanCard[]>",
+					"required": false,
+					"doc": "Cards grouped by column key — typically a grouped Query result."
+				},
+				{
+					"name": "columns",
+					"type": "string | Array<string | { key: string; label?: string }>",
+					"required": false,
+					"doc": "Column order/labels: comma-separated keys, key list, or {key,label} list."
+				},
+				{
+					"name": "title",
+					"type": "string",
+					"required": false,
+					"doc": "Card field used as the card title. Defaults to the first string field."
+				},
+				{
+					"name": "subtitle",
+					"type": "string",
+					"required": false,
+					"doc": "Card field rendered under the title when present."
+				},
+				{
+					"name": "onMove",
+					"type": "(card: KanbanCard, to: string, from: string) => unknown",
+					"required": false,
+					"doc": "Called after a drag between columns; binding an Action enables dragging."
+				},
+				{
+					"name": "oncardclick",
+					"type": "(card: KanbanCard) => void",
+					"required": false
+				},
+				{
+					"name": "emptyMessage",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "card",
+					"type": "Snippet<[KanbanCard]>",
+					"required": false,
+					"doc": "Card renderer snippet — replaces the default title/subtitle block."
+				},
+				{
+					"name": "empty",
+					"type": "Snippet",
+					"required": false,
+					"doc": "Rendered instead of emptyMessage in an empty column."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"data": "query",
+				"onMove": "action",
+				"columns": "literal",
+				"title": "literal",
+				"subtitle": "literal",
+				"emptyMessage": "literal",
+				"card": "snippet",
+				"empty": "snippet",
+				"class": "literal"
+			},
+			"example": {
+				"kanban": "deals.Query.pipeline",
+				"onMove": "deals.Action.win",
+				"title": "title"
+			},
+			"snippetSlots": {
+				"card": [
+					"card"
+				],
+				"empty": []
+			}
+		},
+		{
+			"name": "Listbox",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Listbox.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "ListboxItem[]",
+					"required": false
+				},
+				{
+					"name": "value",
+					"type": "unknown",
+					"required": false,
+					"doc": "Selected value (array when `multiple`). Bindable."
+				},
+				{
+					"name": "multiple",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "emptyMessage",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "onchange",
+					"type": "(value: unknown) => void",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "LiveLog",
+			"category": "realtime",
+			"import": "@human-synthesis/norns-ui/components/LiveLog.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "streamSource",
+					"type": "string",
+					"required": false,
+					"doc": "SSE endpoint URL — each frame becomes a log line."
+				},
+				{
+					"name": "roomChannel",
+					"type": "string",
+					"required": false,
+					"doc": "Room name — received frames become log lines."
+				},
+				{
+					"name": "receive",
+					"type": "string",
+					"required": false,
+					"doc": "Room message type to log ('*' for all, the default)."
+				},
+				{
+					"name": "maxLines",
+					"type": "number | string",
+					"required": false,
+					"doc": "Newest lines kept (default 200)."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"streamSource": "stream",
+				"roomChannel": "room",
+				"receive": "literal",
+				"maxLines": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"liveLog": {
+					"stream": "ops.Endpoint.logs"
+				},
+				"maxLines": 200
+			}
+		},
+		{
+			"name": "MegaMenu",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/MegaMenu.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "sections",
+					"type": "MegaMenuSection[]",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "aria-label for the <nav> wrapper."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "MultiSelect",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/MultiSelect.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "ComboboxItem[]",
+					"required": false
+				},
+				{
+					"name": "value",
+					"type": "string[]",
+					"required": false
+				},
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "NumberInput",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/NumberInput.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "min",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "stepSize",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "readonly",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "OtpField",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/OtpField.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "length",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "mask",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "oncomplete",
+					"type": "(value: string) => void",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Pagination",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Pagination.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "page",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "total",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "pageSize",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "siblingCount",
+					"type": "number",
+					"required": false,
+					"doc": "How many pages to show on each side of the current. Default 1."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"page": "literal",
+				"total": "literal",
+				"pageSize": "literal",
+				"siblingCount": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"pagination": null,
+				"total": 120,
+				"pageSize": 20
+			}
+		},
+		{
+			"name": "Popover",
+			"category": "overlay",
+			"import": "@human-synthesis/norns-ui/components/Popover.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "side",
+					"type": "PopoverSide",
+					"required": false
+				},
+				{
+					"name": "align",
+					"type": "PopoverAlign",
+					"required": false
+				},
+				{
+					"name": "sideOffset",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "triggerClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "PresenceAvatars",
+			"category": "realtime",
+			"import": "@human-synthesis/norns-ui/components/PresenceAvatars.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "roomChannel",
+					"type": "string",
+					"required": false,
+					"doc": "Room name — client count comes from the Room's presence broadcasts."
+				},
+				{
+					"name": "max",
+					"type": "number | string",
+					"required": false,
+					"doc": "Avatars shown before the +N overflow (default 5)."
+				},
+				{
+					"name": "size",
+					"type": "'xs' | 'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "Suffix after the count (default 'online')."
+				},
+				{
+					"name": "showCount",
+					"type": "boolean",
+					"required": false,
+					"doc": "Show the numeric count next to the avatars (default true)."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"roomChannel": "room",
+				"max": "literal",
+				"size": "literal",
+				"label": "literal",
+				"showCount": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"presenceAvatars": {
+					"room": "games.Worker.matchRoom"
+				},
+				"max": 5
+			}
+		},
+		{
+			"name": "Progress",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/Progress.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "variant",
+					"type": "ProgressVariant",
+					"required": false
+				},
+				{
+					"name": "indeterminate",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ProgressCircular",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/ProgressCircular.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "ProgressCircularSize",
+					"required": false
+				},
+				{
+					"name": "indeterminate",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Radio",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Radio.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "group",
+					"type": "string",
+					"required": false,
+					"doc": "Two-way bound shared group value — pass `bind:group={selected}` from parent."
+				},
+				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "RippleButton",
+			"category": "action",
+			"import": "@human-synthesis/norns-ui/components/RippleButton.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "'primary' | 'secondary' | 'ghost' | 'danger' | 'link'",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "type",
+					"type": "'button' | 'submit' | 'reset'",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "onclick",
+					"type": "(event: MouseEvent) => void",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ScrollArea",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/ScrollArea.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "horizontal",
+					"type": "boolean",
+					"required": false,
+					"doc": "Allow horizontal scrolling instead of just vertical."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Select",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Select.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string | number | string[]",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false,
+					"doc": "`<option>` children. Pass via Pug body."
+				}
+			],
+			"bindings": {
+				"name": "literal",
+				"value": "literal",
+				"required": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"select": null,
+				"name": "stage"
+			}
+		},
+		{
+			"name": "Separator",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/Separator.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "orientation",
+					"type": "'horizontal' | 'vertical'",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Sheet",
+			"category": "overlay",
+			"import": "@human-synthesis/norns-ui/components/Sheet.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "side",
+					"type": "SheetSide",
+					"required": false,
+					"doc": "`'left'` was previously the default for the now-removed `<Drawer>`."
+				},
+				{
+					"name": "title",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "description",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "hideClose",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "dismissable",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "ariaLabel",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "actions",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "triggerClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "overlayClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ShinyButton",
+			"category": "action",
+			"import": "@human-synthesis/norns-ui/components/ShinyButton.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "'primary' | 'secondary' | 'ghost' | 'danger' | 'link'",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "type",
+					"type": "'button' | 'submit' | 'reset'",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "onclick",
+					"type": "(event: MouseEvent) => void",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Skeleton",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/Skeleton.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "SkeletonVariant",
+					"required": false
+				},
+				{
+					"name": "width",
+					"type": "number | string",
+					"required": false
+				},
+				{
+					"name": "height",
+					"type": "number | string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Spinner",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/Spinner.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "size",
+					"type": "string",
+					"required": false,
+					"doc": "Tailwind size utility for the spinner glyph."
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "Accessible label announced to screen readers."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Stepper",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/Stepper.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "steps",
+					"type": "StepperStep[]",
+					"required": false
+				},
+				{
+					"name": "current",
+					"type": "number",
+					"required": false,
+					"doc": "Index of the active step. Steps before are auto-marked complete unless overridden."
+				},
+				{
+					"name": "orientation",
+					"type": "'horizontal' | 'vertical'",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "StreamText",
+			"category": "realtime",
+			"import": "@human-synthesis/norns-ui/components/StreamText.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "streamSource",
+					"type": "string",
+					"required": false,
+					"doc": "SSE endpoint URL — a generated Page binds a `stream:` Endpoint here."
+				},
+				{
+					"name": "input",
+					"type": "unknown",
+					"required": false,
+					"doc": "JSON-able request body; the stream opens with POST when set."
+				},
+				{
+					"name": "autostart",
+					"type": "boolean",
+					"required": false,
+					"doc": "Open the stream on mount (default true)."
+				},
+				{
+					"name": "onframe",
+					"type": "(frame: unknown) => void",
+					"required": false,
+					"doc": "Called with each parsed frame as it arrives."
+				},
+				{
+					"name": "ondone",
+					"type": "(text: string) => void",
+					"required": false,
+					"doc": "Called with the full accumulated text when the stream ends."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"streamSource": "stream",
+				"autostart": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"streamText": {
+					"stream": "games.Endpoint.chat"
+				}
+			}
+		},
+		{
+			"name": "Surface",
+			"category": "layout",
+			"import": "@human-synthesis/norns-ui/components/Surface.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "tone",
+					"type": "'glass'",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Switch",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Switch.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "checked",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"name": "literal",
+				"checked": "literal",
+				"required": "literal",
+				"disabled": "literal",
+				"error": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"switch": null,
+				"name": "active"
+			}
+		},
+		{
+			"name": "Table",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Table.n",
+			"bindability": [
+				"spec-bindable",
+				"snippet-extensible"
+			],
+			"props": [
+				{
+					"name": "data",
+					"type": "Record<string, unknown>[]",
+					"required": false,
+					"doc": "Rows to render — typically a generated Query result bound by a Page spec."
+				},
+				{
+					"name": "columns",
+					"type": "string | Array<string | TableColumn>",
+					"required": false
+				},
+				{
+					"name": "pageSize",
+					"type": "number | string",
+					"required": false,
+					"doc": "Client-side page size. 0 disables pagination. Accepts numeric strings."
+				},
+				{
+					"name": "striped",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "dense",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "stickyHeader",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "emptyMessage",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "onrowclick",
+					"type": "(row: Record<string, unknown>, index: number) => void",
+					"required": false
+				},
+				{
+					"name": "cell",
+					"type": "Snippet<[Record<string, unknown>, string, unknown]>",
+					"required": false,
+					"doc": "Cell renderer snippet — receives (row, columnKey, value)."
+				},
+				{
+					"name": "empty",
+					"type": "Snippet",
+					"required": false,
+					"doc": "Rendered instead of emptyMessage when there are no rows."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"data": "query",
+				"columns": "literal",
+				"pageSize": "literal",
+				"striped": "literal",
+				"dense": "literal",
+				"stickyHeader": "literal",
+				"emptyMessage": "literal",
+				"cell": "snippet",
+				"empty": "snippet",
+				"class": "literal"
+			},
+			"example": {
+				"table": "crm.Query.listDeals",
+				"columns": "name,amount,status",
+				"pageSize": 10
+			},
+			"snippetSlots": {
+				"cell": [
+					"row",
+					"column",
+					"value"
+				],
+				"empty": []
+			}
+		},
+		{
+			"name": "Tabs",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/Tabs.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "items",
+					"type": "TabsItem[]",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "ARIA label for the tablist. Default 'Tabs'."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "TagsInput",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/TagsInput.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string[]",
+					"required": false
+				},
+				{
+					"name": "max",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "commitOnBlur",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "separators",
+					"type": "string[]",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Textarea",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Textarea.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "rows",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"name": "literal",
+				"value": "literal",
+				"placeholder": "literal",
+				"rows": "literal",
+				"required": "literal",
+				"disabled": "literal",
+				"error": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"textarea": null,
+				"name": "notes",
+				"rows": 4
+			}
+		},
+		{
+			"name": "ThemeToggler",
+			"category": "action",
+			"import": "@human-synthesis/norns-ui/components/ThemeToggler.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "'primary' | 'secondary' | 'ghost' | 'danger' | 'link'",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "showLabel",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "labelLight",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "labelDark",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "lightIcon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "darkIcon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "storageKey",
+					"type": "string",
+					"required": false,
+					"doc": "localStorage key. Default `'norns-theme'`."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "TimePicker",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/TimePicker.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "string",
+					"required": false,
+					"doc": "Time string `HH:MM` (24h regardless of display `hourCycle`). Bindable."
+				},
+				{
+					"name": "open",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "minuteStep",
+					"type": "number",
+					"required": false,
+					"doc": "Minute increment in the picker (5, 10, 15, 30). Default 5."
+				},
+				{
+					"name": "hourCycle",
+					"type": "12 | 24",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "error",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Timeline",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Timeline.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "TimelineItem[]",
+					"required": false
+				},
+				{
+					"name": "data",
+					"type": "TimelineItem[]",
+					"required": false,
+					"doc": "Alias for `items` — the prop a generated Page binds a Query result to."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"data": "query",
+				"class": "literal"
+			},
+			"example": {
+				"timeline": "crm.Query.history"
+			}
+		},
+		{
+			"name": "ToastProvider",
+			"category": "feedback",
+			"import": "@human-synthesis/norns-ui/components/ToastProvider.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ToggleButton",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/ToggleButton.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "pressed",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "variant",
+					"type": "'primary' | 'secondary' | 'ghost' | 'danger' | 'link'",
+					"required": false,
+					"doc": "Any `.btn-*` variant. The toggle visual state is controlled by `data-pressed`."
+				},
+				{
+					"name": "size",
+					"type": "'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "onpressedchange",
+					"type": "(pressed: boolean) => void",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "ToggleButtonGroup",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/ToggleButtonGroup.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "ToggleGroupItem[]",
+					"required": false
+				},
+				{
+					"name": "value",
+					"type": "string | string[] | undefined",
+					"required": false
+				},
+				{
+					"name": "multiple",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Toolbar",
+			"category": "navigation",
+			"import": "@human-synthesis/norns-ui/components/Toolbar.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "orientation",
+					"type": "'horizontal' | 'vertical'",
+					"required": false
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": false,
+					"doc": "Accessible label, used as aria-label."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Tooltip",
+			"category": "overlay",
+			"import": "@human-synthesis/norns-ui/components/Tooltip.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "content",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "side",
+					"type": "'top' | 'right' | 'bottom' | 'left'",
+					"required": false
+				},
+				{
+					"name": "align",
+					"type": "'start' | 'center' | 'end'",
+					"required": false
+				},
+				{
+					"name": "sideOffset",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "delay",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "rich",
+					"type": "boolean",
+					"required": false,
+					"doc": "Wider, surface-elevated styling for tooltips with markup/multiline content."
+				},
+				{
+					"name": "trigger",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "triggerClass",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Tree",
+			"category": "data",
+			"import": "@human-synthesis/norns-ui/components/Tree.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "items",
+					"type": "TreeNode[]",
+					"required": false
+				},
+				{
+					"name": "data",
+					"type": "TreeNode[]",
+					"required": false,
+					"doc": "Alias for `items` — the prop a generated Page binds a Query result to."
+				},
+				{
+					"name": "expanded",
+					"type": "(string | number)[]",
+					"required": false,
+					"doc": "Array of node ids that are expanded. Bindable."
+				},
+				{
+					"name": "selected",
+					"type": "string | number",
+					"required": false,
+					"doc": "Currently-selected node id. Bindable."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"data": "query",
+				"class": "literal"
+			},
+			"example": {
+				"tree": "crm.Query.folders"
+			}
+		},
+		{
+			"name": "Uploader",
+			"category": "form",
+			"import": "@human-synthesis/norns-ui/components/Uploader.n",
+			"bindability": [
+				"spec-bindable"
+			],
+			"props": [
+				{
+					"name": "files",
+					"type": "File[]",
+					"required": false
+				},
+				{
+					"name": "multiple",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "accept",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "helper",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "onchange",
+					"type": "(files: File[]) => void",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			],
+			"bindings": {
+				"multiple": "literal",
+				"accept": "literal",
+				"disabled": "literal",
+				"placeholder": "literal",
+				"helper": "literal",
+				"class": "literal"
+			},
+			"example": {
+				"uploader": null,
+				"accept": "image/*",
+				"multiple": true
+			}
+		},
+		{
+			"name": "Video",
+			"category": "media",
+			"import": "@human-synthesis/norns-ui/components/Video.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "src",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "sources",
+					"type": "VideoSource[]",
+					"required": false
+				},
+				{
+					"name": "controls",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "autoplay",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "loop",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "muted",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "playsinline",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "preload",
+					"type": "'none' | 'metadata' | 'auto'",
+					"required": false
+				},
+				{
+					"name": "poster",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "fallback",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Window",
+			"category": "overlay",
+			"import": "@human-synthesis/norns-ui/components/Window.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "title",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "hideHeader",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "onClose",
+					"type": "(event: MouseEvent) => void",
+					"required": false,
+					"doc": "Renders the header close button when supplied."
+				},
+				{
+					"name": "onHeaderDoubleClick",
+					"type": "(event: MouseEvent) => void",
+					"required": false
+				},
+				{
+					"name": "actions",
+					"type": "Snippet",
+					"required": false,
+					"doc": "Extra header actions, rendered before the close button."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "bodyClass",
+					"type": "string",
+					"required": false
+				}
+			]
+		}
+	],
+	"motion": [
+		{
+			"name": "AnimatedNumber",
+			"category": "motion",
+			"import": "@human-synthesis/norns-ui/motion/AnimatedNumber.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "value",
+					"type": "number",
+					"required": true
+				},
+				{
+					"name": "from",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "duration",
+					"type": "number",
+					"required": false,
+					"doc": "Duration in seconds."
+				},
+				{
+					"name": "decimals",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "format",
+					"type": "(n: number) => string",
+					"required": false,
+					"doc": "Custom number-to-string formatter."
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "GradientBackground",
+			"category": "motion",
+			"import": "@human-synthesis/norns-ui/motion/GradientBackground.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "colors",
+					"type": "string[]",
+					"required": false
+				},
+				{
+					"name": "duration",
+					"type": "number",
+					"required": false,
+					"doc": "Loop duration in seconds. Default 18."
+				},
+				{
+					"name": "angle",
+					"type": "number",
+					"required": false,
+					"doc": "Gradient angle. Default 130."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "LiquidButton",
+			"category": "motion",
+			"import": "@human-synthesis/norns-ui/motion/LiquidButton.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "variant",
+					"type": "'primary' | 'secondary' | 'ghost' | 'danger' | 'link'",
+					"required": false
+				},
+				{
+					"name": "size",
+					"type": "'sm' | 'md' | 'lg'",
+					"required": false
+				},
+				{
+					"name": "type",
+					"type": "'button' | 'submit' | 'reset'",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "onclick",
+					"type": "(event: MouseEvent) => void",
+					"required": false
+				},
+				{
+					"name": "icon",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Reveal",
+			"category": "motion",
+			"import": "@human-synthesis/norns-ui/motion/Reveal.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "direction",
+					"type": "'up' | 'down' | 'left' | 'right'",
+					"required": false
+				},
+				{
+					"name": "distance",
+					"type": "number",
+					"required": false,
+					"doc": "Travel distance in pixels. Default 12."
+				},
+				{
+					"name": "duration",
+					"type": "number",
+					"required": false,
+					"doc": "Animation duration in seconds. Default 0.5."
+				},
+				{
+					"name": "delay",
+					"type": "number",
+					"required": false,
+					"doc": "Delay before animating, seconds. Default 0."
+				},
+				{
+					"name": "once",
+					"type": "boolean",
+					"required": false,
+					"doc": "Re-trigger on every entry (false) or just the first time (true). Default true."
+				},
+				{
+					"name": "threshold",
+					"type": "number",
+					"required": false,
+					"doc": "IntersectionObserver threshold (0–1). Default 0.15."
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "Sparkles",
+			"category": "motion",
+			"import": "@human-synthesis/norns-ui/motion/Sparkles.n",
+			"bindability": [
+				"custom-only"
+			],
+			"props": [
+				{
+					"name": "density",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "colors",
+					"type": "string[]",
+					"required": false
+				},
+				{
+					"name": "minSize",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "maxSize",
+					"type": "number",
+					"required": false
+				},
+				{
+					"name": "children",
+					"type": "Snippet",
+					"required": false
+				},
+				{
+					"name": "class",
+					"type": "string",
+					"required": false
+				}
+			]
+		}
+	],
+	"behaviors": [
+		{
+			"name": "portal",
+			"description": "Render the node into document.body so overlays escape stacking contexts.",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "clickOutside",
+			"description": "Invoke a callback when a pointer event lands outside the node.",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "escape",
+			"description": "Invoke a callback on Escape keydown while the node is mounted.",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "focusTrap",
+			"description": "Keep Tab focus cycling inside the node (dialogs, sheets).",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "scrollLock",
+			"description": "Lock body scroll while mounted (reference-counted acquire/release).",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "useFloating",
+			"description": "Anchor-position a floating element against a reference (@floating-ui).",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "positionAt",
+			"description": "One-shot floating position calculation for a coordinate anchor.",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "rovingTabindex",
+			"description": "Arrow-key roving focus for composite widgets (menus, listboxes).",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		},
+		{
+			"name": "optimisticOverlay",
+			"description": "Client-side id → value overlay that shadows server truth until reload (instant drag-drop, toggles).",
+			"import": "@human-synthesis/norns-ui/behaviors"
+		}
+	],
+	"tokens": {
+		"source": "@human-synthesis/norns-ui/styles/tokens",
+		"vars": {
+			"--color-primary-50": "oklch(97.7% 0.014 308.3)",
+			"--color-primary-100": "oklch(94.6% 0.033 307.2)",
+			"--color-primary-200": "oklch(90.2% 0.063 306.7)",
+			"--color-primary-300": "oklch(81.1% 0.111 293.6)",
+			"--color-primary-400": "oklch(70.2% 0.183 293.5)",
+			"--color-primary-500": "oklch(60.6% 0.25 292.7)",
+			"--color-primary-600": "oklch(54.1% 0.281 293)",
+			"--color-primary-700": "oklch(49.1% 0.27 292.6)",
+			"--color-primary-800": "oklch(43.2% 0.232 292.8)",
+			"--color-primary-900": "oklch(38% 0.189 293.7)",
+			"--color-primary-950": "oklch(28.3% 0.141 291.1)",
+			"--color-success-50": "oklch(98.2% 0.018 155.8)",
+			"--color-success-100": "oklch(96.2% 0.044 156.7)",
+			"--color-success-200": "oklch(92.5% 0.084 155.9)",
+			"--color-success-300": "oklch(87.1% 0.15 154.4)",
+			"--color-success-400": "oklch(79.2% 0.209 151.7)",
+			"--color-success-500": "oklch(72.3% 0.219 149.6)",
+			"--color-success-600": "oklch(62.7% 0.194 149.2)",
+			"--color-success-700": "oklch(52.7% 0.155 150.1)",
+			"--color-success-800": "oklch(44.8% 0.119 151.3)",
+			"--color-success-900": "oklch(39.3% 0.095 152.5)",
+			"--color-success-950": "oklch(26.6% 0.065 152.9)",
+			"--color-warning-50": "oklch(98.7% 0.022 95.3)",
+			"--color-warning-100": "oklch(96.2% 0.06 95.6)",
+			"--color-warning-200": "oklch(92.4% 0.12 95.7)",
+			"--color-warning-300": "oklch(87.9% 0.169 91.6)",
+			"--color-warning-400": "oklch(82.8% 0.189 84.4)",
+			"--color-warning-500": "oklch(76.9% 0.188 70.1)",
+			"--color-warning-600": "oklch(66.6% 0.179 58.3)",
+			"--color-warning-700": "oklch(55.5% 0.163 48.9)",
+			"--color-warning-800": "oklch(47.3% 0.137 46.2)",
+			"--color-warning-900": "oklch(41.4% 0.112 45.9)",
+			"--color-warning-950": "oklch(27.9% 0.077 45.6)",
+			"--color-danger-50": "oklch(97.1% 0.013 17.4)",
+			"--color-danger-100": "oklch(93.6% 0.032 17.7)",
+			"--color-danger-200": "oklch(88.5% 0.062 18.3)",
+			"--color-danger-300": "oklch(80.8% 0.114 19.6)",
+			"--color-danger-400": "oklch(70.4% 0.191 22.2)",
+			"--color-danger-500": "oklch(63.7% 0.237 25.3)",
+			"--color-danger-600": "oklch(57.7% 0.245 27.3)",
+			"--color-danger-700": "oklch(50.5% 0.213 27.5)",
+			"--color-danger-800": "oklch(44.4% 0.177 26.9)",
+			"--color-danger-900": "oklch(39.6% 0.141 25.7)",
+			"--color-danger-950": "oklch(25.8% 0.092 26)",
+			"--color-info-50": "oklch(97.7% 0.013 236.6)",
+			"--color-info-100": "oklch(95.1% 0.026 236.8)",
+			"--color-info-200": "oklch(90.1% 0.058 230.9)",
+			"--color-info-300": "oklch(82.8% 0.111 230.3)",
+			"--color-info-400": "oklch(74.6% 0.16 232.7)",
+			"--color-info-500": "oklch(68.5% 0.169 237.3)",
+			"--color-info-600": "oklch(58.8% 0.158 241.5)",
+			"--color-info-700": "oklch(50% 0.134 242.7)",
+			"--color-info-800": "oklch(44.3% 0.11 240.8)",
+			"--color-info-900": "oklch(39.1% 0.09 240.9)",
+			"--color-info-950": "oklch(29.3% 0.066 243.2)",
+			"--color-fg": "oklch(20.4% 0 0)",
+			"--color-fg-muted": "oklch(43.9% 0 0)",
+			"--color-fg-subtle": "oklch(56.6% 0 0)",
+			"--color-fg-on-primary": "white",
+			"--color-bg": "white",
+			"--color-bg-muted": "oklch(96.7% 0 0)",
+			"--color-bg-subtle": "oklch(98.5% 0 0)",
+			"--color-bg-elevated": "white",
+			"--color-bg-inverse": "oklch(20.4% 0 0)",
+			"--color-border": "oklch(92.2% 0 0)",
+			"--color-border-strong": "oklch(86.9% 0 0)",
+			"--color-ring": "var(--color-primary-500)",
+			"--color-success-bg": "var(--color-success-50)",
+			"--color-success-fg": "var(--color-success-900)",
+			"--color-success-border": "var(--color-success-200)",
+			"--color-warning-bg": "var(--color-warning-50)",
+			"--color-warning-fg": "var(--color-warning-900)",
+			"--color-warning-border": "var(--color-warning-200)",
+			"--color-danger-bg": "var(--color-danger-50)",
+			"--color-danger-fg": "var(--color-danger-900)",
+			"--color-danger-border": "var(--color-danger-200)",
+			"--color-info-bg": "var(--color-info-50)",
+			"--color-info-fg": "var(--color-info-900)",
+			"--color-info-border": "var(--color-info-200)",
+			"--font-sans": "'Outfit Variable', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\t'Helvetica Neue', Arial, sans-serif",
+			"--font-mono": "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',\n\t\t'Courier New', monospace",
+			"--ui-radius-sm": "0.25rem",
+			"--ui-radius": "0.5rem",
+			"--ui-radius-lg": "0.75rem",
+			"--ui-radius-full": "9999px",
+			"--ui-h-sm": "1.75rem",
+			"--ui-h-md": "2.25rem",
+			"--ui-h-lg": "2.75rem",
+			"--ui-icon-btn-sm": "1.5rem",
+			"--ui-icon-btn-md": "1.75rem",
+			"--ui-icon-btn-lg": "2.25rem",
+			"--ui-motion-fast": "150ms",
+			"--ui-motion-med": "200ms",
+			"--ui-motion-slow": "300ms",
+			"--ui-motion-ease": "cubic-bezier(0.2, 0, 0, 1)",
+			"--ui-elev-1": "0 1px 2px oklch(0% 0 0 / 0.06), 0 1px 3px oklch(0% 0 0 / 0.04)",
+			"--ui-elev-2": "0 4px 12px -2px oklch(0% 0 0 / 0.08), 0 2px 4px -1px oklch(0% 0 0 / 0.04)",
+			"--ui-elev-3": "0 16px 32px -8px oklch(0% 0 0 / 0.18), 0 4px 8px -4px oklch(0% 0 0 / 0.06)",
+			"--ui-focus-ring": "0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ring)"
+		},
+		"dark": {
+			"--color-fg": "oklch(98.5% 0 0)",
+			"--color-fg-muted": "oklch(70.8% 0 0)",
+			"--color-fg-subtle": "oklch(56.6% 0 0)",
+			"--color-fg-on-primary": "white",
+			"--color-bg": "oklch(14.5% 0 0)",
+			"--color-bg-muted": "oklch(20.4% 0 0)",
+			"--color-bg-subtle": "oklch(17.5% 0 0)",
+			"--color-bg-elevated": "oklch(23.5% 0 0)",
+			"--color-bg-inverse": "oklch(98.5% 0 0)",
+			"--color-border": "oklch(27.5% 0 0)",
+			"--color-border-strong": "oklch(37.1% 0 0)",
+			"--color-ring": "var(--color-primary-400)",
+			"--ui-elev-1": "0 1px 2px oklch(0% 0 0 / 0.4)",
+			"--ui-elev-2": "0 4px 12px -2px oklch(0% 0 0 / 0.5), 0 2px 4px -1px oklch(0% 0 0 / 0.3)",
+			"--ui-elev-3": "0 16px 32px -8px oklch(0% 0 0 / 0.6), 0 4px 8px -4px oklch(0% 0 0 / 0.4)",
+			"--ui-focus-ring": "0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-ring)",
+			"--color-success-bg": "oklch(28% 0.05 152)",
+			"--color-success-fg": "var(--color-success-200)",
+			"--color-success-border": "oklch(38% 0.08 151)",
+			"--color-warning-bg": "oklch(28% 0.05 65)",
+			"--color-warning-fg": "var(--color-warning-200)",
+			"--color-warning-border": "oklch(38% 0.08 60)",
+			"--color-danger-bg": "oklch(28% 0.07 27)",
+			"--color-danger-fg": "var(--color-danger-200)",
+			"--color-danger-border": "oklch(38% 0.11 27)",
+			"--color-info-bg": "oklch(28% 0.05 240)",
+			"--color-info-fg": "var(--color-info-200)",
+			"--color-info-border": "oklch(38% 0.08 240)"
+		}
+	}
+}

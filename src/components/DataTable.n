@@ -17,12 +17,18 @@
 			+if('rows.length === 0')
 				tr.data-table-empty
 					td(colspan!="{columns.length}")
-						| {emptyMessage}
+						+if('empty')
+							| {@render empty()}
+						+if('!empty')
+							| {emptyMessage}
 			+each('rows as row, i')
 				tr(onclick!="{onrowclick ? () => onrowclick(row, i) : undefined}" class!="{onrowclick ? 'data-table-row-clickable' : ''}")
 					+each('columns as col')
 						td(class!="{col.cellClass ?? ''}")
-							| {row[col.key]}
+							+if('cell')
+								| {@render cell(row, col.key, row[col.key])}
+							+if('!cell')
+								| {row[col.key]}
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
@@ -38,6 +44,8 @@
 		sortKey = $bindable(undefined)
 		sortDir = $bindable('asc')
 		onrowclick
+		cell = undefined
+		empty = undefined
 		class: extra = ''
 	} .= $props()
 

@@ -1,10 +1,10 @@
 ol(class!="{classes}")
-	+each('items as item, i')
+	+each('list as item, i')
 		li.timeline-item
 			.timeline-dot(class!="{item.variant ? `timeline-dot-${item.variant}` : ''}")
 				+if('item.icon')
 					Icon(name!="{item.icon}" size="size-3")
-			+if('i < items.length - 1')
+			+if('i < list.length - 1')
 				.timeline-line
 			.timeline-body
 				+if('item.time')
@@ -19,9 +19,11 @@ ol(class!="{classes}")
 	import Icon from './Icon.n'
 
 	{
-		items = []
+		items = undefined
+		data = undefined
 		class: extra = ''
 	} := $props()
 
+	list := items ?? data ?? []
 	classes := cn 'timeline', extra
 </script>

@@ -1,0 +1,45 @@
+.presence-avatars(class!="{classes}" role="status" aria-label!="{`${clients} ${label}`}")
+	AvatarGroup(items!="{people}" max!="{max}" size!="{size}" label!="{label}")
+	+if('showCount')
+		span.presence-avatars-count {clients} {label}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { roomChannel as openRoom } from '@human-synthesis/norns/live-client'
+	import AvatarGroup from './AvatarGroup.n'
+
+	{
+		roomChannel = undefined
+		max = 5
+		size = 'sm'
+		label = 'online'
+		showCount = true
+		class: extra = ''
+	} .= $props()
+
+	clients .= $state(0)
+
+	classes := $derived cn('presence-avatars', extra)
+	people := $derived Array.from({ length: Math.min(clients, Number(max) || 5) }, (_, i) => ({ name: `Guest ${i + 1}` }))
+
+	$effect =>
+		return unless roomChannel
+		ch := openRoom(roomChannel)
+		off := ch.on('presence', (frame) => clients = Number(frame?.clients) || 0)
+		=>
+			off()
+			ch.close()
+</script>
+
+<style>
+	.presence-avatars {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-2, 0.5rem);
+	}
+	.presence-avatars-count {
+		font-size: 0.8125rem;
+		opacity: 0.7;
+		font-variant-numeric: tabular-nums;
+	}
+</style>

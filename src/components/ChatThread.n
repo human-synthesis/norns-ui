@@ -1,0 +1,97 @@
+.chat-thread(class!="{classes}")
+	ul.chat-thread-list
+		+if('messages.length === 0')
+			li.chat-thread-empty {emptyMessage}
+		+each('messages as msg')
+			li.chat-thread-msg(class!="{msg.self ? 'chat-thread-msg-self' : ''}")
+				+if('message')
+					| {@render message(msg)}
+				+if('!message')
+					+if('msg.from')
+						span.chat-thread-from {msg.from}
+					span.chat-thread-text {msg.text}
+	form.chat-thread-composer(onsubmit!="{submit}")
+		input.input.chat-thread-input(bind:value!="{draft}" placeholder!="{placeholder}")
+		button.btn.btn-primary(type="submit" disabled!="{draft.trim() === ''}") {sendLabel}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { roomChannel as openRoom } from '@human-synthesis/norns/live-client'
+
+	{
+		roomChannel = undefined
+		send = 'chat'
+		receive = undefined
+		placeholder = 'Message'
+		sendLabel = 'Send'
+		emptyMessage = 'No messages yet'
+		message = undefined
+		class: extra = ''
+	} .= $props()
+
+	messages .= $state([])
+	draft .= $state('')
+	channel .= $state(undefined)
+
+	classes := $derived cn('chat-thread', extra)
+
+	$effect =>
+		return unless roomChannel
+		ch := openRoom(roomChannel)
+		channel = ch
+		off := ch.on(receive ?? send, (frame) => messages = [...messages, frame])
+		=>
+			off()
+			ch.close()
+			channel = undefined
+
+	submit := (e) =>
+		e.preventDefault()
+		body := draft.trim()
+		return unless body and channel
+		channel.send(send, { text: body })
+		messages = [...messages, { text: body, self: true }]
+		draft = ''
+</script>
+
+<style>
+	.chat-thread {
+		display: grid;
+		gap: var(--spacing-2, 0.5rem);
+	}
+	.chat-thread-list {
+		display: grid;
+		gap: var(--spacing-1, 0.25rem);
+		max-height: 24rem;
+		overflow-y: auto;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.chat-thread-empty {
+		opacity: 0.6;
+		font-size: 0.875rem;
+	}
+	.chat-thread-msg {
+		display: flex;
+		gap: var(--spacing-2, 0.5rem);
+		align-items: baseline;
+		padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+		border-radius: var(--radius-md, 0.375rem);
+		background: var(--color-surface-2, color-mix(in oklab, currentColor 4%, transparent));
+	}
+	.chat-thread-msg-self {
+		background: color-mix(in oklab, var(--color-primary-500, currentColor) 12%, transparent);
+	}
+	.chat-thread-from {
+		font-weight: 600;
+		font-size: 0.8125rem;
+	}
+	.chat-thread-composer {
+		display: flex;
+		gap: var(--spacing-2, 0.5rem);
+	}
+	.chat-thread-input {
+		flex: 1;
+	}
+</style>

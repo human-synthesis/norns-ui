@@ -10,6 +10,8 @@ export type TimelineItem = {
 
 export type TimelineProps = {
 	items?: TimelineItem[];
+	/** Alias for `items` — the prop a generated Page binds a Query result to. */
+	data?: TimelineItem[];
 	class?: string;
 };
 

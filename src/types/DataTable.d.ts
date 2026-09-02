@@ -1,4 +1,4 @@
-import type { Component } from 'svelte';
+import type { Component, Snippet } from 'svelte';
 
 export type DataTableColumn = {
 	key: string;
@@ -20,6 +20,10 @@ export type DataTableProps = {
 	sortKey?: string;
 	sortDir?: 'asc' | 'desc';
 	onrowclick?: (row: Record<string, unknown>, index: number) => void;
+	/** Cell renderer snippet — receives (row, columnKey, value). */
+	cell?: Snippet<[Record<string, unknown>, string, unknown]>;
+	/** Rendered instead of emptyMessage when there are no rows. */
+	empty?: Snippet;
 	class?: string;
 };
 

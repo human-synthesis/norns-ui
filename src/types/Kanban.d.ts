@@ -1,4 +1,4 @@
-import type { Component } from 'svelte';
+import type { Component, Snippet } from 'svelte';
 
 export type KanbanCard = Record<string, unknown>;
 
@@ -15,6 +15,10 @@ export type KanbanProps = {
 	onMove?: (card: KanbanCard, to: string, from: string) => unknown;
 	oncardclick?: (card: KanbanCard) => void;
 	emptyMessage?: string;
+	/** Card renderer snippet — replaces the default title/subtitle block. */
+	card?: Snippet<[KanbanCard]>;
+	/** Rendered instead of emptyMessage in an empty column. */
+	empty?: Snippet;
 	class?: string;
 };
 

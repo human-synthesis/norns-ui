@@ -1,0 +1,71 @@
+ul.feed(class!="{classes}" aria-live="polite")
+	+if('entries.length === 0')
+		li.feed-empty {emptyMessage}
+	+each('entries as it')
+		li.feed-item
+			+if('item')
+				| {@render item(it)}
+			+if('!item')
+				| {typeof it === 'string' ? it : (it.text ?? JSON.stringify(it))}
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { streamSource as openStream, roomChannel as openRoom } from '@human-synthesis/norns/live-client'
+
+	{
+		streamSource = undefined
+		roomChannel = undefined
+		receive = '*'
+		max = 100
+		emptyMessage = 'Nothing yet'
+		item = undefined
+		class: extra = ''
+	} .= $props()
+
+	entries .= $state([])
+
+	classes := $derived cn('feed', extra)
+
+	append := (frame) =>
+		entries = [...entries, frame].slice(-Math.max(1, Number(max) || 100))
+
+	$effect =>
+		return unless roomChannel
+		ch := openRoom(roomChannel)
+		off := ch.on(receive, append)
+		=>
+			off()
+			ch.close()
+
+	$effect =>
+		return unless streamSource
+		let stopped = false
+		(async =>
+			try
+				for await (const frame of openStream(streamSource))
+					return if stopped
+					append(frame)
+			catch
+				return
+		)()
+		=> stopped = true
+</script>
+
+<style>
+	.feed {
+		display: grid;
+		gap: var(--spacing-1, 0.25rem);
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.feed-empty {
+		opacity: 0.6;
+		font-size: 0.875rem;
+	}
+	.feed-item {
+		padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+		border-radius: var(--radius-md, 0.375rem);
+		background: var(--color-surface-2, color-mix(in oklab, currentColor 4%, transparent));
+	}
+</style>

@@ -123,7 +123,14 @@ export function presetUI() {
 			CopyButton: c('CopyButton'),
 			ThemeToggler: c('ThemeToggler'),
 			ShinyButton: c('ShinyButton'),
-			RippleButton: c('RippleButton')
+			RippleButton: c('RippleButton'),
+
+			// U-09 — realtime tier
+			StreamText: c('StreamText'),
+			ChatThread: c('ChatThread'),
+			Feed: c('Feed'),
+			PresenceAvatars: c('PresenceAvatars'),
+			LiveLog: c('LiveLog')
 			// Motion-driven components live in `@human-synthesis/norns-ui/motion`
 			// and are NOT registered here (opt-in import only).
 		},

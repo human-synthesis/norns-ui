@@ -1,0 +1,64 @@
+.stream-text(class!="{classes}" aria-live="polite" aria-busy!="{streaming}")
+	| {text}
+	+if('streaming')
+		span.stream-text-cursor(aria-hidden="true")
+
+<script>
+	import { cn } from '@human-synthesis/norns-ui/cn'
+	import { streamSource as openStream } from '@human-synthesis/norns/live-client'
+
+	{
+		streamSource = undefined
+		input = undefined
+		autostart = true
+		onframe = undefined
+		ondone = undefined
+		class: extra = ''
+	} .= $props()
+
+	text .= $state('')
+	streaming .= $state(false)
+
+	classes := $derived cn('stream-text', extra)
+
+	start := async (override) =>
+		return unless streamSource
+		return if streaming
+		text = ''
+		streaming = true
+		body := override ?? input
+		try
+			opts := body === undefined ? {} : { input: body }
+			for await (const frame of openStream(streamSource, opts))
+				delta := typeof frame === 'string' ? frame : (frame?.delta ?? '')
+				text += delta
+				onframe?.(frame)
+		finally
+			streaming = false
+			ondone?.(text)
+
+	$effect =>
+		start() if autostart
+		return
+</script>
+
+<style>
+	.stream-text {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+	.stream-text-cursor {
+		display: inline-block;
+		width: 0.55ch;
+		height: 1em;
+		margin-left: 0.15ch;
+		vertical-align: text-bottom;
+		background: currentColor;
+		animation: stream-text-blink 1s steps(2, start) infinite;
+	}
+	@keyframes stream-text-blink {
+		to {
+			visibility: hidden;
+		}
+	}
+</style>
