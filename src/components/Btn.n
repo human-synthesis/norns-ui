@@ -16,6 +16,7 @@
 		target!="{target}"
 		rel!="{rel}"
 		class!="{classes}"
+		aria-label!="{ariaLabel}"
 		aria-disabled!="{disabled || loading ? 'true' : undefined}"
 	)
 		| {@render body()}
@@ -25,6 +26,7 @@
 		class!="{classes}"
 		disabled!="{disabled || loading}"
 		onclick!="{onclick}"
+		aria-label!="{ariaLabel}"
 		aria-busy!="{loading ? 'true' : undefined}"
 	)
 		| {@render body()}
@@ -44,6 +46,9 @@
 		href
 		target
 		rel
+		// Icon-only buttons (icon set, no children) have no accessible name
+		// without this — always pass ariaLabel for those.
+		ariaLabel
 		children
 		leading
 		trailing

@@ -25,6 +25,12 @@ export type BtnProps = Omit<HTMLButtonAttributes, 'class' | 'children'> & {
 	href?: string;
 	target?: string;
 	rel?: string;
+	/**
+	 * Accessible name, rendered as `aria-label`. Required in practice for
+	 * icon-only buttons (`icon` set, no `children`), which otherwise have
+	 * no accessible name at all.
+	 */
+	ariaLabel?: string;
 	class?: string;
 	children?: Snippet;
 	leading?: Snippet;
