@@ -1697,3 +1697,73 @@
 	}
 	.carousel-dot-active { background-color: var(--color-bg-inverse); }
 }
+
+@layer components {
+	/* ============================================================ */
+	/* App shell — the generated +layout.svelte (spec-first apps)   */
+	/* ============================================================ */
+
+	.norns-shell {
+		@apply grid min-h-screen;
+		grid-template-columns: 15rem minmax(0, 1fr);
+	}
+	.norns-sidebar {
+		@apply sticky top-0 flex h-screen flex-col gap-4 overflow-y-auto border-r px-3 py-4;
+		border-color: var(--color-border);
+		background-color: var(--color-bg);
+	}
+	.norns-brand {
+		@apply px-2 text-sm font-semibold tracking-wide;
+		color: var(--color-fg);
+	}
+	.norns-nav {
+		@apply flex flex-col gap-0.5;
+	}
+	.norns-nav a {
+		@apply block px-2 py-1.5 text-sm no-underline;
+		color: var(--color-fg-muted);
+		border-radius: var(--ui-radius-sm);
+		transition:
+			background-color var(--ui-motion-fast) var(--ui-motion-ease),
+			color var(--ui-motion-fast) var(--ui-motion-ease);
+	}
+	.norns-nav a:hover {
+		background-color: var(--color-bg-muted);
+		color: var(--color-fg);
+	}
+	.norns-nav a:focus-visible {
+		outline: none;
+		box-shadow: var(--ui-focus-ring);
+	}
+	.norns-nav a[aria-current='page'] {
+		@apply font-medium;
+		background-color: var(--color-bg-muted);
+		color: var(--color-fg);
+	}
+	.norns-main {
+		@apply min-w-0 px-8 py-6;
+	}
+	@media (max-width: 40rem) {
+		.norns-shell {
+			grid-template-columns: 1fr;
+		}
+		.norns-sidebar {
+			@apply static h-auto flex-row items-center gap-3 border-r-0 border-b py-2;
+		}
+		.norns-nav {
+			@apply flex-1 flex-row overflow-x-auto;
+		}
+		.norns-main {
+			@apply px-4 py-4;
+		}
+	}
+
+	/* Generated page container: readable width, consistent rhythm. */
+	.norns-page {
+		@apply mx-auto flex w-full flex-col gap-6;
+		max-width: 72rem;
+	}
+	.norns-page-title {
+		@apply text-2xl font-semibold tracking-tight leading-snug;
+	}
+}
