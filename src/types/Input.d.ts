@@ -20,6 +20,15 @@ export type InputProps = Omit<HTMLInputAttributes, 'class' | 'type' | 'size' | '
 	value?: string | number;
 	type?: InputType;
 	size?: InputSize;
+	name?: string;
+	id?: string;
+	placeholder?: string;
+	required?: boolean;
+	disabled?: boolean;
+	readonly?: boolean;
+	autocomplete?: string;
+	/** Accessible name for a control with no visible label (a placeholder is not a label). */
+	ariaLabel?: string;
 	/** Force the error styling regardless of the parent Field's error state. */
 	error?: boolean;
 	class?: string;

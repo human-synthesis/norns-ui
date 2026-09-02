@@ -8,6 +8,7 @@ input(
 	disabled!="{disabled}"
 	readonly!="{readonly}"
 	autocomplete!="{autocomplete}"
+	aria-label!="{ariaLabel}"
 	aria-invalid!="{hasError ? 'true' : undefined}"
 	aria-describedby!="{describedBy}"
 	class!="{classes}"
@@ -28,6 +29,9 @@ input(
 		disabled = false
 		readonly = false
 		autocomplete
+		// A control with no visible label (a toolbar search box) still needs
+		// an accessible name — a placeholder is not a label (v6 U-12).
+		ariaLabel
 		error: explicitError = false
 		class: extra = ''
 	} .= $props()

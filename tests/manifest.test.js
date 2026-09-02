@@ -114,4 +114,25 @@ describe('palette manifest (U-08)', () => {
 			).toBe(true);
 		}
 	});
+
+	// v6 U-13 — the report's finding 14: the manifest under-reported form-atom
+	// props (Select really does take name/id/required/disabled), and while ui://
+	// is down it is the only machine-readable palette. Pin the form-participation
+	// surface so it cannot silently regress.
+	test('form atoms declare their form-participation props', () => {
+		const FORM_PROPS = {
+			Select: ['name', 'id', 'required', 'disabled'],
+			Input: ['name', 'id', 'required', 'disabled', 'readonly', 'ariaLabel'],
+			Textarea: ['name', 'id', 'required', 'disabled', 'readonly'],
+			Checkbox: ['name', 'id', 'required', 'disabled', 'value'],
+			Radio: ['name', 'id', 'required', 'disabled', 'value'],
+			Switch: ['name', 'id', 'required', 'disabled', 'value'],
+			TagsInput: ['name', 'id', 'ariaLabel']
+		};
+		for (const [name, expected] of Object.entries(FORM_PROPS)) {
+			const entry = built.components.find((c) => c.name === name);
+			const props = entry.props.map((p) => p.name);
+			for (const p of expected) expect(props, `${name}.${p}`).toContain(p);
+		}
+	});
 });

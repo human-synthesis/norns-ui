@@ -779,6 +779,31 @@
 					"required": false
 				},
 				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
 					"name": "error",
 					"type": "boolean",
 					"required": false
@@ -1856,6 +1881,47 @@
 					"required": false
 				},
 				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "readonly",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "autocomplete",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "ariaLabel",
+					"type": "string",
+					"required": false,
+					"doc": "Accessible name for a control with no visible label (a placeholder is not a label)."
+				},
+				{
 					"name": "error",
 					"type": "boolean",
 					"required": false,
@@ -2493,6 +2559,26 @@
 					"required": false
 				},
 				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
 					"name": "error",
 					"type": "boolean",
 					"required": false
@@ -2591,6 +2677,26 @@
 				{
 					"name": "value",
 					"type": "string | number | string[]",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
 					"required": false
 				},
 				{
@@ -2949,6 +3055,31 @@
 					"required": false
 				},
 				{
+					"name": "value",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
 					"name": "error",
 					"type": "boolean",
 					"required": false
@@ -3139,12 +3270,19 @@
 				{
 					"name": "name",
 					"type": "string",
-					"required": false
+					"required": false,
+					"doc": "Form field name — rides a hidden input carrying the committed tags, comma-joined."
 				},
 				{
 					"name": "id",
 					"type": "string",
 					"required": false
+				},
+				{
+					"name": "ariaLabel",
+					"type": "string",
+					"required": false,
+					"doc": "Accessible name for the tag-entry box when there is no visible label."
 				},
 				{
 					"name": "error",
@@ -3174,6 +3312,36 @@
 				{
 					"name": "rows",
 					"type": "number",
+					"required": false
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "id",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "placeholder",
+					"type": "string",
+					"required": false
+				},
+				{
+					"name": "required",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "disabled",
+					"type": "boolean",
+					"required": false
+				},
+				{
+					"name": "readonly",
+					"type": "boolean",
 					"required": false
 				},
 				{

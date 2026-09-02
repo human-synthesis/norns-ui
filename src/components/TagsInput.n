@@ -4,6 +4,9 @@
 			| {tag}
 			button.chip-remove(type="button" aria-label!="{`Remove ${tag}`}" onclick!="{(e) => { e.stopPropagation(); remove(i) }}")
 				Icon(name="lucide:x" size="size-3")
+	//- The draft box is NOT the form value — posting it would submit
+	//- half-typed text and drop every committed chip. `name` rides a
+	//- hidden input carrying the committed tags instead (v6 U-11).
 	input.tags-input-field(
 		bind:this!="{inputEl}"
 		bind:value!="{draft}"
@@ -12,10 +15,12 @@
 		disabled!="{disabled}"
 		onkeydown!="{onKey}"
 		onblur!="{commitOnBlur ? commit : undefined}"
-		name!="{name}"
 		id!="{resolvedId}"
+		aria-label!="{ariaLabel}"
 		aria-invalid!="{hasError ? 'true' : undefined}"
 	)
+	+if('name')
+		input(type="hidden" name!="{name}" value!="{value.join(',')}")
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
@@ -29,8 +34,10 @@
 		commitOnBlur = true
 		separators = [',', 'Enter']
 		disabled = false
+		// Form value: committed tags, comma-joined, on a hidden input.
 		name
 		id: providedId
+		ariaLabel
 		error: explicitError = false
 		class: extra = ''
 	} .= $props()
