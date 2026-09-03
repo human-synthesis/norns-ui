@@ -1045,6 +1045,12 @@
 					"required": false
 				},
 				{
+					"name": "data",
+					"type": "Record<string, unknown>[]",
+					"required": false,
+					"doc": "Alias for `rows` — the prop a generated Page binds a Query result to."
+				},
+				{
 					"name": "striped",
 					"type": "boolean",
 					"required": false

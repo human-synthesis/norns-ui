@@ -135,4 +135,18 @@ describe('palette manifest (U-08)', () => {
 			for (const p of expected) expect(props, `${name}.${p}`).toContain(p);
 		}
 	});
+
+	// U-14 — session-v2 finding 01: DataTable's binding said `data` but its
+	// only prop was `rows`, so every generated table silently rendered empty.
+	// The invariant: a binding key the generator will emit as a prop must BE a
+	// prop of the component, for every spec-bindable component.
+	test('every query/action binding key is a real prop of its component', () => {
+		for (const entry of built.components) {
+			const props = new Set((entry.props ?? []).map((p) => p.name));
+			for (const [key, kind] of Object.entries(entry.bindings ?? {})) {
+				if (kind !== 'query' && kind !== 'action') continue;
+				expect(props.has(key), `${entry.name}.${key} (${kind}) is bound but not a prop`).toBe(true);
+			}
+		}
+	});
 });

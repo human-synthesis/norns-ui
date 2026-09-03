@@ -12,6 +12,8 @@ export type DataTableColumn = {
 export type DataTableProps = {
 	columns?: DataTableColumn[];
 	rows?: Record<string, unknown>[];
+	/** Alias for `rows` — the prop a generated Page binds a Query result to. */
+	data?: Record<string, unknown>[];
 	striped?: boolean;
 	dense?: boolean;
 	stickyHeader?: boolean;

@@ -14,14 +14,14 @@
 						+if('!col.sortable')
 							| {col.label ?? col.key}
 		tbody
-			+if('rows.length === 0')
+			+if('list.length === 0')
 				tr.data-table-empty
 					td(colspan!="{columns.length}")
 						+if('empty')
 							| {@render empty()}
 						+if('!empty')
 							| {emptyMessage}
-			+each('rows as row, i')
+			+each('list as row, i')
 				tr(onclick!="{onrowclick ? () => onrowclick(row, i) : undefined}" class!="{onrowclick ? 'data-table-row-clickable' : ''}")
 					+each('columns as col')
 						td(class!="{col.cellClass ?? ''}")
@@ -36,7 +36,8 @@
 
 	{
 		columns = []
-		rows = []
+		rows = undefined
+		data = undefined
 		striped = false
 		dense = false
 		stickyHeader = false
@@ -48,6 +49,10 @@
 		empty = undefined
 		class: extra = ''
 	} .= $props()
+
+	// the spec generator binds queries to `data` (the palette-wide channel);
+	// hand-written callers keep `rows` — either works, `rows` wins
+	list := rows ?? data ?? []
 
 	wrapClasses := cn
 		'data-table-root'
