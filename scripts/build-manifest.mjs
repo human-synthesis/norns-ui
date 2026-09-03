@@ -122,6 +122,47 @@ const CATEGORIES = {
 	GradientText: 'typography'
 };
 
+const FIELD_CHILD =
+	'Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation.';
+const ROWS_OF_QUERY =
+	'Rows are the bound Query\'s result (`data`). `onrowclick(row, i)` is a function prop for custom code only — a generated page wires no row action; put row actions in a `cell` snippet or a custom Component.';
+
+/**
+ * U-15/D77: what a bound prop does at RUNTIME — what a string-bound action
+ * receives over the wire, how nested components couple, what a prop means
+ * bound vs literal. Served verbatim in `ui://palette/{Component}` so no agent
+ * has to read component source. Required for every component with an
+ * `action` binding; welcome on any other.
+ */
+const WIRE = {
+	Kanban:
+		'A string-bound `onMove` (an Action address) POSTs `FormData{id}` to that action when a card is dropped — nothing else crosses the wire, not the target column. The bound action\'s own transition is the move: one action per allowed edge (`set: {entity, status: "<to>"}`), or a custom action that reads only `id`. `onMove(card, to, from)` as a function exists only in custom code.',
+	Form:
+		'Binds an Action: renders `<form method="POST" action="?/<action>">`. A failed submit (`fail(400, {errors, values})`) is published to descendants by field `name`, so a nested Field shows its own error with no wiring. Inputs post strings; number/int/money/bool action inputs are coerced before validation.',
+	Field:
+		'Wraps one control. Derives the control id from `name` (else a slug of `label`), reads the parent Form\'s error for `name`, and hands id + error state down through context — the inner Input/Select/Textarea/Checkbox/Switch/DatePicker needs no `id`. The control\'s own `name` is what the form submits.',
+	Input: FIELD_CHILD,
+	Select: FIELD_CHILD,
+	Textarea: FIELD_CHILD,
+	Checkbox:
+		'Native checkbox semantics: submits `on` when checked and nothing when unchecked — a bool action input reads that as true/false. ' + FIELD_CHILD,
+	Switch: 'Same wire as Checkbox (`on` / absent). ' + FIELD_CHILD,
+	Radio: FIELD_CHILD,
+	NumberInput: FIELD_CHILD,
+	DatePicker:
+		'Submits `YYYY-MM-DD` for dates and `YYYY-MM-DDTHH:MM` (browser-local, no offset) for datetimes; both validate against date/datetime action inputs. ' + FIELD_CHILD,
+	TimePicker: FIELD_CHILD,
+	TagsInput: FIELD_CHILD,
+	MultiSelect: FIELD_CHILD,
+	Autocomplete: FIELD_CHILD,
+	ColorPicker: FIELD_CHILD,
+	DataTable: ROWS_OF_QUERY,
+	Table: ROWS_OF_QUERY,
+	Chart: '`x`/`y` name fields of the bound Query\'s rows; `type` picks the chart. A grouped query (`groupBy`) does not fit — chart a flat query.',
+	Timeline: 'Rows are the bound Query\'s result (`data`), rendered as a vertical list — no bars; a date-range Gantt is a custom Component.',
+	Tree: 'Rows are the bound Query\'s result (`data`); nesting follows each row\'s parent reference.'
+};
+
 /**
  * One canonical page `components:` entry per spec-bindable component. The
  * first key is the component slot: a Query/Action address when the
@@ -277,8 +318,12 @@ function componentEntry(name, dir, subpath) {
 		const example = EXAMPLES[name];
 		if (!example) throw new Error(`build-manifest: no example entry for spec-bindable ${name}`);
 		entry.example = example;
+		if (Object.values(bindings).includes('action') && !WIRE[name]) {
+			throw new Error(`build-manifest: ${name} binds an action but has no WIRE note (U-15)`);
+		}
 	}
 	if (slots) entry.snippetSlots = slots;
+	if (WIRE[name]) entry.wire = WIRE[name];
 	return entry;
 }
 
@@ -298,6 +343,9 @@ export function buildManifest() {
 	}
 	for (const name of Object.keys(EXAMPLES)) {
 		if (!contracts[name]) throw new Error(`build-manifest: example for uncontracted ${name}`);
+	}
+	for (const name of Object.keys(WIRE)) {
+		if (!componentNames.includes(name)) throw new Error(`build-manifest: WIRE note for unknown component ${name}`);
 	}
 
 	const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf-8'));

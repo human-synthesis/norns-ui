@@ -40,6 +40,19 @@ describe('palette manifest (U-08)', () => {
 		}
 	});
 
+	// U-15/D77: runtime edges are surface, not source — every action-bound
+	// component says what its bound action receives over the wire.
+	test('every action-bound component carries a wire note', () => {
+		const actionBound = built.components.filter((c) => Object.values(c.bindings ?? {}).includes('action'));
+		expect(actionBound.map((c) => c.name)).toEqual(['Form', 'Kanban']);
+		for (const c of actionBound) {
+			expect(typeof c.wire, c.name).toBe('string');
+			expect(c.wire.length, c.name).toBeGreaterThan(40);
+		}
+		expect(built.components.find((c) => c.name === 'Kanban').wire).toContain('FormData{id}');
+		expect(built.components.find((c) => c.name === 'Field').wire).toContain('context');
+	});
+
 	test('every spec-bindable component carries bindings and a canonical example', () => {
 		const bindable = built.components.filter((c) => c.bindability.includes('spec-bindable'));
 		expect(bindable.length).toBe(Object.keys(contracts).length);

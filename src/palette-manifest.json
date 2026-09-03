@@ -1,6 +1,6 @@
 {
 	"library": "@human-synthesis/norns-ui",
-	"version": "0.2.5",
+	"version": "0.3.0",
 	"counts": {
 		"components": 78,
 		"motion": 5,
@@ -141,7 +141,8 @@
 					"type": "boolean",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Avatar",
@@ -682,7 +683,8 @@
 				"type": "bar",
 				"x": "title",
 				"y": "amount"
-			}
+			},
+			"wire": "`x`/`y` name fields of the bound Query's rows; `type` picks the chart. A grouped query (`groupBy`) does not fit — chart a flat query."
 		},
 		{
 			"name": "ChatThread",
@@ -826,7 +828,8 @@
 				"checkbox": null,
 				"name": "done",
 				"checked": true
-			}
+			},
+			"wire": "Native checkbox semantics: submits `on` when checked and nothing when unchecked — a bool action input reads that as true/false. Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Chip",
@@ -943,7 +946,8 @@
 					"type": "string",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "ContextMenu",
@@ -1128,7 +1132,8 @@
 					"value"
 				],
 				"empty": []
-			}
+			},
+			"wire": "Rows are the bound Query's result (`data`). `onrowclick(row, i)` is a function prop for custom code only — a generated page wires no row action; put row actions in a `cell` snippet or a custom Component."
 		},
 		{
 			"name": "DatePicker",
@@ -1219,7 +1224,8 @@
 				"datePicker": null,
 				"name": "due",
 				"placeholder": "Pick a date"
-			}
+			},
+			"wire": "Submits `YYYY-MM-DD` for dates and `YYYY-MM-DDTHH:MM` (browser-local, no offset) for datetimes; both validate against date/datetime action inputs. Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "DateRangePicker",
@@ -1532,7 +1538,8 @@
 				"field": null,
 				"label": "Email",
 				"name": "email"
-			}
+			},
+			"wire": "Wraps one control. Derives the control id from `name` (else a slug of `label`), reads the parent Form's error for `name`, and hands id + error state down through context — the inner Input/Select/Textarea/Checkbox/Switch/DatePicker needs no `id`. The control's own `name` is what the form submits."
 		},
 		{
 			"name": "FieldGroup",
@@ -1608,7 +1615,8 @@
 			"example": {
 				"form": "crm.Action.createDeal",
 				"method": "POST"
-			}
+			},
+			"wire": "Binds an Action: renders `<form method=\"POST\" action=\"?/<action>\">`. A failed submit (`fail(400, {errors, values})`) is published to descendants by field `name`, so a nested Field shows its own error with no wiring. Inputs post strings; number/int/money/bool action inputs are coerced before validation."
 		},
 		{
 			"name": "GradientText",
@@ -1953,7 +1961,8 @@
 				"name": "email",
 				"type": "email",
 				"placeholder": "you@example.com"
-			}
+			},
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Kanban",
@@ -2043,7 +2052,8 @@
 					"card"
 				],
 				"empty": []
-			}
+			},
+			"wire": "A string-bound `onMove` (an Action address) POSTs `FormData{id}` to that action when a card is dropped — nothing else crosses the wire, not the target column. The bound action's own transition is the move: one action per allowed edge (`set: {entity, status: \"<to>\"}`), or a custom action that reads only `id`. `onMove(card, to, from)` as a function exists only in custom code."
 		},
 		{
 			"name": "Listbox",
@@ -2217,7 +2227,8 @@
 					"type": "boolean",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "NumberInput",
@@ -2277,7 +2288,8 @@
 					"type": "string",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "OtpField",
@@ -2594,7 +2606,8 @@
 					"type": "string",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "RippleButton",
@@ -2731,7 +2744,8 @@
 			"example": {
 				"select": null,
 				"name": "stage"
-			}
+			},
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Separator",
@@ -3107,7 +3121,8 @@
 			"example": {
 				"switch": null,
 				"name": "active"
-			}
+			},
+			"wire": "Same wire as Checkbox (`on` / absent). Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Table",
@@ -3202,7 +3217,8 @@
 					"value"
 				],
 				"empty": []
-			}
+			},
+			"wire": "Rows are the bound Query's result (`data`). `onrowclick(row, i)` is a function prop for custom code only — a generated page wires no row action; put row actions in a `cell` snippet or a custom Component."
 		},
 		{
 			"name": "Tabs",
@@ -3300,7 +3316,8 @@
 					"type": "string",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Textarea",
@@ -3375,7 +3392,8 @@
 				"textarea": null,
 				"name": "notes",
 				"rows": 4
-			}
+			},
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "ThemeToggler",
@@ -3498,7 +3516,8 @@
 					"type": "string",
 					"required": false
 				}
-			]
+			],
+			"wire": "Inside a Field it takes its id and error state from context (no `id` needed); its own `name` is what the enclosing Form submits it as. Posts a string — number/int/money/bool action inputs coerce it before validation."
 		},
 		{
 			"name": "Timeline",
@@ -3531,7 +3550,8 @@
 			},
 			"example": {
 				"timeline": "crm.Query.history"
-			}
+			},
+			"wire": "Rows are the bound Query's result (`data`), rendered as a vertical list — no bars; a date-range Gantt is a custom Component."
 		},
 		{
 			"name": "ToastProvider",
@@ -3774,7 +3794,8 @@
 			},
 			"example": {
 				"tree": "crm.Query.folders"
-			}
+			},
+			"wire": "Rows are the bound Query's result (`data`); nesting follows each row's parent reference."
 		},
 		{
 			"name": "Uploader",
