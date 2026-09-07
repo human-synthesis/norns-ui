@@ -24,6 +24,7 @@
 		aria-expanded!="{open}"
 		aria-controls!="{listboxId}"
 		aria-autocomplete="list"
+		aria-busy!="{loading ? 'true' : undefined}"
 		id!="{resolvedId}"
 		aria-invalid!="{hasError ? 'true' : undefined}"
 		oninput!="{onInput}"
@@ -37,7 +38,7 @@
 		aria-label="Toggle options"
 		onclick!="{(e) => { e.stopPropagation(); toggle() }}"
 	)
-		Icon(name="lucide:chevrons-up-down" size="size-4")
+		Icon(name!="{loading ? 'lucide:loader-circle' : 'lucide:chevrons-up-down'}" size="size-4" class!="{loading ? 'animate-spin' : ''}")
 
 +if('open && filtered.length > 0')
 	ul(
@@ -59,9 +60,9 @@
 			)
 				Icon(name="lucide:check" size="size-3.5" class!="{value.includes(item.value) ? '' : 'opacity-0'}")
 				span {item.label}
-+if('open && filtered.length === 0')
++if('open && filtered.length === 0 && (loading || term.length >= minChars)')
 	div(use:portal use:floatAction use:clickOutside!="{[onClose, open, wrapEl]}" class="dropdown-content combobox-listbox" data-state="open")
-		.combobox-empty No matches
+		.combobox-empty {loading ? loadingMessage : emptyMessage}
 
 <script>
 	import { getContext } from 'svelte'
@@ -72,9 +73,14 @@
 
 	{
 		items = []
+		source
+		debounce = 200
+		minChars = 0
 		value = $bindable([])
 		open = $bindable(false)
 		placeholder = 'Pick options…'
+		emptyMessage = 'No matches'
+		loadingMessage = 'Searching…'
 		disabled = false
 		name
 		id: providedId
@@ -98,7 +104,38 @@
 	inputEl .= $state null
 	wrapEl .= $state null
 
+	// Remote mode: `source(term)` resolves the options for the current input.
+	// Labels of everything ever seen are kept in `known`, so chips for values
+	// picked from an earlier search still render after the list moved on.
+	remote .= $state []
+	loading .= $state false
+	known := $state {}
+	seq .= 0
+
+	search := async (t) =>
+		id := ++seq
+		loading = true
+		try
+			res := await source t
+			return unless id === seq
+			list := Array.isArray(res) ? res : (res?.data ?? [])
+			for it of list
+				known[it.value] = it.label
+			remote = list
+		catch
+			remote = [] if id === seq
+		finally
+			loading = false if id === seq
+
+	$effect =>
+		return unless source && open
+		t := term
+		return if t.length < minChars
+		timer := setTimeout (=> search t), debounce
+		return () => clearTimeout timer
+
 	filtered := $derived.by =>
+		return remote if source
 		return items unless term
 		t := term.toLowerCase()
 		items.filter (it) => it.label.toLowerCase().includes(t)
@@ -106,7 +143,7 @@
 	$effect =>
 		active = 0 if active >= filtered.length
 
-	labelOf := (v) => items.find((it) => it.value === v)?.label ?? v
+	labelOf := (v) => items.find((it) => it.value === v)?.label ?? known[v] ?? v
 
 	focusInput := => inputEl?.focus()
 
@@ -124,6 +161,7 @@
 		setTimeout (=> open = false), 100
 
 	pick := (item) =>
+		known[item.value] = item.label
 		if value.includes(item.value)
 			value = value.filter (v) => v !== item.value
 		else

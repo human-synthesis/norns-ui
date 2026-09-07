@@ -99,3 +99,4 @@ export { cn } from './lib/cn.js';
 export { variantClasses } from './lib/variants.js';
 export { presetUI } from './auto-import.js';
 export { toast, notify, dismiss, clear } from './lib/toast.svelte.js';
+export { useList } from './lib/list.svelte.js';

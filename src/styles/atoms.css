@@ -1603,6 +1603,7 @@
 		cursor: pointer;
 	}
 	.data-table-sort:hover { color: var(--color-primary-600); }
+	.data-table-loading tbody { @apply opacity-60 transition-opacity; }
 
 	/* ============================================================ */
 	/* Tree                                                         */

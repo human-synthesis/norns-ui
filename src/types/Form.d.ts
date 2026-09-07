@@ -22,6 +22,22 @@ export type FormProps = Omit<HTMLFormAttributes, 'class' | 'children'> & {
 	 * up its own error automatically.
 	 */
 	form?: FormActionResult;
+	/**
+	 * API mode. Intercepts the submit, collects the fields into a plain object
+	 * and calls this instead of posting the form — typically
+	 * `(values) => api.post('/api/notes', values)` against a norns `route()`.
+	 * A rejection whose `body.issues` (or `issues`) is a valibot issue list is
+	 * mapped into the same errors context as `form`.
+	 */
+	submit?: (values: Record<string, FormDataEntryValue>, event: SubmitEvent) => Promise<unknown> | unknown;
+	/** Called with the resolved value of `submit`. */
+	onsuccess?: (result: unknown, values: Record<string, FormDataEntryValue>) => void;
+	/** Called when `submit` rejects (after the errors map was updated). */
+	onerror?: (error: unknown) => void;
+	/** True while `submit` is pending. Bindable. */
+	submitting?: boolean;
+	/** API mode: clear the fields after `submit` resolves. */
+	resetOnSuccess?: boolean;
 	class?: string;
 	children?: Snippet;
 };

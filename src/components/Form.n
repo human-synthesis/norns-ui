@@ -3,7 +3,8 @@ form(
 	action!="{action}"
 	enctype!="{enctype}"
 	class!="{classes}"
-	onsubmit!="{onsubmit}"
+	aria-busy!="{submitting ? 'true' : undefined}"
+	onsubmit!="{handleSubmit}"
 )
 	| {@render children?.()}
 
@@ -17,9 +18,40 @@ form(
 		enctype
 		onsubmit
 		form
+		submit
+		onsuccess
+		onerror
+		submitting = $bindable(false)
+		resetOnSuccess = false
 		children
 		class: extra = ''
-	} := $props()
+	} .= $props()
+
+	// API mode. With `submit`, the native POST is intercepted: the fields are
+	// collected into a plain object and handed to `submit(values, event)` —
+	// typically `api.post('/api/notes', values)` against a norns route().
+	// A rejection carrying `issues` (route()'s 400 body, surfaced as
+	// ApiError.body.issues) feeds the same errors map the action path uses,
+	// so <Field name="…"> shows the message either way.
+	apiIssues .= $state null
+
+	handleSubmit := async (e) =>
+		onsubmit?.(e)
+		return unless submit && !e.defaultPrevented
+		e.preventDefault()
+		values := Object.fromEntries new FormData(e.currentTarget)
+		submitting = true
+		apiIssues = null
+		try
+			result := await submit values, e
+			e.currentTarget?.reset?.() if resetOnSuccess
+			onsuccess?.(result, values)
+		catch err
+			issues := err?.body?.issues ?? err?.issues
+			apiIssues = issues if Array.isArray issues
+			onerror?.(err)
+		finally
+			submitting = false
 
 	// Errors-by-name map. Built reactively from the valibot issue list so
 	// descendant Fields can look up their own error by `name` without a
@@ -30,16 +62,17 @@ form(
 	// errors during initial server render.
 	errorsMap := $derived.by =>
 		out := {}
-		if form?.errors
-			for issue of form.errors
-				name := issue.path?.[0]?.key
+		issues := apiIssues ?? form?.errors
+		if issues
+			for issue of issues
+				name := issue.path?.[0]?.key ?? issue.path?.[0]
 				if name && !out[name]
 					out[name] = issue.message
 		out
 
 	// Getter wraps the $derived so context consumers re-evaluate on read.
-	ctx := { get errors() { errorsMap } }
+	ctx := { get errors() { errorsMap }, get submitting() { submitting } }
 	setContext 'norns-ui:form', ctx
 
-	classes := cn 'form', extra
+	classes := $derived cn 'form', extra
 </script>

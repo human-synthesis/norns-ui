@@ -56,11 +56,23 @@ export type AudioProps = {
 ```ts
 export type ComboboxItem = { value: string; label: string };
 
+/** Remote option source: resolves the items for the current input, or a `{ data }` envelope. */
+export type ComboboxSource = (term: string) => Promise<ComboboxItem[] | { data?: ComboboxItem[] } | null | undefined> | ComboboxItem[];
+
 export type AutocompleteProps = {
+	/** Local options, filtered client-side by label. Ignored when `source` is set. */
 	items?: ComboboxItem[];
+	/** Remote options: called (debounced) with the typed text while the list is open. */
+	source?: ComboboxSource;
+	/** Milliseconds to wait after typing before calling `source`. Default 200. */
+	debounce?: number;
+	/** Minimum typed characters before `source` is called. Default 0. */
+	minChars?: number;
 	value?: string;
 	open?: boolean;
 	placeholder?: string;
+	emptyMessage?: string;
+	loadingMessage?: string;
 	disabled?: boolean;
 	name?: string;
 	id?: string;
@@ -381,6 +393,8 @@ export type DataTableColumn = {
 	class?: string;
 	cellClass?: string;
 	sortable?: boolean;
+	/** Render the cell value (e.g. a date or number formatter). */
+	format?: (value: unknown, row: Record<string, unknown>) => string | number;
 };
 
 export type DataTableProps = {
@@ -389,8 +403,14 @@ export type DataTableProps = {
 	striped?: boolean;
 	dense?: boolean;
 	stickyHeader?: boolean;
+	/** Dims the table and swaps the empty message while a page is being fetched (see `useList()`). */
+	loading?: boolean;
 	emptyMessage?: string;
-	/** Currently-sorted column key. Bindable. */
+	loadingMessage?: string;
+	/**
+	 * Currently-sorted column key. Bindable. The table only flips these two;
+	 * sort `rows` yourself or bind them to `useList()` for server-side ordering.
+	 */
 	sortKey?: string;
 	sortDir?: 'asc' | 'desc';
 	onrowclick?: (row: Record<string, unknown>, index: number) => void;
@@ -564,6 +584,22 @@ export type FormProps = Omit<HTMLFormAttributes, 'class' | 'children'> & {
 	 * up its own error automatically.
 	 */
 	form?: FormActionResult;
+	/**
+	 * API mode. Intercepts the submit, collects the fields into a plain object
+	 * and calls this instead of posting the form — typically
+	 * `(values) => api.post('/api/notes', values)` against a norns `route()`.
+	 * A rejection whose `body.issues` (or `issues`) is a valibot issue list is
+	 * mapped into the same errors context as `form`.
+	 */
+	submit?: (values: Record<string, FormDataEntryValue>, event: SubmitEvent) => Promise<unknown> | unknown;
+	/** Called with the resolved value of `submit`. */
+	onsuccess?: (result: unknown, values: Record<string, FormDataEntryValue>) => void;
+	/** Called when `submit` rejects (after the errors map was updated). */
+	onerror?: (error: unknown) => void;
+	/** True while `submit` is pending. Bindable. */
+	submitting?: boolean;
+	/** API mode: clear the fields after `submit` resolves. */
+	resetOnSuccess?: boolean;
 	class?: string;
 	children?: Snippet;
 };
@@ -752,10 +788,19 @@ export type MegaMenuProps = {
 
 ```ts
 export type MultiSelectProps = {
+	/** Local options, filtered client-side by label. Ignored when `source` is set. */
 	items?: ComboboxItem[];
+	/** Remote options: called (debounced) with the typed text while the list is open. Picked labels are remembered across searches. */
+	source?: ComboboxSource;
+	/** Milliseconds to wait after typing before calling `source`. Default 200. */
+	debounce?: number;
+	/** Minimum typed characters before `source` is called. Default 0. */
+	minChars?: number;
 	value?: string[];
 	open?: boolean;
 	placeholder?: string;
+	emptyMessage?: string;
+	loadingMessage?: string;
 	disabled?: boolean;
 	name?: string;
 	id?: string;

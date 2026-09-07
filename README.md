@@ -98,6 +98,34 @@ Form(action="?/save" form!="{form}")
 
 `<Field name="title">` reads its error from the parent `<Form>`'s context map; no per-page boilerplate.
 
+### API mode
+
+Give `Form` a `submit` function and it posts through your API client instead of a form action. A rejection carrying `issues` (a norns `route()` 400, surfaced as `ApiError.body.issues`) feeds the same errors map, so the Fields light up either way:
+
+```pug
+Form(submit!="{(values) => api.post('/api/notes', values)}" onsuccess!="{onCreated}" bind:submitting!="{busy}" resetOnSuccess!="{true}")
+  Field(label="Title" name="title" required)
+    Input(name="title")
+  Btn(type="submit" variant="primary" loading!="{busy}") Create
+```
+
+### Server-driven lists
+
+`useList()` (`@human-synthesis/norns-ui/list`) owns page / sort / search state and re-runs your loader with a query string a norns `listQuery()` route understands. Bind it to `DataTable` and `Pagination`; the server orders and slices, the page never holds more than one page:
+
+```pug
+Input(type="search" bind:value!="{list.q}")
+DataTable(columns!="{columns}" rows!="{list.rows}" bind:sortKey!="{list.sort}" bind:sortDir!="{list.dir}" loading!="{list.loading}")
+Pagination(bind:page!="{list.page}" total!="{list.total}" pageSize!="{list.pageSize}")
+
+<script>
+  import { useList } from '@human-synthesis/norns-ui/list'
+  list := useList (qs) => api.get(`/api/notes?${qs}`), { sort: 'updated_at', dir: 'desc', debounce: 150 }
+</script>
+```
+
+`Autocomplete` and `MultiSelect` accept a `source` function (debounced, out-of-order responses dropped) in place of `items`, so pickers over large sets fetch options as you type.
+
 ## What's in here
 
 - **Atoms** (CSS-only `@layer components`): `.btn`, `.input`, `.field`, `.form`, `.checkbox`, `.radio`, `.switch`, `.card`, `.surface-elevated`, `.btn-icon`, `.banner`, `.badge`, `.chip`, `.avatar`, `.skeleton`, `.progress`, `.norns-header`, `.hero`, `.stepper`, `.breadcrumbs`, `.pagination`, `.accordion`, `.carousel`, plus variants/sizes.
@@ -107,6 +135,7 @@ Form(action="?/save" form!="{form}")
 - **Composite**: `Header`, `HeroBanner`, `Stepper`, `Breadcrumbs`, `Pagination`, `Carousel`, `Tree`, `Toolbar`, `Separator`, `ButtonGroup`, `ToggleButton`, `ToggleButtonGroup`, `HierarchicalMenu`, `MegaMenu`.
 - **Inputs**: `NumberInput`, `OtpField`, `TagsInput`, `Autocomplete`, `MultiSelect`, `ColorPicker`, `Uploader`, `DatePicker`, `DateRangePicker`, `TimePicker`, `Calendar`, `DataTable`, `ScrollArea`, `CopyButton`, `ThemeToggler`, `ShinyButton`, `RippleButton`.
 - **Toast**: `ToastProvider` + `toast()` / `notify()` / `dismiss()` from `@human-synthesis/norns-ui/toast`.
+- **Lists**: `useList()` from `@human-synthesis/norns-ui/list` — server-driven paging / sorting / search state for `DataTable` + `Pagination`.
 - **Motion** (opt-in, `@human-synthesis/norns-ui/motion`): `AnimatedNumber`, `GradientBackground`, `LiquidButton`, `Reveal`, `Sparkles`.
 
 The full prop reference for every component is **[COMPONENTS.md](./COMPONENTS.md)**, generated from the `.d.ts` shims under `src/types/` (`bun run docs:components`). Live usage of every component: `norns-demo/src/routes/examples/ui/+page.n`. Override any component by dropping `src/lib/components/<Name>.n` in your project — `nornsAutoImport`'s first-match-wins shadows the library silently.
