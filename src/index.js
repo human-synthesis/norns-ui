@@ -33,6 +33,7 @@ export { default as ToastProvider } from './components/ToastProvider.n';
 // 0.0.4 — display layer
 export { default as Icon } from './components/Icon.n';
 export { default as Card } from './components/Card.n';
+export { default as Window } from './components/Window.n';
 export { default as Surface } from './components/Surface.n';
 export { default as Banner } from './components/Banner.n';
 export { default as Badge } from './components/Badge.n';

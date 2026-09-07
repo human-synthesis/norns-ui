@@ -1,6 +1,6 @@
 {
 	"name": "@human-synthesis/norns-ui",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"description": "UI library for the Norns ecosystem — Pug + Civet components on Tailwind v4.",
 	"license": "MIT",
 	"author": "Daniel Teodoroiu (https://humansynthesis.ai)",
@@ -11,12 +11,15 @@
 	},
 	"files": [
 		"src",
-		"README.md"
+		"README.md",
+		"COMPONENTS.md"
 	],
 	"scripts": {
 		"test": "bun test",
 		"check:shims": "bun scripts/check-shims.mjs",
-		"check:shims:strict": "bun scripts/check-shims.mjs --strict"
+		"check:shims:strict": "bun scripts/check-shims.mjs --strict",
+		"docs:components": "bun scripts/gen-components-doc.mjs",
+		"docs:components:check": "bun scripts/gen-components-doc.mjs --check"
 	},
 	"exports": {
 		".": "./src/index.js",
@@ -34,8 +37,8 @@
 		"./package.json": "./package.json"
 	},
 	"peerDependencies": {
-		"@human-synthesis/norns": "^0.0.17",
-		"@human-synthesis/norns-core": "^0.0.10",
+		"@human-synthesis/norns": "^0.0.18",
+		"@human-synthesis/norns-core": "^0.0.11",
 		"svelte": "^5.0.0",
 		"tailwindcss": "^4.0.0"
 	},

@@ -103,11 +103,13 @@ Form(action="?/save" form!="{form}")
 - **Atoms** (CSS-only `@layer components`): `.btn`, `.input`, `.field`, `.form`, `.checkbox`, `.radio`, `.switch`, `.card`, `.surface-elevated`, `.btn-icon`, `.banner`, `.badge`, `.chip`, `.avatar`, `.skeleton`, `.progress`, `.norns-header`, `.hero`, `.stepper`, `.breadcrumbs`, `.pagination`, `.accordion`, `.carousel`, plus variants/sizes.
 - **Forms**: `Btn`, `Form`, `Field`, `FieldGroup`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`.
 - **Behavior** (custom on `@floating-ui/dom`): `Dialog`, `Sheet`, `Popover`, `Dropdown`, `Tooltip`, `Tabs`, `Accordion`, `ContextMenu`, `Collapsible`.
-- **Display**: `Card`, `Surface`, `Banner`, `Badge`, `Chip`, `Avatar`, `Skeleton`, `Progress`, `ProgressCircular`, `Icon`.
-- **Composite**: `Header`, `HeroBanner`, `Stepper`, `Breadcrumbs`, `Pagination`, `Carousel`.
+- **Display**: `Card`, `Window`, `Surface`, `Banner`, `Badge`, `Chip`, `Avatar`, `AvatarGroup`, `Skeleton`, `Progress`, `ProgressCircular`, `Icon`, `Image`, `Audio`, `Video`, `Timeline`, `GradientText`.
+- **Composite**: `Header`, `HeroBanner`, `Stepper`, `Breadcrumbs`, `Pagination`, `Carousel`, `Tree`, `Toolbar`, `Separator`, `ButtonGroup`, `ToggleButton`, `ToggleButtonGroup`, `HierarchicalMenu`, `MegaMenu`.
+- **Inputs**: `NumberInput`, `OtpField`, `TagsInput`, `Autocomplete`, `MultiSelect`, `ColorPicker`, `Uploader`, `DatePicker`, `DateRangePicker`, `TimePicker`, `Calendar`, `DataTable`, `ScrollArea`, `CopyButton`, `ThemeToggler`, `ShinyButton`, `RippleButton`.
 - **Toast**: `ToastProvider` + `toast()` / `notify()` / `dismiss()` from `@human-synthesis/norns-ui/toast`.
+- **Motion** (opt-in, `@human-synthesis/norns-ui/motion`): `AnimatedNumber`, `GradientBackground`, `LiquidButton`, `Reveal`, `Sparkles`.
 
-Hand-rolled `.d.ts` shims live under `src/types/`. Override any component by dropping `src/lib/components/<Name>.n` in your project — `nornsAutoImport`'s first-match-wins shadows the library silently.
+The full prop reference for every component is **[COMPONENTS.md](./COMPONENTS.md)**, generated from the `.d.ts` shims under `src/types/` (`bun run docs:components`). Live usage of every component: `norns-demo/src/routes/examples/ui/+page.n`. Override any component by dropping `src/lib/components/<Name>.n` in your project — `nornsAutoImport`'s first-match-wins shadows the library silently.
 
 ## Behaviors
 
