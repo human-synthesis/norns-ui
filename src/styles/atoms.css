@@ -118,6 +118,17 @@
 		border-radius: var(--ui-radius);
 		box-shadow: var(--ui-elev-2);
 	}
+	/* Floating surfaces (menus, listboxes, popovers, nav menus, rich tooltips)
+	 * get their own edge and a deeper shadow so they lift off the page in dark
+	 * theme. Covers Dropdown, ContextMenu, Autocomplete, MultiSelect, Popover,
+	 * DatePicker, TimePicker, HierarchicalMenu, MegaMenu and Tooltip(rich). */
+	.popover-content,
+	.dropdown-content,
+	.tooltip-rich,
+	.nav-menu-content {
+		border-color: var(--color-border-floating);
+		box-shadow: var(--ui-elev-popover);
+	}
 
 	/* `.control-base` — public alias. Form-control atoms below extend this
 	 * rule via selector lists, so `.input`, `.textarea`, `.select`, etc. all
@@ -1043,7 +1054,7 @@
 	}
 	.stepper-step-current .stepper-marker {
 		background-color: var(--color-primary-600);
-		color: white;
+		color: var(--color-fg-on-primary);
 		border-color: var(--color-primary-600);
 	}
 	.stepper-step-complete .stepper-marker {
@@ -1078,7 +1089,7 @@
 	.pagination-item-active,
 	.pagination-item-active:hover {
 		background-color: var(--color-primary-600);
-		color: white;
+		color: var(--color-fg-on-primary);
 	}
 	.pagination-item:disabled {
 		@apply cursor-not-allowed opacity-40;
@@ -1290,9 +1301,10 @@
 	}
 	.timeline-item:last-child { @apply pb-0; }
 	.timeline-dot {
-		@apply absolute left-0 inline-flex items-center justify-center rounded-full text-white;
+		@apply absolute left-0 inline-flex items-center justify-center rounded-full;
 		width: var(--ui-icon-btn-md);
 		height: var(--ui-icon-btn-md);
+		color: var(--color-fg-on-primary);
 		background-color: var(--color-primary-600);
 		top: 0;
 	}
@@ -1300,6 +1312,10 @@
 	.timeline-dot-warning { background-color: var(--color-warning-600); }
 	.timeline-dot-danger  { background-color: var(--color-danger-600); }
 	.timeline-dot-info    { background-color: var(--color-info-600); }
+	.timeline-dot-success,
+	.timeline-dot-warning,
+	.timeline-dot-danger,
+	.timeline-dot-info { color: white; }
 	.timeline-line {
 		@apply absolute w-px;
 		left: 0.875rem;
@@ -1518,7 +1534,7 @@
 	.calendar-day-selected,
 	.calendar-day-selected:hover:not(:disabled) {
 		background-color: var(--color-primary-600);
-		color: white;
+		color: var(--color-fg-on-primary);
 		font-weight: 600;
 	}
 	.calendar-day-selected:hover:not(:disabled) { background-color: var(--color-primary-700); }
@@ -1559,7 +1575,7 @@
 	.time-picker-cell-selected,
 	.time-picker-cell-selected:hover {
 		background-color: var(--color-primary-600);
-		color: white;
+		color: var(--color-fg-on-primary);
 		font-weight: 600;
 	}
 	.time-picker-cell-selected:hover { background-color: var(--color-primary-700); }

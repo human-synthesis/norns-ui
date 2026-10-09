@@ -23,7 +23,7 @@ COMPONENTS.md           generated prop reference (bun run docs:components)
 2. `src/types/<Name>.d.ts` — mirror every prop. `bun run check:shims:strict` fails CI on a missing shim or a prop the shim does not mention.
 3. Register in `presetUI()` (`src/auto-import.js`) **and** the barrel (`src/index.js`).
 4. `bun run docs:components` — regenerates `COMPONENTS.md` from the shims. Add a README example only for non-obvious usage.
-5. Atom CSS goes in `src/styles/atoms.css` under `@layer components`; tokens in `tokens.css`. Reference role tokens (`--color-fg`, `--color-bg-muted`, `--ui-focus-ring`, …), never raw palette values, so dark mode keeps working.
+5. Atom CSS goes in `src/styles/atoms.css` under `@layer components`; tokens in `tokens.css`. Reference role tokens (`--color-fg`, `--color-bg-muted`, `--ui-focus-ring`, …), never raw palette values, so dark mode keeps working. Text on a `primary` fill uses `--color-fg-on-primary` (never `white`: it is dark ink in dark theme). Floating surfaces (menus, listboxes, popovers) reuse `.dropdown-content` / `.popover-content` so they pick up `--color-border-floating` and `--ui-elev-popover`. `bun test` includes `tests/contrast.test.js`; keep it green when touching tokens.
 6. Overlays use `@floating-ui/dom` through `lib/behaviors/floating.svelte.js` plus the other behaviors; do not add a headless-UI dependency.
 
 ## Verification

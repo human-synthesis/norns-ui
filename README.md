@@ -67,6 +67,42 @@ Toggle via `<html data-theme="dark">` — every component swaps. Persist the cho
 </script>
 ```
 
+`data-theme="dark"` also sets `color-scheme: dark`, so native `<select>` popups, scrollbars and date inputs follow.
+
+### Accent colour
+
+`primary` is the accent. It defaults to **green** in both themes; `data-accent="violet"` restores the earlier violet. Set it on `<html>` or on any subtree:
+
+```html
+<html data-theme="dark" data-accent="violet">
+```
+
+Each preset ships a light scale, a dark scale and an ink colour. In dark theme the mid steps are lifted to 70–80% lightness, so `bg-primary-600`, `text-primary-500` and selected borders stay readable on the dark background. Text on a primary fill uses `--color-fg-on-primary`: white in light theme, the preset's dark ink in dark theme. Use that token instead of `white` when you put text on `bg-primary-*`.
+
+To add your own accent, declare the 23 preset variables under your own attribute value:
+
+```css
+[data-accent='ocean'] {
+  --ui-accent-light-50: oklch(97.7% 0.013 236);
+  /* … --ui-accent-light-100 … 950 */
+  /* … --ui-accent-dark-50 … 950 */
+  --ui-accent-ink: oklch(20% 0.03 236);
+}
+```
+
+Don't override `--color-primary-*` with literal values. They are an indirection to the preset, and a literal value would stop the dark-theme switch. `tests/contrast.test.js` shows the contrast checks every preset should pass.
+
+### Contrast targets (dark theme)
+
+| Token | Use | Target |
+|---|---|---|
+| `--color-fg-muted`, `--color-fg-subtle` | readable text: secondary copy, placeholders, captions | ≥ 4.5:1 on every surface |
+| `--color-border-strong` | control edges: inputs, checkboxes, radios | ≥ 3:1 on bg and bg-elevated |
+| `--color-border` | decorative dividers and card edges | ~1.8:1 by design |
+| `--color-border-floating` + `--ui-elev-popover` | open menus, listboxes, popovers, nav menus, rich tooltips | visible edge (≥ 2:1 against the menu surface) and a deep shadow |
+
+Surfaces step up as bg < bg-subtle < bg-elevated < bg-muted, so hover and active states (`bg-muted`) show inside cards and open menus. `tests/contrast.test.js` enforces all of the above, plus the rule that light-theme neutrals don't change.
+
 ## Icons
 
 The library ships [`@iconify/svelte`](https://iconify.design/docs/icon-components/svelte/) with the [Lucide](https://lucide.dev) collection bundled. Register the collection once in your app entry so icons render in SSR and the client:
@@ -167,13 +203,13 @@ bits-ui has been removed; overlays are now built on `@floating-ui/dom` plus the 
 
 Tokens are in [`src/styles/tokens.css`](src/styles/tokens.css) as a Tailwind v4 `@theme` block. The library exposes:
 
-- **Color scales** (50–950) for `primary`, `success`, `warning`, `danger`, `info` — all in `oklch` for perceptual uniformity. Use as `bg-primary-500`, `text-danger-700`, etc.
-- **Role tokens** that atoms reference (and that you should reach for in your own components): `--color-fg`, `--color-fg-muted`, `--color-fg-subtle`, `--color-bg`, `--color-bg-muted`, `--color-bg-subtle`, `--color-bg-elevated`, `--color-border`, `--color-border-strong`, `--color-ring`. These swap automatically on dark mode.
+- **Color scales** (50–950) for `primary`, `success`, `warning`, `danger`, `info` — all in `oklch` for perceptual uniformity. Use as `bg-primary-500`, `text-danger-700`, etc. `primary` follows the accent preset (see [Accent colour](#accent-colour)).
+- **Role tokens** that atoms reference (and that you should reach for in your own components): `--color-fg`, `--color-fg-muted`, `--color-fg-subtle`, `--color-fg-on-primary`, `--color-bg`, `--color-bg-muted`, `--color-bg-subtle`, `--color-bg-elevated`, `--color-border`, `--color-border-strong`, `--color-border-floating`, `--color-ring`. These swap automatically on dark mode.
 - **Feedback tokens**: `--color-{success,warning,danger,info}-{bg,fg,border}` for tinted surfaces.
 - **Typography tokens**: `--font-sans`, `--font-mono`.
 - **Sizing**: `--ui-radius-{sm,,lg,full}`, `--ui-h-{sm,md,lg}` (full button heights), `--ui-icon-btn-{sm,md,lg}` (square icon-button sizes).
 - **Motion**: `--ui-motion-{fast,med,slow}` durations + `--ui-motion-ease`. All component transitions reference these.
-- **Elevation**: `--ui-elev-{1,2,3}` (subtle / floating / modal). Dark mode swaps to deeper shadows.
+- **Elevation**: `--ui-elev-{1,2,3}` (subtle / raised / modal) and `--ui-elev-popover` for open menus and popovers. Dark mode swaps to deeper shadows.
 - **Focus**: `--ui-focus-ring` — the single canonical focus indicator. Apply as `box-shadow: var(--ui-focus-ring)` on `:focus-visible`.
 
 Override by re-declaring `@theme { … }` in your `app.css` after the library import.

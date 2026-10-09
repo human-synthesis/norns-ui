@@ -4,8 +4,11 @@
  * Tailwind v4 `@theme` block. Two layers:
  *
  *   1. Color *scales* (50–950) for primary + success + warning + danger + info.
- *      These generate utilities like `bg-success-500`, `text-danger-700`. Stay
- *      identical in light + dark — oklch is perceptually uniform.
+ *      These generate utilities like `bg-success-500`, `text-danger-700`. The
+ *      feedback scales stay identical in light + dark. `primary` is the accent:
+ *      it points at an accent preset (`--ui-accent-{light,dark}-*`, see below)
+ *      and switches to a brighter scale in dark theme, so `bg-primary-600` and
+ *      `text-primary-500` stay readable on both backgrounds.
  *
  *   2. *Role tokens* (`--color-fg`, `--color-bg`, `--color-border`, …). Atoms
  *      reference these so dark-mode swap is a single point of change. The
@@ -19,18 +22,21 @@
  */
 
 @theme {
-	/* === Brand: Primary (violet) === */
-	--color-primary-50: oklch(97.7% 0.014 308.3);
-	--color-primary-100: oklch(94.6% 0.033 307.2);
-	--color-primary-200: oklch(90.2% 0.063 306.7);
-	--color-primary-300: oklch(81.1% 0.111 293.6);
-	--color-primary-400: oklch(70.2% 0.183 293.5);
-	--color-primary-500: oklch(60.6% 0.25 292.7);
-	--color-primary-600: oklch(54.1% 0.281 293);
-	--color-primary-700: oklch(49.1% 0.27 292.6);
-	--color-primary-800: oklch(43.2% 0.232 292.8);
-	--color-primary-900: oklch(38% 0.189 293.7);
-	--color-primary-950: oklch(28.3% 0.141 291.1);
+	/* === Accent: Primary ===
+	 * Indirection only — values live in the accent presets after this block.
+	 * Default accent is green; `data-accent="violet"` restores the old violet.
+	 */
+	--color-primary-50: var(--ui-accent-light-50);
+	--color-primary-100: var(--ui-accent-light-100);
+	--color-primary-200: var(--ui-accent-light-200);
+	--color-primary-300: var(--ui-accent-light-300);
+	--color-primary-400: var(--ui-accent-light-400);
+	--color-primary-500: var(--ui-accent-light-500);
+	--color-primary-600: var(--ui-accent-light-600);
+	--color-primary-700: var(--ui-accent-light-700);
+	--color-primary-800: var(--ui-accent-light-800);
+	--color-primary-900: var(--ui-accent-light-900);
+	--color-primary-950: var(--ui-accent-light-950);
 
 	/* === Success (green) === */
 	--color-success-50: oklch(98.2% 0.018 155.8);
@@ -89,7 +95,8 @@
 	 * sides at the bottom of this file.
 	 */
 
-	/* Foreground (text) */
+	/* Foreground (text). fg-muted and fg-subtle are both for readable text
+	 * (secondary copy, placeholders, captions) and target 4.5:1 on bg. */
 	--color-fg: oklch(20.4% 0 0); /* neutral-950ish */
 	--color-fg-muted: oklch(43.9% 0 0); /* neutral-600 */
 	--color-fg-subtle: oklch(56.6% 0 0); /* neutral-500 */
@@ -102,9 +109,12 @@
 	--color-bg-elevated: white;
 	--color-bg-inverse: oklch(20.4% 0 0); /* used for tooltips, dark surfaces on light */
 
-	/* Borders */
+	/* Borders. `border` is decorative (dividers, card edges); `border-strong`
+	 * outlines controls (inputs, checkboxes) and targets 3:1 in dark theme. */
 	--color-border: oklch(92.2% 0 0); /* neutral-200 */
 	--color-border-strong: oklch(86.9% 0 0); /* neutral-300 */
+	/* Edge of open menus, popovers, listboxes and rich tooltips. */
+	--color-border-floating: oklch(92.2% 0 0);
 
 	/* Focus ring — semi-transparent so it composes on any bg */
 	--color-ring: var(--color-primary-500);
@@ -160,51 +170,150 @@
 
 	/* Elevation — the only shadow vocabulary in the library.
 	 * elev-1: subtle (cards, hover-lifts)
-	 * elev-2: floating menus, popovers, tooltips
+	 * elev-2: tooltips, hover-lifted cards
 	 * elev-3: dialogs, sheets
 	 */
 	--ui-elev-1: 0 1px 2px oklch(0% 0 0 / 0.06), 0 1px 3px oklch(0% 0 0 / 0.04);
 	--ui-elev-2: 0 4px 12px -2px oklch(0% 0 0 / 0.08), 0 2px 4px -1px oklch(0% 0 0 / 0.04);
 	--ui-elev-3: 0 16px 32px -8px oklch(0% 0 0 / 0.18), 0 4px 8px -4px oklch(0% 0 0 / 0.06);
+	/* elev-popover: open menus, popovers, listboxes (same as elev-2 in light). */
+	--ui-elev-popover: 0 4px 12px -2px oklch(0% 0 0 / 0.08), 0 2px 4px -1px oklch(0% 0 0 / 0.04);
 
 	/* Single canonical focus indicator. 2px halo on the surface color + 2px
 	 * ring color outside it, so the ring stays visible on any background. */
 	--ui-focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ring);
 }
 
+/* === Accent presets ===
+ * An accent is two scales plus an ink colour:
+ *   --ui-accent-light-{50…950}  light theme (600 carries white text at ≥4.5:1)
+ *   --ui-accent-dark-{50…950}   dark theme, mid steps lifted to 70–80% L so
+ *                               500/600 read on the dark background
+ *   --ui-accent-ink             text on a dark-theme accent fill
+ * Pick one with `data-accent` on <html> or any subtree. To add your own,
+ * declare the same 23 variables under `[data-accent='yours']`.
+ */
+:root,
+[data-accent='green'] {
+	--ui-accent-light-50: oklch(97.7% 0.03 150);
+	--ui-accent-light-100: oklch(95% 0.06 150);
+	--ui-accent-light-200: oklch(90.5% 0.11 150);
+	--ui-accent-light-300: oklch(82% 0.16 150);
+	--ui-accent-light-400: oklch(70% 0.186 150);
+	--ui-accent-light-500: oklch(60% 0.16 150);
+	--ui-accent-light-600: oklch(52% 0.139 150);
+	--ui-accent-light-700: oklch(47% 0.125 150);
+	--ui-accent-light-800: oklch(42% 0.112 150);
+	--ui-accent-light-900: oklch(37% 0.099 150);
+	--ui-accent-light-950: oklch(26.5% 0.06 150);
+	--ui-accent-dark-50: oklch(97% 0.03 150);
+	--ui-accent-dark-100: oklch(94% 0.06 150);
+	--ui-accent-dark-200: oklch(89% 0.11 150);
+	--ui-accent-dark-300: oklch(85% 0.15 150);
+	--ui-accent-dark-400: oklch(80% 0.18 150);
+	--ui-accent-dark-500: oklch(75% 0.18 150);
+	--ui-accent-dark-600: oklch(70% 0.17 150);
+	--ui-accent-dark-700: oklch(65% 0.16 150);
+	--ui-accent-dark-800: oklch(60% 0.15 150);
+	--ui-accent-dark-900: oklch(40% 0.1 150);
+	--ui-accent-dark-950: oklch(27% 0.06 150);
+	--ui-accent-ink: oklch(20% 0.03 150);
+}
+[data-accent='violet'] {
+	--ui-accent-light-50: oklch(97.7% 0.014 308.3);
+	--ui-accent-light-100: oklch(94.6% 0.033 307.2);
+	--ui-accent-light-200: oklch(90.2% 0.063 306.7);
+	--ui-accent-light-300: oklch(81.1% 0.111 293.6);
+	--ui-accent-light-400: oklch(70.2% 0.183 293.5);
+	--ui-accent-light-500: oklch(60.6% 0.25 292.7);
+	--ui-accent-light-600: oklch(54.1% 0.281 293);
+	--ui-accent-light-700: oklch(49.1% 0.27 292.6);
+	--ui-accent-light-800: oklch(43.2% 0.232 292.8);
+	--ui-accent-light-900: oklch(38% 0.189 293.7);
+	--ui-accent-light-950: oklch(28.3% 0.141 291.1);
+	--ui-accent-dark-50: oklch(97% 0.015 293);
+	--ui-accent-dark-100: oklch(94% 0.03 293);
+	--ui-accent-dark-200: oklch(89% 0.056 293);
+	--ui-accent-dark-300: oklch(85% 0.079 293);
+	--ui-accent-dark-400: oklch(80% 0.107 293);
+	--ui-accent-dark-500: oklch(75% 0.137 293);
+	--ui-accent-dark-600: oklch(70% 0.16 293);
+	--ui-accent-dark-700: oklch(66% 0.17 293);
+	--ui-accent-dark-800: oklch(63% 0.17 293);
+	--ui-accent-dark-900: oklch(40% 0.17 293);
+	--ui-accent-dark-950: oklch(27% 0.12 293);
+	--ui-accent-ink: oklch(20% 0.03 293);
+}
+
+/* Re-resolve the accent wherever a theme or accent is set, so a nested
+ * `data-accent` subtree gets its own scale. */
+[data-accent] {
+	--color-primary-50: var(--ui-accent-light-50);
+	--color-primary-100: var(--ui-accent-light-100);
+	--color-primary-200: var(--ui-accent-light-200);
+	--color-primary-300: var(--ui-accent-light-300);
+	--color-primary-400: var(--ui-accent-light-400);
+	--color-primary-500: var(--ui-accent-light-500);
+	--color-primary-600: var(--ui-accent-light-600);
+	--color-primary-700: var(--ui-accent-light-700);
+	--color-primary-800: var(--ui-accent-light-800);
+	--color-primary-900: var(--ui-accent-light-900);
+	--color-primary-950: var(--ui-accent-light-950);
+	--color-fg-on-primary: white;
+	--color-ring: var(--color-primary-500);
+	--ui-focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ring);
+}
+[data-theme='dark'],
+[data-theme='dark'] [data-accent] {
+	--color-primary-50: var(--ui-accent-dark-50);
+	--color-primary-100: var(--ui-accent-dark-100);
+	--color-primary-200: var(--ui-accent-dark-200);
+	--color-primary-300: var(--ui-accent-dark-300);
+	--color-primary-400: var(--ui-accent-dark-400);
+	--color-primary-500: var(--ui-accent-dark-500);
+	--color-primary-600: var(--ui-accent-dark-600);
+	--color-primary-700: var(--ui-accent-dark-700);
+	--color-primary-800: var(--ui-accent-dark-800);
+	--color-primary-900: var(--ui-accent-dark-900);
+	--color-primary-950: var(--ui-accent-dark-950);
+	--color-fg-on-primary: var(--ui-accent-ink);
+	/* Ring brightens so it stays visible on dark surfaces */
+	--color-ring: var(--color-primary-400);
+	--ui-focus-ring: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-ring);
+}
+
 /* === Dark theme ===
  * User toggles via <html data-theme="dark">. Only role tokens change; scales
- * are perceptually uniform across both modes. Tuned for WCAG AA contrast at
- * the body-text level.
+ * are perceptually uniform across both modes. Ratios below are WCAG contrast,
+ * checked by tests/contrast.test.js.
  */
 [data-theme='dark'] {
-	/* Foreground */
-	--color-fg: oklch(98.5% 0 0); /* near-white */
-	--color-fg-muted: oklch(70.8% 0 0); /* neutral-400 */
-	--color-fg-subtle: oklch(56.6% 0 0); /* neutral-500 */
-	--color-fg-on-primary: white;
+	color-scheme: dark; /* native select popups, scrollbars, date inputs */
 
-	/* Background */
+	/* Foreground — ≥4.5:1 on bg, bg-subtle, bg-elevated and bg-muted */
+	--color-fg: oklch(98.5% 0 0); /* near-white */
+	--color-fg-muted: oklch(78% 0 0); /* 9.9:1 on bg, 6.8:1 on bg-muted */
+	--color-fg-subtle: oklch(68% 0 0); /* 6.9:1 on bg, 4.7:1 on bg-muted */
+
+	/* Background — bg < bg-subtle < bg-elevated < bg-muted, so hover and
+	 * active states (bg-muted) show on cards and open menus (bg-elevated). */
 	--color-bg: oklch(14.5% 0 0); /* deep neutral, slightly above true black */
-	--color-bg-muted: oklch(20.4% 0 0); /* neutral-900ish */
-	--color-bg-subtle: oklch(17.5% 0 0); /* between bg and bg-muted */
-	--color-bg-elevated: oklch(23.5% 0 0); /* one step up — Cards/Dialogs */
+	--color-bg-subtle: oklch(17.5% 0 0);
+	--color-bg-elevated: oklch(23.5% 0 0); /* Cards, dialogs, menus */
+	--color-bg-muted: oklch(30% 0 0); /* hover / active, one step above elevated */
 	--color-bg-inverse: oklch(98.5% 0 0);
 
 	/* Borders */
-	--color-border: oklch(27.5% 0 0); /* neutral-800 */
-	--color-border-strong: oklch(37.1% 0 0); /* neutral-700 */
-
-	/* Ring brightens slightly so it stays visible on dark surfaces */
-	--color-ring: var(--color-primary-400);
+	--color-border: oklch(36% 0 0); /* dividers: 1.8:1 on bg */
+	--color-border-strong: oklch(53% 0 0); /* controls: 3.7:1 on bg, 3.2:1 on elevated */
+	--color-border-floating: oklch(44% 0 0); /* open menus: 2.2:1 against their own surface */
 
 	/* Dark-mode elevation — true-black shadow on dark bg disappears, so we
 	 * lean on darker shadow + the existing border to convey depth. */
 	--ui-elev-1: 0 1px 2px oklch(0% 0 0 / 0.4);
 	--ui-elev-2: 0 4px 12px -2px oklch(0% 0 0 / 0.5), 0 2px 4px -1px oklch(0% 0 0 / 0.3);
 	--ui-elev-3: 0 16px 32px -8px oklch(0% 0 0 / 0.6), 0 4px 8px -4px oklch(0% 0 0 / 0.4);
-
-	--ui-focus-ring: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-ring);
+	--ui-elev-popover: 0 10px 30px -4px oklch(0% 0 0 / 0.65), 0 2px 6px oklch(0% 0 0 / 0.4);
 
 	/* Feedback — flip to deep tinted bg + light fg */
 	--color-success-bg: oklch(28% 0.05 152);
