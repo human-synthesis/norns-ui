@@ -8,7 +8,7 @@ button(
 		span.ripple-btn-ripple(
 			aria-hidden="true"
 			style!="{`left: ${r.x}px; top: ${r.y}px; width: ${r.size}px; height: ${r.size}px`}"
-			ontransitionend!="{() => removeRipple(r.id)}"
+			onanimationend!="{() => removeRipple(r.id)}"
 		)
 	+if('icon')
 		Icon(name!="{icon}" size!="{iconSize}")

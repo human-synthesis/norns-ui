@@ -32,18 +32,20 @@
 		background-color: var(--color-bg);
 	}
 
-	/* Respect prefers-reduced-motion without nuking decorative animations
-	 * entirely: cap iterations to 1 (so infinite loops like the shiny
-	 * sweep, sparkle, gradient shift play once and stop instead of
-	 * looping), and shrink incidental transitions. Finite animations
-	 * (ripple, copy-pop, toast-in, banner-in) keep their natural duration
-	 * so users still see the state change they signal. */
+	/* Reduced motion: remove transitions outright and collapse animations to
+	 * their end state. `transition: none` matters for performance, not just
+	 * motion: a 0.01ms transition still makes the browser create and resolve a
+	 * transition for every changed property on every element, which made
+	 * pan/zoom of large transformed DOMs stutter with macOS Reduce Motion on.
+	 * Animations keep firing `animationend` (0.01ms, one iteration), so code
+	 * that cleans up on it, like RippleButton, still runs. */
 	@media (prefers-reduced-motion: reduce) {
 		*,
 		*::before,
 		*::after {
+			animation-duration: 0.01ms !important;
 			animation-iteration-count: 1 !important;
-			transition-duration: 0.01ms !important;
+			transition: none !important;
 			scroll-behavior: auto !important;
 		}
 	}
