@@ -203,7 +203,7 @@ import {
 
 These are Svelte 5 actions (`use:portal`, `use:clickOutside={handler}`, etc.) and a small `useFloating()` factory that wraps `@floating-ui/dom`. They're what every overlay component in this library is built on, so reaching for them in your own code keeps interactions consistent.
 
-## Migrating to 0.1.0
+## Migrating to 0.0.17
 
 - **Removed:** `ShinyButton`, `RippleButton`, `GradientText` and the whole `@human-synthesis/norns-ui/motion` subpath (`AnimatedNumber`, `GradientBackground`, `LiquidButton`, `Reveal`, `Sparkles`), plus the `motion` dependency. They move to a separate effects package. Use `Btn` and plain text meanwhile.
 - **Removed props:** `HeroBanner gradient`, `Surface tone="glass"`, `Dialog`/`Sheet` `overlayClass` (there is no overlay).
