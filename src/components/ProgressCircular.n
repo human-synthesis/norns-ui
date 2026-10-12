@@ -16,19 +16,18 @@ svg(
 		stroke-width!="{stroke}"
 		fill="none"
 	)
-	circle(
-		cx!="{center}"
-		cy!="{center}"
-		r!="{radius}"
-		stroke="var(--color-primary-600)"
-		stroke-width!="{stroke}"
-		stroke-linecap="round"
-		fill="none"
-		stroke-dasharray!="{circumference}"
-		stroke-dashoffset!="{indeterminate ? circumference * 0.7 : circumference - (circumference * pct) / 100}"
-		transform!="rotate(-90 {center} {center})"
-		style="transition: stroke-dashoffset 300ms ease-out"
-	)
+	+if('arc > 0')
+		circle(
+			cx!="{center}"
+			cy!="{center}"
+			r!="{radius}"
+			stroke="var(--color-primary-600)"
+			stroke-width!="{stroke}"
+			stroke-linecap="round"
+			fill="none"
+			stroke-dasharray!="{arc} {circumference - arc}"
+			stroke-dashoffset!="{circumference / 4}"
+		)
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
@@ -48,5 +47,8 @@ svg(
 	radius := center - stroke
 	circumference := $derived 2 * Math.PI * radius
 	pct := $derived Math.max(0, Math.min(100, (value / max) * 100))
-	classes := cn indeterminate && 'animate-spin', extra
+	// Arc length; the quarter-turn dash offset starts it at 12 o'clock, so no
+	// rotate() is needed.
+	arc := $derived indeterminate ? circumference * 0.3 : (circumference * pct) / 100
+	classes := cn indeterminate && 'ui-spin', extra
 </script>

@@ -73,7 +73,14 @@ export function useFloating(opts = {}) {
 	function bind() {
 		if (cleanupAutoUpdate) cleanupAutoUpdate();
 		if (referenceEl && floatingEl) {
-			cleanupAutoUpdate = autoUpdate(referenceEl, floatingEl, update);
+			// Follow scroll and window resize only. No ResizeObserver, no
+			// IntersectionObserver, no per-frame polling. Components call
+			// update() themselves when their content changes size.
+			cleanupAutoUpdate = autoUpdate(referenceEl, floatingEl, update, {
+				elementResize: false,
+				layoutShift: false,
+				animationFrame: false
+			});
 		}
 	}
 

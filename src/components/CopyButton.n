@@ -6,7 +6,7 @@ button(
 	aria-label!="{copied ? 'Copied' : (label ?? 'Copy to clipboard')}"
 )
 	+if('copied')
-		Icon(name="lucide:check" size!="{iconSize}" class="copy-btn-check")
+		Icon(name="lucide:check" size!="{iconSize}")
 	+if('!copied')
 		Icon(name!="{icon}" size!="{iconSize}")
 	+if('children')

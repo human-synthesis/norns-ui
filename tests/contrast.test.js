@@ -70,8 +70,9 @@ describe('dark theme role tokens', () => {
 		expect(ratio(dark['--color-border-strong'], dark['--color-bg-elevated'])).toBeGreaterThanOrEqual(3);
 	});
 
-	test('--color-border-floating ≥ 2:1 against the menu surface it outlines', () => {
-		expect(ratio(dark['--color-border-floating'], dark['--color-bg-elevated'])).toBeGreaterThanOrEqual(2);
+	test('--color-border-floating ≥ 3:1 against bg and the surface it outlines (no shadows)', () => {
+		expect(ratio(dark['--color-border-floating'], dark['--color-bg'])).toBeGreaterThanOrEqual(3);
+		expect(ratio(dark['--color-border-floating'], dark['--color-bg-elevated'])).toBeGreaterThanOrEqual(3);
 	});
 
 	test('surfaces step up: bg < bg-subtle < bg-elevated < bg-muted', () => {
@@ -94,14 +95,13 @@ describe('light theme neutrals are unchanged', () => {
 		'--color-bg-subtle': 'oklch(98.5% 0 0)',
 		'--color-bg-elevated': 'white',
 		'--color-border': 'oklch(92.2% 0 0)',
-		'--color-border-strong': 'oklch(86.9% 0 0)',
-		'--color-border-floating': 'oklch(92.2% 0 0)'
+		'--color-border-strong': 'oklch(86.9% 0 0)'
 	};
 	for (const [name, value] of Object.entries(expected)) {
 		test(name, () => expect(lightRoot[name].replace(/\s*\/\*.*$/, '')).toBe(value));
 	}
-	test('--ui-elev-popover equals --ui-elev-2 in light', () => {
-		expect(lightRoot['--ui-elev-popover']).toBe(lightRoot['--ui-elev-2']);
+	test('floating edge (no shadows) is visible on white: ≥ 2.2:1', () => {
+		expect(ratio(lightRoot['--color-border-floating'], 'white')).toBeGreaterThanOrEqual(2.2);
 	});
 });
 

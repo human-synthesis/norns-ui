@@ -41,14 +41,24 @@ export function clickOutside(node, paramOrHandler) {
 		}
 		handler(e);
 	};
-	document.addEventListener('pointerdown', onPointerDown, true);
+	let attached = false;
+	const sync = () => {
+		const want = enabled && !!handler;
+		if (want === attached) return;
+		attached = want;
+		if (want) document.addEventListener('pointerdown', onPointerDown, true);
+		else document.removeEventListener('pointerdown', onPointerDown, true);
+	};
+	sync();
 
 	return {
 		update(value) {
 			set(value);
+			sync();
 		},
 		destroy() {
-			document.removeEventListener('pointerdown', onPointerDown, true);
+			enabled = false;
+			sync();
 		}
 	};
 }

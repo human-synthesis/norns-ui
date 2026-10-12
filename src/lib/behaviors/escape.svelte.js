@@ -23,14 +23,24 @@ export function escape(node, paramOrHandler) {
 		if (e.key !== 'Escape') return;
 		handler(e);
 	};
-	document.addEventListener('keydown', onKeyDown);
+	let attached = false;
+	const sync = () => {
+		const want = enabled && !!handler;
+		if (want === attached) return;
+		attached = want;
+		if (want) document.addEventListener('keydown', onKeyDown);
+		else document.removeEventListener('keydown', onKeyDown);
+	};
+	sync();
 
 	return {
 		update(value) {
 			set(value);
+			sync();
 		},
 		destroy() {
-			document.removeEventListener('keydown', onKeyDown);
+			enabled = false;
+			sync();
 		}
 	};
 }

@@ -21,7 +21,6 @@
 					aria-pressed!="{cell.selected}"
 					tabindex!="{cell.outside ? -1 : 0}"
 					onclick!="{() => onSelect(cell)}"
-					onmouseenter!="{() => range && (hovered = cell.iso)}"
 				)
 					| {cell.day}
 
@@ -51,7 +50,6 @@
 		s ? new Date(`${s}T00:00:00`) : new Date()
 	anchor .= $state initial()
 
-	hovered .= $state ''
 
 	monthLabel := $derived monthFmt.format(anchor)
 
@@ -118,11 +116,7 @@
 			s := rangeValue?.start ?? ''
 			e := rangeValue?.end ?? ''
 			selected = !!((s && s === isoStr) || (e && e === isoStr))
-			if s && !e && hovered
-				lo := s < hovered ? s : hovered
-				hi := s < hovered ? hovered : s
-				inRange = isoStr > lo && isoStr < hi
-			else if s && e
+			if s && e
 				inRange = isoStr > s && isoStr < e
 		else
 			selected = value === isoStr

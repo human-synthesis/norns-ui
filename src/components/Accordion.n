@@ -7,7 +7,8 @@
 			summary.accordion-trigger
 				span {item.title}
 				.accordion-chevron
-					Icon(name="lucide:chevron-down" size="size-4")
+					Icon(name="lucide:chevron-down" size="size-4" class="accordion-chevron-closed")
+					Icon(name="lucide:chevron-up" size="size-4" class="accordion-chevron-open")
 			.accordion-content
 				| {@render item.content?.()}
 

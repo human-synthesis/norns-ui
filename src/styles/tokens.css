@@ -113,10 +113,14 @@
 	 * outlines controls (inputs, checkboxes) and targets 3:1 in dark theme. */
 	--color-border: oklch(92.2% 0 0); /* neutral-200 */
 	--color-border-strong: oklch(86.9% 0 0); /* neutral-300 */
-	/* Edge of open menus, popovers, listboxes and rich tooltips. */
-	--color-border-floating: oklch(92.2% 0 0);
+	/* Edge of open menus, popovers, listboxes, dialogs and rich tooltips.
+	 * There are no shadows, so this edge alone separates them from the page. */
+	--color-border-floating: oklch(72% 0 0);
 
-	/* Focus ring — semi-transparent so it composes on any bg */
+	/* Disabled controls: a colour, never opacity. */
+	--color-fg-disabled: oklch(70% 0 0);
+
+	/* Focus colour (outline, see --ui-focus-outline) */
 	--color-ring: var(--color-primary-500);
 
 	/* Feedback role tokens — referenced by Banner / toast / Field error */
@@ -162,27 +166,38 @@
 	--ui-icon-btn-md: 1.75rem; /* 28px */
 	--ui-icon-btn-lg: 2.25rem; /* 36px */
 
-	/* Motion timings — shared so animations feel coordinated. */
-	--ui-motion-fast: 150ms;
-	--ui-motion-med: 200ms;
-	--ui-motion-slow: 300ms;
+	/* Motion: the library has none. Kept at 0s so app CSS that still
+	 * references these gets instant changes (a 0s transition is never created). */
+	--ui-motion-fast: 0s;
+	--ui-motion-med: 0s;
+	--ui-motion-slow: 0s;
 	--ui-motion-ease: cubic-bezier(0.2, 0, 0, 1);
 
-	/* Elevation — the only shadow vocabulary in the library.
-	 * elev-1: subtle (cards, hover-lifts)
-	 * elev-2: tooltips, hover-lifted cards
-	 * elev-3: dialogs, sheets
-	 */
-	--ui-elev-1: 0 1px 2px oklch(0% 0 0 / 0.06), 0 1px 3px oklch(0% 0 0 / 0.04);
-	--ui-elev-2: 0 4px 12px -2px oklch(0% 0 0 / 0.08), 0 2px 4px -1px oklch(0% 0 0 / 0.04);
-	--ui-elev-3: 0 16px 32px -8px oklch(0% 0 0 / 0.18), 0 4px 8px -4px oklch(0% 0 0 / 0.06);
-	/* elev-popover: open menus, popovers, listboxes (same as elev-2 in light). */
-	--ui-elev-popover: 0 4px 12px -2px oklch(0% 0 0 / 0.08), 0 2px 4px -1px oklch(0% 0 0 / 0.04);
+	/* Elevation: the library draws no shadows; depth is a border plus a
+	 * surface step. Kept as `none` for app CSS that still references them. */
+	--ui-elev-1: none;
+	--ui-elev-2: none;
+	--ui-elev-3: none;
+	--ui-elev-popover: none;
 
-	/* Single canonical focus indicator. 2px halo on the surface color + 2px
-	 * ring color outside it, so the ring stays visible on any background. */
+	/* Focus: one solid outline, drawn outside the element. Outlines take no
+	 * layout and no shadow pass. */
+	--ui-focus-outline: 2px solid var(--color-ring);
+	--ui-focus-offset: 2px;
+	/* Deprecated: shadow-based ring, unused by the library. Use
+	 * `outline: var(--ui-focus-outline)` instead. */
 	--ui-focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ring);
 }
+
+/* === Size ===
+ * One attribute on <html> scales every component: all sizes are rem, so this
+ * is a single font-size change, resolved once when styles compute.
+ *   <html data-size="compact">   87.5%
+ *   <html data-size="large">     112.5%
+ * Percentages keep the user's browser font-size preference in the loop.
+ */
+html[data-size='compact'] { font-size: 87.5%; }
+html[data-size='large'] { font-size: 112.5%; }
 
 /* === Accent presets ===
  * An accent is two scales plus an ink colour:
@@ -262,6 +277,7 @@
 	--color-fg-on-primary: white;
 	--color-ring: var(--color-primary-500);
 	--ui-focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ring);
+	--ui-focus-outline: 2px solid var(--color-ring);
 }
 [data-theme='dark'],
 [data-theme='dark'] [data-accent] {
@@ -280,6 +296,7 @@
 	/* Ring brightens so it stays visible on dark surfaces */
 	--color-ring: var(--color-primary-400);
 	--ui-focus-ring: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-ring);
+	--ui-focus-outline: 2px solid var(--color-ring);
 }
 
 /* === Dark theme ===
@@ -295,25 +312,20 @@
 	--color-fg-muted: oklch(78% 0 0); /* 9.9:1 on bg, 6.8:1 on bg-muted */
 	--color-fg-subtle: oklch(68% 0 0); /* 6.9:1 on bg, 4.7:1 on bg-muted */
 
-	/* Background — bg < bg-subtle < bg-elevated < bg-muted, so hover and
+	/* Background — bg < bg-subtle < bg-elevated < bg-muted, so selected and
 	 * active states (bg-muted) show on cards and open menus (bg-elevated). */
 	--color-bg: oklch(14.5% 0 0); /* deep neutral, slightly above true black */
 	--color-bg-subtle: oklch(17.5% 0 0);
 	--color-bg-elevated: oklch(23.5% 0 0); /* Cards, dialogs, menus */
-	--color-bg-muted: oklch(30% 0 0); /* hover / active, one step above elevated */
+	--color-bg-muted: oklch(30% 0 0); /* selected / active, one step above elevated */
 	--color-bg-inverse: oklch(98.5% 0 0);
 
 	/* Borders */
 	--color-border: oklch(36% 0 0); /* dividers: 1.8:1 on bg */
 	--color-border-strong: oklch(53% 0 0); /* controls: 3.7:1 on bg, 3.2:1 on elevated */
-	--color-border-floating: oklch(44% 0 0); /* open menus: 2.2:1 against their own surface */
+	--color-border-floating: oklch(53% 0 0); /* menus, dialogs: 3.2:1 against their own surface */
 
-	/* Dark-mode elevation — true-black shadow on dark bg disappears, so we
-	 * lean on darker shadow + the existing border to convey depth. */
-	--ui-elev-1: 0 1px 2px oklch(0% 0 0 / 0.4);
-	--ui-elev-2: 0 4px 12px -2px oklch(0% 0 0 / 0.5), 0 2px 4px -1px oklch(0% 0 0 / 0.3);
-	--ui-elev-3: 0 16px 32px -8px oklch(0% 0 0 / 0.6), 0 4px 8px -4px oklch(0% 0 0 / 0.4);
-	--ui-elev-popover: 0 10px 30px -4px oklch(0% 0 0 / 0.65), 0 2px 6px oklch(0% 0 0 / 0.4);
+	--color-fg-disabled: oklch(48% 0 0);
 
 	/* Feedback — flip to deep tinted bg + light fg */
 	--color-success-bg: oklch(28% 0.05 152);

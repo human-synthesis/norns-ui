@@ -3,11 +3,10 @@ import type { Component, Snippet } from 'svelte';
 export type HeroBannerProps = {
 	title: string;
 	description?: string;
-	/** Background/decorative image src; rendered with reduced opacity behind the content. */
+	/** Image src; fills the right half, text keeps the left half. */
 	image?: string;
 	align?: 'left' | 'center';
 	/** Apply animated `GradientText` to the title. Default false. */
-	gradient?: boolean;
 	actions?: Snippet;
 	children?: Snippet;
 	class?: string;

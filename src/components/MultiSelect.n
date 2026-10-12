@@ -38,7 +38,7 @@
 		aria-label="Toggle options"
 		onclick!="{(e) => { e.stopPropagation(); toggle() }}"
 	)
-		Icon(name!="{loading ? 'lucide:loader-circle' : 'lucide:chevrons-up-down'}" size="size-4" class!="{loading ? 'animate-spin' : ''}")
+		Icon(name!="{loading ? 'lucide:loader-circle' : 'lucide:chevrons-up-down'}" size="size-4" class!="{loading ? 'ui-spin' : ''}")
 
 +if('open && filtered.length > 0')
 	ul(
@@ -58,7 +58,7 @@
 				data-active!="{i === active ? 'true' : undefined}"
 				onpointerdown!="{(e) => { e.preventDefault(); pick(item) }}"
 			)
-				Icon(name="lucide:check" size="size-3.5" class!="{value.includes(item.value) ? '' : 'opacity-0'}")
+				Icon(name="lucide:check" size="size-3.5" class!="{value.includes(item.value) ? '' : 'combobox-check-hidden'}")
 				span {item.label}
 +if('open && filtered.length === 0 && (loading || term.length >= minChars)')
 	div(use:portal use:floatAction use:clickOutside!="{[onClose, open, wrapEl]}" class="dropdown-content combobox-listbox" data-state="open")
@@ -94,7 +94,7 @@
 	uid := Math.random().toString(36).slice(2, 8)
 	listboxId := `listbox-${uid}`
 
-	{ reference: refAction, floating: floatAction } := useFloating
+	{ reference: refAction, floating: floatAction, update: updateFloat } := useFloating
 		placement: 'bottom-start'
 		offset: 4
 		matchWidth: true
@@ -139,6 +139,12 @@
 		return items unless term
 		t := term.toLowerCase()
 		items.filter (it) => it.label.toLowerCase().includes(t)
+
+	// The list changed size (typing, remote results): re-place it once.
+	$effect =>
+		filtered.length
+		updateFloat() if open
+		return
 
 	$effect =>
 		active = 0 if active >= filtered.length

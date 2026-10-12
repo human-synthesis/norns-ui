@@ -4,7 +4,7 @@ span(class!="{classes}")
 	+if('!src && name')
 		| {initials}
 	+if('!src && !name')
-		Icon(name="lucide:user" size="size-1/2" class="opacity-50")
+		Icon(name="lucide:user" size="size-1/2" class="avatar-fallback-icon")
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'

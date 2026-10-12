@@ -15,8 +15,8 @@ ul.tree(class!="{classes}" role="tree")
 			onclick!="{() => onRowClick(node)}"
 		)
 			+if('hasChildren(node)')
-				span.tree-chevron(class!="{isExpanded(node.id) ? 'tree-chevron-open' : ''}")
-					Icon(name="lucide:chevron-right" size="size-3.5")
+				span.tree-chevron
+					Icon(name!="{isExpanded(node.id) ? 'lucide:chevron-down' : 'lucide:chevron-right'}" size="size-3.5")
 			+if('!hasChildren(node)')
 				span.tree-chevron-spacer
 			+if('node.icon')

@@ -15,7 +15,6 @@ export type SheetProps = {
 	actions?: Snippet;
 	children?: Snippet;
 	triggerClass?: string;
-	overlayClass?: string;
 	class?: string;
 };
 

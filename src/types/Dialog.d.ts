@@ -5,7 +5,7 @@ export type DialogProps = {
 	title?: string;
 	description?: string;
 	hideClose?: boolean;
-	/** Close on overlay click and Escape. Default true. */
+	/** Close on a click outside the dialog and on Escape. Default true. */
 	dismissable?: boolean;
 	/** Used as `aria-label` on the dialog when no `title` is provided. */
 	ariaLabel?: string;
@@ -13,7 +13,6 @@ export type DialogProps = {
 	actions?: Snippet;
 	children?: Snippet;
 	triggerClass?: string;
-	overlayClass?: string;
 	class?: string;
 };
 

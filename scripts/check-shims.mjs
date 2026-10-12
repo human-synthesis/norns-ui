@@ -2,7 +2,7 @@
 /**
  * Drift detector for hand-rolled .d.ts shims vs the .n component sources.
  *
- * For every component in src/components/*.n and src/motion/*.n:
+ * For every component in src/components/*.n:
  *   1. Find the $props() destructure inside <script>.
  *   2. Extract the external prop names (left side of `:` if renamed).
  *   3. Confirm a shim file exists at src/types/<Name>.d.ts.
@@ -20,7 +20,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
-const COMPONENT_DIRS = ['src/components', 'src/motion'];
+const COMPONENT_DIRS = ['src/components'];
 const TYPES_DIR = 'src/types';
 const STRICT = process.argv.includes('--strict');
 

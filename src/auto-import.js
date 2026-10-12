@@ -107,15 +107,10 @@ export function presetUI() {
 			Calendar: c('Calendar'),
 			DataTable: c('DataTable'),
 
-			// 0.0.5 — CSS-only motion components
+			// 0.0.5
 			AvatarGroup: c('AvatarGroup'),
-			GradientText: c('GradientText'),
 			CopyButton: c('CopyButton'),
-			ThemeToggler: c('ThemeToggler'),
-			ShinyButton: c('ShinyButton'),
-			RippleButton: c('RippleButton')
-			// Motion-driven components live in `@human-synthesis/norns-ui/motion`
-			// and are NOT registered here (opt-in import only).
+			ThemeToggler: c('ThemeToggler')
 		},
 		helpers: [
 			{

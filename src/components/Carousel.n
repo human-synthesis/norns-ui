@@ -1,11 +1,11 @@
-.carousel(class!="{classes}" onmouseenter!="{pause}" onmouseleave!="{resume}")
-	.carousel-track(style!="{trackStyle}")
-		+each('slides as item, i')
-			.carousel-slide
-				+if('item.src')
-					img(src!="{item.src}" alt!="{item.alt ?? ''}" loading="lazy" class="block w-full h-full object-cover")
-				+if('!item.src && children')
-					| {@render children(item, i)}
+.carousel(class!="{classes}" onfocusin!="{pause}" onfocusout!="{resume}")
+	//- Only the active slide is in the DOM: switching is a swap, not a slide.
+	+if('current')
+		.carousel-slide
+			+if('current.src')
+				img(src!="{current.src}" alt!="{current.alt ?? ''}" class="block w-full h-full object-cover")
+			+if('!current.src && children')
+				| {@render children(current, index)}
 	+if('slides.length > 1')
 		button.carousel-arrow.carousel-arrow-prev(
 			type="button"
@@ -35,7 +35,7 @@
 	{
 		slides = []
 		index = $bindable(0)
-		autoplay = false
+		autoplay = false // advances on a timer; pauses while keyboard focus is inside
 		interval = 5000
 		aspect = 'video'
 		children
@@ -50,7 +50,7 @@
 
 	classes := cn 'carousel', aspectClass, extra
 
-	trackStyle := $derived `transform: translateX(-${index * 100}%)`
+	current := $derived slides[index]
 
 	prev := => index = (index - 1 + slides.length) % slides.length
 	next := => index = (index + 1) % slides.length

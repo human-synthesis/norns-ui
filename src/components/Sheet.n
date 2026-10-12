@@ -2,45 +2,37 @@
 	span(class!="{triggerClass ?? ''}" onclick!="{() => open = true}")
 		| {@render trigger()}
 
+//- Native modal <dialog>: the browser makes the page inert, keeps focus inside,
+//- handles Escape and paints it in the top layer. The backdrop is transparent.
 +if('open')
-	div(use:portal use:scrollLock)
-		div(
-			data-state="open"
-			class!="{overlayClasses}"
-			onclick!="{onOverlayClick}"
-		)
-		div(
-			role="dialog"
-			aria-modal="true"
-			aria-label!="{title ?? ariaLabel}"
-			class!="{contentClasses}"
-			data-state="open"
-			data-side!="{side}"
-			use:focusTrap
-			use:escape!="{[onClose, open]}"
-		)
-			+if('title')
-				h2.dialog-title
-					| {title}
-			+if('description')
-				p.dialog-description
-					| {description}
-			+if('children')
-				.sheet-body
-					| {@render children()}
-			+if('actions')
-				.dialog-actions
-					| {@render actions()}
-			+if('!hideClose')
-				button.dialog-close(type="button" aria-label="Close" onclick!="{onClose}")
-					| ✕
+	dialog(
+		use:showModal
+		use:scrollLock
+		aria-label!="{title ?? ariaLabel}"
+		class!="{contentClasses}"
+		data-side!="{side}"
+		oncancel!="{onCancel}"
+		onclick!="{onBackdropClick}"
+	)
+		+if('title')
+			h2.dialog-title
+				| {title}
+		+if('description')
+			p.dialog-description
+				| {description}
+		+if('children')
+			.sheet-body
+				| {@render children()}
+		+if('actions')
+			.dialog-actions
+				| {@render actions()}
+		+if('!hideClose')
+			button.dialog-close(type="button" aria-label="Close" onclick!="{onClose}")
+				| ✕
 
 <script>
 	import { cn } from '@human-synthesis/norns-ui/cn'
-	import { portal } from '@human-synthesis/norns-ui/behaviors/portal.svelte.js'
 	import { scrollLock } from '@human-synthesis/norns-ui/behaviors/scrollLock.svelte.js'
-	import { focusTrap } from '@human-synthesis/norns-ui/behaviors/focusTrap.svelte.js'
-	import { escape } from '@human-synthesis/norns-ui/behaviors/escape.svelte.js'
 
 	{
 		open = $bindable(false)
@@ -54,16 +46,25 @@
 		actions
 		children
 		triggerClass
-		overlayClass = ''
 		class: extra = ''
 	} .= $props()
 
-	overlayClasses := cn 'dialog-overlay', overlayClass
 	contentClasses := cn 'sheet-content', `sheet-${side}`, extra
+
+	showModal := (node) => node.showModal()
 
 	onClose := => open = false
 
-	onOverlayClick := (e) =>
-		return unless dismissable
-		open = false if e.target === e.currentTarget
+	// Escape: let Svelte remove the dialog instead of the browser closing it.
+	onCancel := (e) =>
+		e.preventDefault()
+		open = false if dismissable
+
+	// A click on the transparent backdrop targets the <dialog> itself, outside
+	// its box.
+	onBackdropClick := (e) =>
+		return unless dismissable && e.target === e.currentTarget
+		r := e.currentTarget.getBoundingClientRect()
+		outside := e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom
+		open = false if outside
 </script>

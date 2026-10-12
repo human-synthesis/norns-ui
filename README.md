@@ -50,6 +50,21 @@ export default {
 @import '@human-synthesis/norns-ui/styles';
 ```
 
+## Rendering rules
+
+norns-ui draws each state once and then does no further work: no hover styling, no transitions or entrance animations, no transforms, no shadows, blur, gradients or translucency. Modals are native `<dialog>` elements over a transparent backdrop. Only loading indicators animate, by colour or rotation. The full list, enforced by `tests/rules.test.js`, is in [CLAUDE.md](./CLAUDE.md#library-rules-mandatory).
+
+## Size
+
+Every size in the library is in `rem`, so one attribute on `<html>` rescales everything:
+
+```html
+<html data-size="compact">  <!-- 87.5% -->
+<html data-size="large">    <!-- 112.5% -->
+```
+
+It is a single root font-size change, resolved once when styles compute. It scales your own `rem`-based styles too.
+
 ## Dark mode
 
 Toggle via `<html data-theme="dark">` — every component swaps. Persist the choice with a small inline script in `app.html` to avoid FOUC:
@@ -99,9 +114,9 @@ Don't override `--color-primary-*` with literal values. They are an indirection 
 | `--color-fg-muted`, `--color-fg-subtle` | readable text: secondary copy, placeholders, captions | ≥ 4.5:1 on every surface |
 | `--color-border-strong` | control edges: inputs, checkboxes, radios | ≥ 3:1 on bg and bg-elevated |
 | `--color-border` | decorative dividers and card edges | ~1.8:1 by design |
-| `--color-border-floating` + `--ui-elev-popover` | open menus, listboxes, popovers, nav menus, rich tooltips | visible edge (≥ 2:1 against the menu surface) and a deep shadow |
+| `--color-border-floating` | open menus, listboxes, popovers, dialogs, sheets, rich tooltips | ≥ 3:1 on bg and on its own surface (dark); the only separation, since there are no shadows |
 
-Surfaces step up as bg < bg-subtle < bg-elevated < bg-muted, so hover and active states (`bg-muted`) show inside cards and open menus. `tests/contrast.test.js` enforces all of the above, plus the rule that light-theme neutrals don't change.
+Surfaces step up as bg < bg-subtle < bg-elevated < bg-muted, so selected and keyboard-active states (`bg-muted`) show inside cards and open menus. `tests/contrast.test.js` enforces all of the above, plus the light-theme neutrals.
 
 ## Icons
 
@@ -167,12 +182,11 @@ Pagination(bind:page!="{list.page}" total!="{list.total}" pageSize!="{list.pageS
 - **Atoms** (CSS-only `@layer components`): `.btn`, `.input`, `.field`, `.form`, `.checkbox`, `.radio`, `.switch`, `.card`, `.surface-elevated`, `.btn-icon`, `.banner`, `.badge`, `.chip`, `.avatar`, `.skeleton`, `.progress`, `.norns-header`, `.hero`, `.stepper`, `.breadcrumbs`, `.pagination`, `.accordion`, `.carousel`, plus variants/sizes.
 - **Forms**: `Btn`, `Form`, `Field`, `FieldGroup`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`.
 - **Behavior** (custom on `@floating-ui/dom`): `Dialog`, `Sheet`, `Popover`, `Dropdown`, `Tooltip`, `Tabs`, `Accordion`, `ContextMenu`, `Collapsible`.
-- **Display**: `Card`, `Window`, `Surface`, `Banner`, `Badge`, `Chip`, `Avatar`, `AvatarGroup`, `Skeleton`, `Progress`, `ProgressCircular`, `Icon`, `Image`, `Audio`, `Video`, `Timeline`, `GradientText`.
+- **Display**: `Card`, `Window`, `Surface`, `Banner`, `Badge`, `Chip`, `Avatar`, `AvatarGroup`, `Skeleton`, `Progress`, `ProgressCircular`, `Icon`, `Image`, `Audio`, `Video`, `Timeline`.
 - **Composite**: `Header`, `HeroBanner`, `Stepper`, `Breadcrumbs`, `Pagination`, `Carousel`, `Tree`, `Toolbar`, `Separator`, `ButtonGroup`, `ToggleButton`, `ToggleButtonGroup`, `HierarchicalMenu`, `MegaMenu`.
-- **Inputs**: `NumberInput`, `OtpField`, `TagsInput`, `Autocomplete`, `MultiSelect`, `ColorPicker`, `Uploader`, `DatePicker`, `DateRangePicker`, `TimePicker`, `Calendar`, `DataTable`, `ScrollArea`, `CopyButton`, `ThemeToggler`, `ShinyButton`, `RippleButton`.
+- **Inputs**: `NumberInput`, `OtpField`, `TagsInput`, `Autocomplete`, `MultiSelect`, `ColorPicker`, `Uploader`, `DatePicker`, `DateRangePicker`, `TimePicker`, `Calendar`, `DataTable`, `ScrollArea`, `CopyButton`, `ThemeToggler`.
 - **Toast**: `ToastProvider` + `toast()` / `notify()` / `dismiss()` from `@human-synthesis/norns-ui/toast`.
 - **Lists**: `useList()` from `@human-synthesis/norns-ui/list` — server-driven paging / sorting / search state for `DataTable` + `Pagination`.
-- **Motion** (opt-in, `@human-synthesis/norns-ui/motion`): `AnimatedNumber`, `GradientBackground`, `LiquidButton`, `Reveal`, `Sparkles`.
 
 The full prop reference for every component is **[COMPONENTS.md](./COMPONENTS.md)**, generated from the `.d.ts` shims under `src/types/` (`bun run docs:components`). Live usage of every component: `norns-demo/src/routes/examples/ui/+page.n`. Override any component by dropping `src/lib/components/<Name>.n` in your project — `nornsAutoImport`'s first-match-wins shadows the library silently.
 
@@ -188,6 +202,15 @@ import {
 ```
 
 These are Svelte 5 actions (`use:portal`, `use:clickOutside={handler}`, etc.) and a small `useFloating()` factory that wraps `@floating-ui/dom`. They're what every overlay component in this library is built on, so reaching for them in your own code keeps interactions consistent.
+
+## Migrating to 0.1.0
+
+- **Removed:** `ShinyButton`, `RippleButton`, `GradientText` and the whole `@human-synthesis/norns-ui/motion` subpath (`AnimatedNumber`, `GradientBackground`, `LiquidButton`, `Reveal`, `Sparkles`), plus the `motion` dependency. They move to a separate effects package. Use `Btn` and plain text meanwhile.
+- **Removed props:** `HeroBanner gradient`, `Surface tone="glass"`, `Dialog`/`Sheet` `overlayClass` (there is no overlay).
+- **Dialog / Sheet** render a native `<dialog>`: no dimmed or blurred backdrop, no portal. With `dismissable={false}`, Escape no longer closes them (it used to, despite the docs).
+- **Tokens:** `--ui-elev-*` are `none` and `--ui-motion-*` are `0s`, so app CSS that uses them keeps working with no effect. Use `outline: var(--ui-focus-outline)` instead of `box-shadow: var(--ui-focus-ring)` (still defined, deprecated). New: `--color-fg-disabled`, `--ui-focus-outline`, `--ui-focus-offset`, `data-size`.
+- **Behaviour:** no hover highlights anywhere. Carousel renders only the active slide and no longer pauses on hover (it pauses while focused). Calendar range selection no longer previews on hover. Chevrons swap icons instead of rotating. `.surface-glass` is now an opaque surface.
+- **Floating edge:** `--color-border-floating` is stronger in both themes, since menus no longer have a shadow.
 
 ## Migrating from 0.0.5 → 0.0.6
 
@@ -208,9 +231,10 @@ Tokens are in [`src/styles/tokens.css`](src/styles/tokens.css) as a Tailwind v4 
 - **Feedback tokens**: `--color-{success,warning,danger,info}-{bg,fg,border}` for tinted surfaces.
 - **Typography tokens**: `--font-sans`, `--font-mono`.
 - **Sizing**: `--ui-radius-{sm,,lg,full}`, `--ui-h-{sm,md,lg}` (full button heights), `--ui-icon-btn-{sm,md,lg}` (square icon-button sizes).
-- **Motion**: `--ui-motion-{fast,med,slow}` durations + `--ui-motion-ease`. All component transitions reference these.
-- **Elevation**: `--ui-elev-{1,2,3}` (subtle / raised / modal) and `--ui-elev-popover` for open menus and popovers. Dark mode swaps to deeper shadows.
-- **Focus**: `--ui-focus-ring` — the single canonical focus indicator. Apply as `box-shadow: var(--ui-focus-ring)` on `:focus-visible`.
+- **Motion**: none. `--ui-motion-{fast,med,slow}` are `0s` for compatibility.
+- **Elevation**: none. `--ui-elev-*` are kept as `none` for compatibility; depth comes from `--color-border-floating` and the surface steps.
+- **Focus**: `--ui-focus-outline` + `--ui-focus-offset` — the single focus indicator. Apply as `outline: var(--ui-focus-outline); outline-offset: var(--ui-focus-offset)` on `:focus-visible`.
+- **Size**: `data-size` on `<html>` (see [Size](#size)).
 
 Override by re-declaring `@theme { … }` in your `app.css` after the library import.
 
