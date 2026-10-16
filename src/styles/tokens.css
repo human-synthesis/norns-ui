@@ -106,7 +106,10 @@
 	--color-bg: white;
 	--color-bg-muted: oklch(96.7% 0 0); /* neutral-100 */
 	--color-bg-subtle: oklch(98.5% 0 0); /* neutral-50 */
-	--color-bg-elevated: white;
+	--color-bg-elevated: oklch(98.5% 0 0); /* cards, dialogs: one step off the page so they need no border */
+	/* Control fill: buttons, chips, inputs keep their shape by this step, not a border. */
+	--color-bg-fill: oklch(94.5% 0 0);
+	--color-bg-fill-strong: oklch(90.5% 0 0); /* pressed / active control */
 	--color-bg-inverse: oklch(20.4% 0 0); /* used for tooltips, dark surfaces on light */
 
 	/* Borders. `border` is decorative (dividers, card edges); `border-strong`
@@ -319,6 +322,8 @@ html[data-size='large'] { font-size: 112.5%; }
 	--color-bg-elevated: oklch(23.5% 0 0); /* Cards, dialogs, menus */
 	--color-bg-muted: oklch(30% 0 0); /* selected / active, one step above elevated */
 	--color-bg-inverse: oklch(98.5% 0 0);
+	--color-bg-fill: oklch(27% 0 0); /* controls, between elevated and muted */
+	--color-bg-fill-strong: oklch(34% 0 0); /* pressed / active control */
 
 	/* Borders */
 	--color-border: oklch(36% 0 0); /* dividers: 1.8:1 on bg */

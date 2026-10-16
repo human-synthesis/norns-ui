@@ -72,9 +72,8 @@
 
 	kbd {
 		font-family: var(--font-mono);
-		@apply text-xs px-1.5 py-0.5 border;
-		background-color: var(--color-bg-muted);
-		border-color: var(--color-border);
+		@apply text-xs px-1.5 py-0.5;
+		background-color: var(--color-bg-fill);
 		color: var(--color-fg);
 		border-radius: var(--ui-radius-sm);
 	}
@@ -134,9 +133,9 @@
 	.color-picker-text,
 	.date-picker-trigger {
 		@apply block w-full text-sm leading-none;
-		background-color: var(--color-bg);
+		background-color: var(--color-bg-fill);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
+		border: 1px solid transparent;
 		border-radius: var(--ui-radius);
 		height: var(--ui-h-md);
 		padding-inline: 0.75rem;
@@ -150,7 +149,6 @@
 	.textarea:focus-visible,
 	.select:focus-visible,
 	.date-picker-trigger:focus-visible {
-		border-color: var(--color-ring);
 		outline: var(--ui-focus-outline);
 		outline-offset: var(--ui-focus-offset);
 	}
@@ -191,7 +189,6 @@
 	.btn:disabled {
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg-disabled);
-		border-color: var(--color-border);
 	}
 
 	.btn-sm {
@@ -212,15 +209,11 @@
 	.btn-primary:active { background-color: var(--color-primary-800); }
 
 	.btn-secondary {
-		background-color: var(--color-bg-muted);
+		background-color: var(--color-bg-fill);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border);
 	}
-	.btn-secondary:active { background-color: var(--color-border); }
-	.btn-secondary[data-pressed='true'] {
-		background-color: var(--color-border);
-		border-color: var(--color-border-strong);
-	}
+	.btn-secondary:active,
+	.btn-secondary[data-pressed='true'] { background-color: var(--color-bg-fill-strong); }
 
 	.btn-ghost {
 		background-color: transparent;
@@ -364,7 +357,7 @@
 
 	.field-group {
 		@apply space-y-3 p-4;
-		border: 1px solid var(--color-border);
+		background-color: var(--color-bg-subtle);
 		border-radius: var(--ui-radius);
 	}
 	.field-group-legend {
@@ -546,7 +539,6 @@
 	.surface {
 		background-color: var(--color-bg-elevated);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 	}
 	.surface-glass {
@@ -555,7 +547,6 @@
 	.card {
 		background-color: var(--color-bg-elevated);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius-lg);
 	}
 	.card-padded { @apply p-5; }
@@ -568,7 +559,6 @@
 	.card-body { @apply p-5; }
 	.card-footer {
 		@apply px-5 py-3;
-		border-top: 1px solid var(--color-border);
 		background-color: var(--color-bg-subtle);
 		border-bottom-left-radius: var(--ui-radius-lg);
 		border-bottom-right-radius: var(--ui-radius-lg);
@@ -601,7 +591,6 @@
 		justify-content: space-between;
 		gap: 0.5rem;
 		padding: 0.4rem 0.625rem;
-		border-bottom: 1px solid var(--color-border);
 		background-color: var(--color-bg-subtle);
 		user-select: none;
 		cursor: move;
@@ -646,28 +635,23 @@
 	/* ============================================================ */
 	.banner {
 		@apply flex items-start gap-3 p-3 text-sm;
-		border: 1px solid;
 		border-radius: var(--ui-radius);
 	}
 	.banner-info {
 		background-color: var(--color-info-bg);
 		color: var(--color-info-fg);
-		border-color: var(--color-info-border);
 	}
 	.banner-success {
 		background-color: var(--color-success-bg);
 		color: var(--color-success-fg);
-		border-color: var(--color-success-border);
 	}
 	.banner-warning {
 		background-color: var(--color-warning-bg);
 		color: var(--color-warning-fg);
-		border-color: var(--color-warning-border);
 	}
 	.banner-danger {
 		background-color: var(--color-danger-bg);
 		color: var(--color-danger-fg);
-		border-color: var(--color-danger-border);
 	}
 	.banner-icon { @apply shrink-0 mt-0.5; }
 	.banner-body { @apply flex-1; }
@@ -698,9 +682,8 @@
 
 	.chip {
 		@apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium;
-		background-color: var(--color-bg-muted);
+		background-color: var(--color-bg-fill);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius-full);
 	}
 	.chip-remove {
@@ -805,7 +788,6 @@
 	.hero {
 		@apply relative overflow-hidden p-8 md:p-12;
 		background-color: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius-lg);
 	}
 	.hero-center { @apply text-center; }
@@ -843,17 +825,14 @@
 		border-radius: var(--ui-radius-full);
 		background-color: var(--color-bg-muted);
 		color: var(--color-fg-muted);
-		border: 1px solid var(--color-border);
 	}
 	.stepper-step-current .stepper-marker {
 		background-color: var(--color-primary-600);
 		color: var(--color-fg-on-primary);
-		border-color: var(--color-primary-600);
 	}
 	.stepper-step-complete .stepper-marker {
 		background-color: var(--color-success-600);
 		color: white;
-		border-color: var(--color-success-600);
 	}
 	.stepper-divider { @apply h-px flex-1; background-color: var(--color-border); }
 	.stepper-vertical .stepper-divider { @apply h-6 w-px ml-3; }
@@ -897,7 +876,7 @@
 	/* Accordion / Collapsible — both built on <details>            */
 	/* ============================================================ */
 	.accordion {
-		border: 1px solid var(--color-border);
+		background-color: var(--color-bg-subtle);
 		border-radius: var(--ui-radius);
 	}
 	.accordion-item { border-bottom: 1px solid var(--color-border); }
@@ -925,7 +904,6 @@
 	.collapsible:not([open]) > .collapsible-trigger .collapsible-chevron-open { display: none; }
 
 	.collapsible {
-		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 		background-color: var(--color-bg-elevated);
 	}
@@ -957,7 +935,6 @@
 	.toolbar {
 		@apply flex items-center gap-1 p-1;
 		background-color: var(--color-bg-muted);
-		border: 1px solid var(--color-border);
 		border-radius: var(--ui-radius);
 	}
 	.toolbar-vertical { @apply flex-col items-stretch; }
@@ -975,7 +952,7 @@
 		border-top-right-radius: var(--ui-radius);
 		border-bottom-right-radius: var(--ui-radius);
 	}
-	.btn-group > * + * { margin-left: -1px; }
+	.btn-group > * + * { margin-left: 1px; }
 
 	.btn-group-vertical { @apply flex-col; }
 	.btn-group-vertical > * { width: 100%; border-radius: 0; }
@@ -987,7 +964,7 @@
 		border-bottom-left-radius: var(--ui-radius);
 		border-bottom-right-radius: var(--ui-radius);
 	}
-	.btn-group-vertical > * + * { margin-left: 0; margin-top: -1px; }
+	.btn-group-vertical > * + * { margin-left: 0; margin-top: 1px; }
 
 	/* ============================================================ */
 	/* NumberInput                                                  */
@@ -1009,21 +986,18 @@
 	}
 	.number-step {
 		@apply inline-flex items-center justify-center px-2 cursor-pointer;
-		background-color: var(--color-bg-muted);
+		background-color: var(--color-bg-fill-strong);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
 		height: var(--ui-h-md);
 	}
 	.number-step:focus-visible { outline: var(--ui-focus-outline); outline-offset: var(--ui-focus-offset); }
 	.number-step:first-child {
 		border-top-left-radius: var(--ui-radius);
 		border-bottom-left-radius: var(--ui-radius);
-		border-right: none;
 	}
 	.number-step:last-child {
 		border-top-right-radius: var(--ui-radius);
 		border-bottom-right-radius: var(--ui-radius);
-		border-left: none;
 	}
 	.number-step:disabled { @apply cursor-not-allowed;
 		color: var(--color-fg-disabled); }
@@ -1036,13 +1010,12 @@
 		@apply text-center font-mono text-lg;
 		width: 2.75rem;
 		height: 3rem;
-		background-color: var(--color-bg);
+		background-color: var(--color-bg-fill);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
+		border: 1px solid transparent;
 		border-radius: var(--ui-radius);
 	}
 	.otp-cell:focus-visible {
-		border-color: var(--color-ring);
 		outline: var(--ui-focus-outline);
 		outline-offset: var(--ui-focus-offset);
 	}
@@ -1053,13 +1026,12 @@
 	.tags-input {
 		@apply flex w-full flex-wrap items-center gap-1.5 px-2 py-1.5;
 		min-height: var(--ui-h-md);
-		background-color: var(--color-bg);
+		background-color: var(--color-bg-fill);
 		color: var(--color-fg);
-		border: 1px solid var(--color-border-strong);
+		border: 1px solid transparent;
 		border-radius: var(--ui-radius);
 	}
 	.tags-input:focus-within {
-		border-color: var(--color-ring);
 		outline: var(--ui-focus-outline);
 		outline-offset: var(--ui-focus-offset);
 	}

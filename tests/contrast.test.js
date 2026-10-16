@@ -93,7 +93,9 @@ describe('light theme neutrals are unchanged', () => {
 		'--color-bg': 'white',
 		'--color-bg-muted': 'oklch(96.7% 0 0)',
 		'--color-bg-subtle': 'oklch(98.5% 0 0)',
-		'--color-bg-elevated': 'white',
+		'--color-bg-elevated': 'oklch(98.5% 0 0)',
+		'--color-bg-fill': 'oklch(94.5% 0 0)',
+		'--color-bg-fill-strong': 'oklch(90.5% 0 0)',
 		'--color-border': 'oklch(92.2% 0 0)',
 		'--color-border-strong': 'oklch(86.9% 0 0)'
 	};

@@ -15,7 +15,8 @@ The library is built to render once and then cost nothing. `tests/rules.test.js`
 7. **Focus** is `outline: var(--ui-focus-outline)` with `outline-offset: var(--ui-focus-offset)`, never a shadow.
 8. **Size** is rem everywhere (borders excepted). `<html data-size="compact|large">` rescales the whole library with one font-size change. No `px` font sizes.
 9. **No background tracking.** Document listeners (`clickOutside`, `escape`) exist only while their overlay is open. Floating positioning follows scroll and window resize while open, nothing else: no ResizeObserver, IntersectionObserver or per-frame polling. No component listens to mouse movement; Tooltip's mouseenter is the only pointer listener.
-10. **Effect components** (shiny, ripple, gradient text, sparkles, …) do not belong here; they live in a separate effects package.
+10. **Fewer borders.** A control or card keeps its shape with a fill step, not a border: controls (`.btn-secondary`, `.chip`, `kbd`, inputs, `.tags-input`, `.otp-cell`) fill with `--color-bg-fill` (pressed `--color-bg-fill-strong`), cards and surfaces sit on `--color-bg-elevated`, groups on `--color-bg-subtle`. Inputs keep a transparent 1px border so the error state can colour it and focus is the outline alone. A border stays only where two areas share one colour (a list's row dividers, a header on the page colour) and on floating surfaces (`--color-border-floating`), which can sit on anything.
+11. **Effect components** (shiny, ripple, gradient text, sparkles, …) do not belong here; they live in a separate effects package.
 
 ## Layout
 
